@@ -1,0 +1,47 @@
+# ==============================================================================
+# RENDER BLUEPRINT - TIENDADELKI PRODUCCIÓN
+# ==============================================================================
+# Documentación: https://render.com/docs/blueprint-spec
+
+databases:
+  - name: tiendadelki-db
+    databaseName: tiendadelki_prod
+    user: tiendadelki_user
+    plan: starter
+    region: oregon
+    postgresMajorVersion: 16
+
+services:
+  - type: web
+    name: tiendadelki-backend
+    runtime: node
+    region: oregon
+    plan: starter
+    buildCommand: "npm install && npx prisma generate && npm run build"
+    startCommand: "npx prisma migrate deploy && npm start"
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "10000"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: tiendadelki-db
+          property: connectionString
+      - key: COOKIE_NAME
+        value: td_auth_token
+      - key: STORAGE_PROVIDER
+        value: local
+      - key: UPLOAD_DIR
+        value: ./public/uploads
+      - key: PRIVATE_STORAGE_DIR
+        value: ./storage/private
+      - key: NEXT_PUBLIC_WHATSAPP_PHONE
+        value: "8296734710"
+      # Las siguientes variables sensibles se configuran en el Dashboard de Render:
+      # - JWT_SECRET (mínimo 32 caracteres)
+      # - NEXT_PUBLIC_SITE_URL (ej. https://tiendadelki.vercel.app)
+      # - ALLOWED_ORIGINS (ej. https://tiendadelki.vercel.app)
+      # - INITIAL_ADMIN_EMAIL
+      # - INITIAL_ADMIN_PASSWORD

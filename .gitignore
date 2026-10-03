@@ -1,0 +1,46 @@
+# Entornos y Secretos Locales (CRÍTICO: Nunca cometer a Git)
+.env
+.env*.local
+.env.production
+.env.staging
+.env.test
+
+# Dependencias
+node_modules/
+/.pnp
+.pnp.js
+
+# Build y Producción
+.next/
+out/
+build/
+dist/
+*.tsbuildinfo
+
+# Debug y Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# Almacenamiento local de archivos y backups
+storage/backups/*
+!storage/backups/.gitkeep
+public/uploads/*
+!public/uploads/.gitkeep
+storage/private/*
+!storage/private/.gitkeep
+
+# Archivos de Sistema Operativo
+.DS_Store
+Thumbs.db
+*.pem
+*.key
+*.cert
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
