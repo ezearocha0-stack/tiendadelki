@@ -1,7 +1,7 @@
 # ==============================================================================
-# RENDER BLUEPRINT - TIENDADELKI PRODUCCIÓN
+# RENDER BLUEPRINT - TIENDADELKI PRODUCCIÓN (FULLSTACK + PERSISTENT DISK)
 # ==============================================================================
-# Documentación: https://render.com/docs/blueprint-spec
+# Documentación oficial: https://render.com/docs/blueprint-spec
 
 databases:
   - name: tiendadelki-db
@@ -20,6 +20,10 @@ services:
     buildCommand: "npm install && npx prisma generate && npm run build"
     startCommand: "npx prisma migrate deploy && npm start"
     healthCheckPath: /api/health
+    disk:
+      name: tiendadelki-uploads
+      mountPath: /data/tiendadelki
+      sizeGB: 10
     envVars:
       - key: NODE_ENV
         value: production
@@ -34,14 +38,15 @@ services:
       - key: STORAGE_PROVIDER
         value: local
       - key: UPLOAD_DIR
-        value: ./public/uploads
+        value: /data/tiendadelki/uploads
       - key: PRIVATE_STORAGE_DIR
-        value: ./storage/private
+        value: /data/tiendadelki/storage_private
       - key: NEXT_PUBLIC_WHATSAPP_PHONE
         value: "8296734710"
-      # Las siguientes variables sensibles se configuran en el Dashboard de Render:
-      # - JWT_SECRET (mínimo 32 caracteres)
-      # - NEXT_PUBLIC_SITE_URL (ej. https://tiendadelki.vercel.app)
-      # - ALLOWED_ORIGINS (ej. https://tiendadelki.vercel.app)
-      # - INITIAL_ADMIN_EMAIL
-      # - INITIAL_ADMIN_PASSWORD
+      # ==========================================================================
+      # VARIABLES SECRETAS OBLIGATORIAS (Configurar en Render Dashboard):
+      # ==========================================================================
+      # - JWT_SECRET: Clave criptográfica de 64 caracteres (openssl rand -hex 32)
+      # - NEXT_PUBLIC_SITE_URL: URL pública final de Render (ej. https://tiendadelki-backend.onrender.com)
+      #   o tu dominio personalizado (ej. https://tiendadelki.com).
+      # ==========================================================================

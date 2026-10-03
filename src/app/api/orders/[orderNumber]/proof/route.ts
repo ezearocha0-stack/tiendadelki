@@ -8,6 +8,7 @@ import { getAuthenticatedUser } from "@/core/auth/session";
 import { signJwt, verifyJwt, Role, ADMIN_ROLES } from "@/core/auth/jwt";
 import path from "path";
 import fs from "fs/promises";
+import { env } from "@/config/env";
 
 export const dynamic = "force-dynamic";
 
@@ -94,7 +95,7 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
     // Fallback: si el URL apuntaba a /uploads/receipts/...
     if (!buffer && order.proofOfPaymentUrl.includes("/uploads/")) {
       const publicRelative = order.proofOfPaymentUrl.split("?")[0].replace(/^\/uploads\//, "");
-      const fullPath = path.resolve(process.cwd(), "./public/uploads", publicRelative);
+      const fullPath = path.resolve(process.cwd(), env.UPLOAD_DIR, publicRelative);
       try {
         buffer = await fs.readFile(fullPath);
       } catch (e) {
