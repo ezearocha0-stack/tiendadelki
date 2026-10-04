@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { prisma } from "@/lib/db";
+import { getCategoryBySlug } from "@/lib/server-api";
 import { StoreHeader } from "@/components/store/store-header";
 import { StoreFooter } from "@/components/store/store-footer";
 import { WhatsAppFloatingButton } from "@/components/store/whatsapp-floating-button";
@@ -15,9 +15,7 @@ interface CategoryDetailPageProps {
 
 export async function generateMetadata({ params }: CategoryDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const category = await prisma.category.findUnique({
-    where: { slug },
-  });
+  const category = await getCategoryBySlug(slug);
 
   if (!category) return { title: "Categoría no encontrada" };
 
@@ -37,28 +35,15 @@ export async function generateMetadata({ params }: CategoryDetailPageProps): Pro
 export default async function CategoryDetailPage({ params }: CategoryDetailPageProps) {
   const { slug } = await params;
 
-  const category = await prisma.category.findUnique({
-    where: { slug },
-    include: {
-      products: {
-        where: { status: "PUBLISHED" },
-        include: {
-          category: { select: { name: true, slug: true } },
-          images: { orderBy: [{ isPrimary: "desc" }, { sortOrder: "asc" }], take: 1 },
-          variants: { where: { isActive: true } },
-        },
-        orderBy: { createdAt: "desc" },
-      },
-    },
-  });
+  const category = await getCategoryBySlug(slug);
 
   if (!category) {
     notFound();
   }
 
-  function checkOutOfStock(p: NonNullable<typeof category>["products"][0]) {
+  function checkOutOfStock(p: any) {
     if (p.hasVariants) {
-      return p.variants.length > 0 && p.variants.every((v) => v.stock === 0);
+      return Boolean(p.variants && p.variants.length > 0 && p.variants.every((v: any) => v.stock === 0));
     }
     return p.stock === 0;
   }
@@ -151,7 +136,7 @@ export default async function CategoryDetailPage({ params }: CategoryDetailPageP
           </div>
         ) : (
           <div className="store-product-grid">
-            {category.products.map((p) => (
+            {category.products.map((p: any) => (
               <ProductCard
                 key={p.id}
                 id={p.id}
@@ -160,7 +145,7 @@ export default async function CategoryDetailPage({ params }: CategoryDetailPageP
                 basePrice={Number(p.basePrice)}
                 compareAtPrice={p.compareAtPrice ? Number(p.compareAtPrice) : null}
                 categoryName={category.name}
-                thumbnailUrl={p.images[0]?.thumbnailUrl || p.images[0]?.url}
+                thumbnailUrl={p.images?.[0]?.thumbnailUrl || p.images?.[0]?.url}
                 hasVariants={p.hasVariants}
                 isNew={p.isNew}
                 isFeatured={p.isFeatured}

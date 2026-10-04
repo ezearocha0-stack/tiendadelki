@@ -2,9 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { handleApiError } from "@/lib/errors";
 import { OrderStatus } from "@prisma/client";
+import { requireAdminUser } from "@/core/auth/session";
 
 export async function GET(req: NextRequest) {
   try {
+    await requireAdminUser(req);
     const { searchParams } = new URL(req.url);
     const status = searchParams.get("status") as OrderStatus | null;
     const hasProof = searchParams.get("hasProof");

@@ -24,71 +24,82 @@ async function main() {
   });
   console.log(`✅ Tienda matriz: ${store.name}`);
 
-  // 2. Usuarios Administrativos y Empleados con Hash Bcrypt
-  const superAdmin = await prisma.user.upsert({
-    where: { email: adminEmail },
-    update: {
-      passwordHash: adminPasswordHash,
-    },
-    create: {
-      email: adminEmail,
-      passwordHash: adminPasswordHash,
-      firstName: "Delki",
-      lastName: "Admin",
-      phone: "8095550100",
-      whatsapp: "8095550100",
-      role: Role.SUPER_ADMIN,
-      isActive: true,
+  // 2. Administrador Inicial Seguro e Idempotente
+  const existingAdmin = await prisma.user.findFirst({
+    where: {
+      role: { in: [Role.SUPER_ADMIN, Role.ADMIN] },
     },
   });
 
-  const staffUser = await prisma.user.upsert({
-    where: { email: "cajero@tiendadelki.com" },
-    update: {
-      passwordHash: staffPasswordHash,
-    },
-    create: {
-      email: "cajero@tiendadelki.com",
-      passwordHash: staffPasswordHash,
-      firstName: "Marcos",
-      lastName: "Vendedor",
-      phone: "8095550101",
-      whatsapp: "8095550101",
-      role: Role.STAFF,
-      isActive: true,
-    },
-  });
-  console.log(`✅ Usuarios administrativos asegurados con hash Bcrypt (Cost 12): ${superAdmin.email}, ${staffUser.email}`);
-
-  // 3. Cliente de Prueba
-  const testCustomer = await prisma.user.upsert({
-    where: { email: "cliente@ejemplo.com" },
-    update: {},
-    create: {
-      email: "cliente@ejemplo.com",
-      firstName: "Carlos",
-      lastName: "Gómez",
-      phone: "8095550199",
-      whatsapp: "8095550199",
-      role: Role.CUSTOMER,
-      isActive: true,
-      addresses: {
-        create: {
-          label: "Casa",
-          recipientName: "Carlos Gómez",
-          recipientPhone: "8095550199",
-          streetAddress: "Calle Las Palmas #45, Edf. Coral Apto 3B",
-          sectorOrNeighborhood: "Bella Vista",
-          city: "Santo Domingo",
-          provinceOrState: "Distrito Nacional",
-          postalCode: "10112",
-          deliveryNotes: "Frente al parque, portón blanco",
-          isDefault: true,
-        },
+  let superAdmin;
+  if (!existingAdmin) {
+    superAdmin = await prisma.user.create({
+      data: {
+        email: adminEmail,
+        passwordHash: adminPasswordHash,
+        firstName: process.env.INITIAL_ADMIN_FIRST_NAME || "Delki",
+        lastName: process.env.INITIAL_ADMIN_LAST_NAME || "Admin",
+        phone: process.env.INITIAL_ADMIN_PHONE || "8095550100",
+        whatsapp: process.env.INITIAL_ADMIN_PHONE || "8095550100",
+        role: Role.SUPER_ADMIN,
+        isActive: true,
       },
-    },
-  });
-  console.log(`✅ Cliente de prueba: ${testCustomer.firstName} ${testCustomer.lastName}`);
+    });
+    console.log(`✅ Super Admin inicial creado con éxito: ${superAdmin.email}`);
+  } else {
+    superAdmin = existingAdmin;
+    console.log(`ℹ️ Administrador existente detectado (${existingAdmin.email}). Credenciales preservadas sin modificaciones.`);
+  }
+
+  // 3. Empleado y Clientes de desarrollo (solo en desarrollo)
+  if (process.env.NODE_ENV !== "production") {
+    const existingStaff = await prisma.user.findUnique({ where: { email: "cajero@tiendadelki.com" } });
+    if (!existingStaff) {
+      await prisma.user.create({
+        data: {
+          email: "cajero@tiendadelki.com",
+          passwordHash: staffPasswordHash,
+          firstName: "Marcos",
+          lastName: "Vendedor",
+          phone: "8095550101",
+          whatsapp: "8095550101",
+          role: Role.STAFF,
+          isActive: true,
+        },
+      });
+      console.log("✅ Usuario staff de prueba creado.");
+    }
+
+    const existingCustomer = await prisma.user.findUnique({ where: { email: "cliente@ejemplo.com" } });
+    if (!existingCustomer) {
+      await prisma.user.create({
+        data: {
+          email: "cliente@ejemplo.com",
+          firstName: "Carlos",
+          lastName: "Gómez",
+          phone: "8095550199",
+          whatsapp: "8095550199",
+          role: Role.CUSTOMER,
+          isActive: true,
+          addresses: {
+            create: {
+              label: "Casa",
+              recipientName: "Carlos Gómez",
+              recipientPhone: "8095550199",
+              streetAddress: "Calle Las Palmas #45, Edf. Coral Apto 3B",
+              sectorOrNeighborhood: "Bella Vista",
+              city: "Santo Domingo",
+              provinceOrState: "Distrito Nacional",
+              postalCode: "10112",
+              deliveryNotes: "Frente al parque, portón blanco",
+              isDefault: true,
+            },
+          },
+        },
+      });
+      console.log("✅ Cliente de prueba creado.");
+    }
+  }
 
   // 4. Métodos de Envío Dinámicos
   const shippingMethodsData = [
@@ -118,12 +129,15 @@ async function main() {
     },
   ];
 
-  for (const method of shippingMethodsData) {
-    await prisma.shippingMethod.create({
-      data: method,
-    });
+  const shippingCount = await prisma.shippingMethod.count();
+  if (shippingCount === 0) {
+    for (const method of shippingMethodsData) {
+      await prisma.shippingMethod.create({ data: method });
+    }
+    console.log("✅ Métodos de envío configurados");
+  } else {
+    console.log("ℹ️ Métodos de envío ya configurados en la base de datos.");
   }
-  console.log("✅ Métodos de envío configurados");
 
   // 5. Cuentas Bancarias para Depósito/Transferencia
   const bankAccountsData = [
@@ -156,12 +170,15 @@ async function main() {
     },
   ];
 
-  for (const acc of bankAccountsData) {
-    await prisma.bankAccount.create({
-      data: acc,
-    });
+  const bankCount = await prisma.bankAccount.count();
+  if (bankCount === 0) {
+    for (const acc of bankAccountsData) {
+      await prisma.bankAccount.create({ data: acc });
+    }
+    console.log("✅ Cuentas bancarias configuradas");
+  } else {
+    console.log("ℹ️ Cuentas bancarias ya configuradas en la base de datos.");
   }
-  console.log("✅ Cuentas bancarias configuradas");
 
   // 6. Parámetros del Sistema
   const settingsData = [

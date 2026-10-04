@@ -1,6 +1,7 @@
 import { prisma } from "../lib/db";
 import { OrderStatus } from "@prisma/client";
 import { NextRequest } from "next/server";
+import { signJwt, AUTH_COOKIE_OPTIONS, Role } from "../core/auth/jwt";
 
 async function runAdminOrderTests() {
   console.log("🛍️ ========================================================");
@@ -17,8 +18,14 @@ async function runAdminOrderTests() {
     const store = await prisma.store.findFirstOrThrow({ where: { isDefault: true } });
     const shippingMethod = await prisma.shippingMethod.findFirstOrThrow({ where: { isActive: true } });
     const bankAccount = await prisma.bankAccount.findFirstOrThrow({ where: { isActive: true } });
-    const adminUser = await prisma.user.findFirst({ where: { role: "ADMIN" } });
+    const adminUser = await prisma.user.findFirst({ where: { role: { in: [Role.SUPER_ADMIN, Role.ADMIN] } } });
     adminUserId = adminUser ? adminUser.id : "test-admin-id";
+    const adminToken = await signJwt({
+      sub: adminUserId,
+      email: adminUser?.email || "admin@tiendadelki.com",
+      role: Role.ADMIN,
+      name: "Admin Tester",
+    });
 
     // Crear un producto para el pedido de prueba
     const category = await prisma.category.findFirstOrThrow({ where: { isActive: true } });
@@ -89,7 +96,11 @@ async function runAdminOrderTests() {
     const { GET: listOrdersApi } = await import("../app/api/admin/orders/route");
 
     // A) Búsqueda por número de pedido
-    const reqSearch = new NextRequest(`http://localhost:3000/api/admin/orders?search=${testOrderNumber}`);
+    const reqSearch = new NextRequest(`http://localhost:3000/api/admin/orders?search=${testOrderNumber}`, {
+      headers: {
+        cookie: `${AUTH_COOKIE_OPTIONS.name}=${adminToken}`,
+      },
+    });
     const resSearch = await listOrdersApi(reqSearch);
     const jsonSearch = await resSearch.json();
 
@@ -111,7 +122,11 @@ async function runAdminOrderTests() {
     // 4. PROBAR ENDPOINT GET /api/admin/orders/[id] (DETALLE COMPLETO)
     const { GET: getOrderDetailApi } = await import("../app/api/admin/orders/[id]/route");
 
-    const reqDetail = new NextRequest(`http://localhost:3000/api/admin/orders/${testOrderId}`);
+    const reqDetail = new NextRequest(`http://localhost:3000/api/admin/orders/${testOrderId}`, {
+      headers: {
+        cookie: `${AUTH_COOKIE_OPTIONS.name}=${adminToken}`,
+      },
+    });
     const resDetail = await getOrderDetailApi(reqDetail, {
       params: Promise.resolve({ id: testOrderId }),
     });
@@ -138,6 +153,7 @@ async function runAdminOrderTests() {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          cookie: `${AUTH_COOKIE_OPTIONS.name}=${adminToken}`,
           "x-user-id": adminUserId,
           ...customHeaders,
         },

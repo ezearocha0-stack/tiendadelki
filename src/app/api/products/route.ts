@@ -9,16 +9,30 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const search = searchParams.get("search") || undefined;
     const categoryId = searchParams.get("categoryId") || undefined;
+    const categorySlug = searchParams.get("categorySlug") || searchParams.get("category") || undefined;
     const status = searchParams.get("status") || undefined;
     const isFeatured = searchParams.has("featured") ? searchParams.get("featured") === "true" : undefined;
+    const isNew = searchParams.has("isNew") ? searchParams.get("isNew") === "true" : undefined;
+    const deals = searchParams.has("deals") ? searchParams.get("deals") === "true" : undefined;
+    const minPrice = searchParams.has("minPrice") ? parseFloat(searchParams.get("minPrice")!) : undefined;
+    const maxPrice = searchParams.has("maxPrice") ? parseFloat(searchParams.get("maxPrice")!) : undefined;
+    const inStock = searchParams.has("inStock") ? searchParams.get("inStock") === "true" : undefined;
+    const sort = searchParams.get("sort") || undefined;
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = parseInt(searchParams.get("limit") || "50", 10);
 
     const result = await ProductService.listProducts({
       search,
       categoryId,
+      categorySlug,
       status,
       isFeatured,
+      isNew,
+      deals,
+      minPrice,
+      maxPrice,
+      inStock,
+      sort,
       page,
       limit,
     });

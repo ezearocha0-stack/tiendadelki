@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { prisma } from "@/lib/db";
-import { Prisma } from "@prisma/client";
+import { getProducts, getCategories, getCategoryBySlug } from "@/lib/server-api";
 import { StoreHeader } from "@/components/store/store-header";
 import { StoreFooter } from "@/components/store/store-footer";
 import { WhatsAppFloatingButton } from "@/components/store/whatsapp-floating-button";
@@ -45,95 +44,40 @@ export default async function TiendaPage({ searchParams }: TiendaPageProps) {
   const maxPrice = params.maxPrice ? parseFloat(params.maxPrice) : undefined;
   const onlyInStock = params.inStock === "true";
 
-  // Construir clausula WHERE
-  const where: Prisma.ProductWhereInput = {
-    status: "PUBLISHED",
-  };
-
-  if (search) {
-    where.OR = [
-      { name: { contains: search, mode: "insensitive" } },
-      { description: { contains: search, mode: "insensitive" } },
-      { sku: { contains: search, mode: "insensitive" } },
-      {
-        variants: {
-          some: {
-            OR: [
-              { title: { contains: search, mode: "insensitive" } },
-              { sku: { contains: search, mode: "insensitive" } },
-            ],
-          },
-        },
-      },
-    ];
-  }
-
-  if (categorySlug) {
-    where.category = { slug: categorySlug };
-  }
-
-  if (specialFilter === "featured") {
-    where.isFeatured = true;
-  } else if (specialFilter === "new") {
-    where.isNew = true;
-  } else if (specialFilter === "offers") {
-    where.compareAtPrice = { gt: 0 };
-  }
-
-  if (minPrice !== undefined || maxPrice !== undefined) {
-    where.basePrice = {};
-    if (minPrice !== undefined) where.basePrice.gte = minPrice;
-    if (maxPrice !== undefined) where.basePrice.lte = maxPrice;
-  }
-
-  // Ordenamiento
-  let orderBy: Prisma.ProductOrderByWithRelationInput = { createdAt: "desc" };
-  if (sort === "price_asc") {
-    orderBy = { basePrice: "asc" };
-  } else if (sort === "price_desc") {
-    orderBy = { basePrice: "desc" };
-  } else if (sort === "featured") {
-    orderBy = { isFeatured: "desc" };
-  }
-
-  // Consultar categorías y productos en paralelo
-  const [categories, products, selectedCategoryData] = await Promise.all([
-    prisma.category.findMany({
-      where: { isActive: true },
-      include: {
-        _count: { select: { products: { where: { status: "PUBLISHED" } } } },
-      },
-      orderBy: { sortOrder: "asc" },
+  // Consultar categorías y productos mediante capa desacoplada (Frontend Vercel -> Backend Render)
+  const [categories, productsResult, selectedCategoryData] = await Promise.all([
+    getCategories(),
+    getProducts({
+      search,
+      categorySlug,
+      sort,
+      isFeatured: specialFilter === "featured" ? true : undefined,
+      isNew: specialFilter === "new" ? true : undefined,
+      deals: specialFilter === "offers" ? true : undefined,
+      minPrice,
+      maxPrice,
+      inStock: onlyInStock,
+      limit: 60,
     }),
-    prisma.product.findMany({
-      where,
-      include: {
-        category: { select: { name: true, slug: true } },
-        images: { orderBy: [{ isPrimary: "desc" }, { sortOrder: "asc" }], take: 1 },
-        variants: { where: { isActive: true } },
-      },
-      orderBy,
-      take: 60,
-    }),
-    categorySlug
-      ? prisma.category.findUnique({ where: { slug: categorySlug } })
-      : Promise.resolve(null),
+    categorySlug ? getCategoryBySlug(categorySlug) : Promise.resolve(null),
   ]);
+
+  const products = productsResult.data;
 
   // Filtrado de stock si se requirió únicamente en stock
   let filteredProducts = products;
   if (onlyInStock) {
-    filteredProducts = products.filter((p) => {
+    filteredProducts = products.filter((p: any) => {
       if (p.hasVariants) {
-        return p.variants.some((v) => v.stock > 0);
+        return p.variants.some((v: any) => v.stock > 0);
       }
       return p.stock > 0;
     });
   }
 
-  function checkOutOfStock(p: typeof products[0]) {
+  function checkOutOfStock(p: any) {
     if (p.hasVariants) {
-      return p.variants.length > 0 && p.variants.every((v) => v.stock === 0);
+      return p.variants.length > 0 && p.variants.every((v: any) => v.stock === 0);
     }
     return p.stock === 0;
   }

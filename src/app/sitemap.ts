@@ -1,5 +1,5 @@
 import { MetadataRoute } from "next";
-import { prisma } from "@/lib/db";
+import { getCategories, getProducts } from "@/lib/server-api";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || "https://tiendadelki.com";
@@ -69,16 +69,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   try {
-    const [categories, products] = await Promise.all([
-      prisma.category.findMany({
-        where: { isActive: true },
-        select: { slug: true, createdAt: true },
-      }),
-      prisma.product.findMany({
-        where: { status: "PUBLISHED" },
-        select: { slug: true, updatedAt: true },
-      }),
+    const [categories, productsResult] = await Promise.all([
+      getCategories(),
+      getProducts({ status: "PUBLISHED", limit: 100 }),
     ]);
+
+    const products = productsResult.data || [];
 
     const categoryRoutes: MetadataRoute.Sitemap = categories.map((c) => ({
       url: `${baseUrl}/categorias/${c.slug}`,

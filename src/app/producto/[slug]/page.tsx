@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { prisma } from "@/lib/db";
+import { getProductBySlug, getProducts } from "@/lib/server-api";
 import { StoreHeader } from "@/components/store/store-header";
 import { StoreFooter } from "@/components/store/store-footer";
 import { WhatsAppFloatingButton } from "@/components/store/whatsapp-floating-button";
@@ -14,19 +14,13 @@ interface ProductPageProps {
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const product = await prisma.product.findUnique({
-    where: { slug },
-    include: {
-      images: { orderBy: [{ isPrimary: "desc" }, { sortOrder: "asc" }], take: 1 },
-      category: { select: { name: true } },
-    },
-  });
+  const product = await getProductBySlug(slug);
 
   if (!product || product.status !== "PUBLISHED") {
     return { title: "Producto no encontrado - TiendaDelki" };
   }
 
-  const primaryImage = product.images[0]?.url || "/logo.png";
+  const primaryImage = product.images?.[0]?.url || "/logo.png";
   const title = product.seoTitle || `${product.name} | TiendaDelki`;
   const description =
     product.seoDescription ||
@@ -58,56 +52,24 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params;
 
-  const product = await prisma.product.findUnique({
-    where: { slug },
-    include: {
-      category: { select: { id: true, name: true, slug: true } },
-      brand: { select: { name: true, slug: true } },
-      images: {
-        orderBy: [{ isPrimary: "desc" }, { sortOrder: "asc" }],
-        select: {
-          id: true,
-          url: true,
-          thumbnailUrl: true,
-          altText: true,
-          isPrimary: true,
-        },
-      },
-      variants: {
-        where: { isActive: true },
-        orderBy: { title: "asc" },
-      },
-    },
-  });
+  const product = await getProductBySlug(slug);
 
   if (!product || product.status !== "PUBLISHED") {
     notFound();
   }
 
   // Related products from same category
-  const rawRelated = await prisma.product.findMany({
-    where: {
-      categoryId: product.categoryId,
-      id: { not: product.id },
-      status: "PUBLISHED",
-    },
-    include: {
-      category: { select: { name: true, slug: true } },
-      images: {
-        orderBy: [{ isPrimary: "desc" }, { sortOrder: "asc" }],
-        take: 1,
-      },
-      variants: {
-        where: { isActive: true },
-      },
-    },
-    take: 4,
+  const relatedResult = await getProducts({
+    categoryId: product.categoryId,
+    status: "PUBLISHED",
+    limit: 5,
   });
+  const rawRelated = (relatedResult.data || []).filter((p: any) => p.id !== product.id).slice(0, 4);
 
-  const relatedProducts = rawRelated.map((p) => {
+  const relatedProducts = rawRelated.map((p: any) => {
     let outOfStock = false;
     if (p.hasVariants) {
-      outOfStock = p.variants.length > 0 && p.variants.every((v) => v.stock === 0);
+      outOfStock = p.variants.length > 0 && p.variants.every((v: any) => v.stock === 0);
     } else {
       outOfStock = p.stock === 0;
     }
@@ -154,7 +116,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
     category: product.category,
     brand: product.brand,
     images: product.images,
-    variants: product.variants.map((v) => ({
+    variants: product.variants.map((v: any) => ({
       id: v.id,
       sku: v.sku,
       title: v.title,
@@ -169,7 +131,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   // Structured Data (JSON-LD)
   const isAvailable = product.hasVariants
-    ? product.variants.some((v) => v.stock > 0)
+    ? product.variants.some((v: any) => v.stock > 0)
     : product.stock > 0;
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://tiendadelki.com";
@@ -179,7 +141,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
     "@type": "Product",
     name: product.name,
     description: product.description || product.shortDescription || product.name,
-    image: product.images.map((img) => img.url),
+    image: product.images.map((img: any) => img.url),
     sku: product.sku || product.id,
     brand: {
       "@type": "Brand",

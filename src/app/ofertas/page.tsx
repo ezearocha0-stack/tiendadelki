@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { prisma } from "@/lib/db";
-import { Prisma } from "@prisma/client";
+import { getCategories, getProducts } from "@/lib/server-api";
 import { StoreHeader } from "@/components/store/store-header";
 import { StoreFooter } from "@/components/store/store-footer";
 import { WhatsAppFloatingButton } from "@/components/store/whatsapp-floating-button";
@@ -36,43 +35,18 @@ export default async function OfertasPage({ searchParams }: OfertasPageProps) {
   const categorySlug = params.category || "";
   const sort = params.sort || "discount_desc";
 
-  // Construir clausula WHERE para ofertas reales: compareAtPrice > 0 y status = PUBLISHED
-  const where: Prisma.ProductWhereInput = {
-    status: "PUBLISHED",
-    compareAtPrice: { gt: 0 },
-  };
-
-  if (categorySlug) {
-    where.category = { slug: categorySlug };
-  }
-
-  // Ordenamiento
-  let orderBy: Prisma.ProductOrderByWithRelationInput = { createdAt: "desc" };
-  if (sort === "price_asc") {
-    orderBy = { basePrice: "asc" };
-  } else if (sort === "price_desc") {
-    orderBy = { basePrice: "desc" };
-  }
-
-  const [categories, rawProducts] = await Promise.all([
-    prisma.category.findMany({
-      where: {
-        isActive: true,
-        products: { some: { status: "PUBLISHED", compareAtPrice: { gt: 0 } } },
-      },
-      orderBy: { sortOrder: "asc" },
-    }),
-    prisma.product.findMany({
-      where,
-      include: {
-        category: { select: { name: true, slug: true } },
-        images: { orderBy: [{ isPrimary: "desc" }, { sortOrder: "asc" }], take: 1 },
-        variants: { where: { isActive: true } },
-      },
-      orderBy,
-      take: 60,
+  // Consultar categorías y productos en oferta mediante capa desacoplada
+  const [categories, productsResult] = await Promise.all([
+    getCategories(),
+    getProducts({
+      deals: true,
+      categorySlug,
+      sort,
+      limit: 60,
     }),
   ]);
+
+  const rawProducts = productsResult.data;
 
   // Filtrar en memoria para asegurar que compareAtPrice sea estrictamente mayor a basePrice
   let dealProducts = rawProducts.filter((p) => {
@@ -91,7 +65,7 @@ export default async function OfertasPage({ searchParams }: OfertasPageProps) {
 
   function checkOutOfStock(p: (typeof rawProducts)[0]) {
     if (p.hasVariants) {
-      return p.variants.length > 0 && p.variants.every((v) => v.stock === 0);
+      return p.variants.length > 0 && p.variants.every((v: any) => v.stock === 0);
     }
     return p.stock === 0;
   }

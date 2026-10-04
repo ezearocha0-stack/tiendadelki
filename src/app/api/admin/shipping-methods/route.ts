@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { handleApiError, ValidationError } from "@/lib/errors";
+import { requireAdminUser } from "@/core/auth/session";
 import { z } from "zod";
 
 export const dynamic = "force-dynamic";
@@ -17,6 +18,7 @@ const createShippingMethodSchema = z.object({
 
 export async function GET(req: NextRequest) {
   try {
+    await requireAdminUser(req);
     const methods = await prisma.shippingMethod.findMany({
       orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
       include: {
@@ -50,6 +52,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+    await requireAdminUser(req);
     const body = await req.json();
     const validated = createShippingMethodSchema.parse(body);
 

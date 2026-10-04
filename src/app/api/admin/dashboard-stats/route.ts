@@ -2,11 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { handleApiError } from "@/lib/errors";
 import { DashboardService } from "@/core/dashboard/dashboard-service";
 import { prisma } from "@/lib/db";
+import { requireAdminUser } from "@/core/auth/session";
 
 export async function GET(req: NextRequest) {
   try {
-    const adminUserId = req.headers.get("x-user-id");
-    const adminUserRole = req.headers.get("x-user-role");
+    const admin = await requireAdminUser(req);
+    const adminUserId = admin.userId;
+    const adminUserRole = admin.role;
 
     const [stats, totalProducts, totalCategories] = await Promise.all([
       DashboardService.getDashboardStats(),

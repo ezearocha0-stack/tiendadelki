@@ -23,18 +23,17 @@ export async function GET(req: NextRequest, { params }: RouteProps) {
       return new NextResponse("Not Found", { status: 404 });
     }
 
-    // Prevención estricta de Path Traversal
-    const safeRelativePath = path
-      .normalize(segments.join("/"))
-      .replace(/^(\.\.(\/|\\|$))+/, "");
-
+    // Prevención matemática estricta de Path Traversal
     const uploadBaseDir = path.resolve(process.cwd(), env.UPLOAD_DIR);
-    const targetFilePath = path.join(uploadBaseDir, safeRelativePath);
+    const resolvedPath = path.resolve(uploadBaseDir, segments.join(path.sep));
+    const relative = path.relative(uploadBaseDir, resolvedPath);
 
-    // Asegurar que la ruta resuelta permanezca dentro del directorio de uploads
-    if (!targetFilePath.startsWith(uploadBaseDir)) {
+    // Asegurar que la ruta resuelta permanezca estrictamente dentro del directorio de uploads
+    if (relative.startsWith("..") || path.isAbsolute(relative) || relative === "") {
       return new NextResponse("Forbidden", { status: 403 });
     }
+
+    const targetFilePath = resolvedPath;
 
     const fileBuffer = await fs.readFile(targetFilePath);
     const ext = path.extname(targetFilePath).toLowerCase();

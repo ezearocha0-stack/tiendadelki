@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { prisma } from "@/lib/db";
+import { getCategories } from "@/lib/server-api";
 import { StoreHeader } from "@/components/store/store-header";
 import { StoreFooter } from "@/components/store/store-footer";
 import { WhatsAppFloatingButton } from "@/components/store/whatsapp-floating-button";
@@ -20,17 +20,7 @@ export const metadata = {
 };
 
 export default async function CategoriesPage() {
-  const categories = await prisma.category.findMany({
-    where: { isActive: true },
-    include: {
-      _count: { select: { products: { where: { status: "PUBLISHED" } } } },
-      children: {
-        where: { isActive: true },
-        include: { _count: { select: { products: { where: { status: "PUBLISHED" } } } } },
-      },
-    },
-    orderBy: { sortOrder: "asc" },
-  });
+  const categories = await getCategories();
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
@@ -103,7 +93,7 @@ export default async function CategoriesPage() {
                 {/* Subcategorías si existen */}
                 {cat.children && cat.children.length > 0 && (
                   <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem", marginBottom: "1.25rem" }}>
-                    {cat.children.map((sub) => (
+                    {cat.children.map((sub: any) => (
                       <Link
                         key={sub.id}
                         href={`/tienda?category=${sub.slug}`}

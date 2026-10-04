@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { prisma } from "@/lib/db";
+import { getOrderByNumber, getBankAccounts } from "@/lib/server-api";
 import { StoreHeader } from "@/components/store/store-header";
 import { StoreFooter } from "@/components/store/store-footer";
 import { WhatsAppFloatingButton } from "@/components/store/whatsapp-floating-button";
@@ -95,18 +95,10 @@ const ORDER_STEPS = [
 export default async function OrderConfirmationPage({ params }: OrderConfirmationPageProps) {
   const { orderNumber } = await params;
 
+  // Consultar pedido y cuentas bancarias mediante capa desacoplada
   const [order, bankAccounts] = await Promise.all([
-    prisma.order.findUnique({
-      where: { orderNumber },
-      include: {
-        items: true,
-        shippingMethod: true,
-      },
-    }),
-    prisma.bankAccount.findMany({
-      where: { isActive: true },
-      orderBy: { sortOrder: "asc" },
-    }),
+    getOrderByNumber(orderNumber),
+    getBankAccounts(),
   ]);
 
   if (!order) {
@@ -356,7 +348,7 @@ export default async function OrderConfirmationPage({ params }: OrderConfirmatio
             </h2>
 
             <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem", marginBottom: "1.25rem" }}>
-              {order.items.map((item) => (
+              {order.items.map((item: any) => (
                 <div
                   key={item.id}
                   style={{

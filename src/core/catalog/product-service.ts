@@ -15,8 +15,15 @@ import { ImageProcessor } from "../images/image-processor";
 export interface ProductFilterParams {
   search?: string;
   categoryId?: string;
+  categorySlug?: string;
   status?: string;
   isFeatured?: boolean;
+  isNew?: boolean;
+  deals?: boolean;
+  minPrice?: number;
+  maxPrice?: number;
+  inStock?: boolean;
+  sort?: string;
   page?: number;
   limit?: number;
 }
@@ -46,12 +53,46 @@ export class ProductService {
       whereClause.categoryId = params.categoryId;
     }
 
+    if (params.categorySlug) {
+      whereClause.category = { slug: params.categorySlug };
+    }
+
     if (params.status) {
       whereClause.status = params.status as ProductStatus;
     }
 
     if (params.isFeatured !== undefined) {
       whereClause.isFeatured = params.isFeatured;
+    }
+
+    if (params.isNew !== undefined) {
+      whereClause.isNew = params.isNew;
+    }
+
+    if (params.deals) {
+      whereClause.compareAtPrice = { gt: 0 };
+    }
+
+    if (params.minPrice !== undefined || params.maxPrice !== undefined) {
+      const priceFilter: Record<string, number> = {};
+      if (params.minPrice !== undefined) priceFilter.gte = params.minPrice;
+      if (params.maxPrice !== undefined) priceFilter.lte = params.maxPrice;
+      whereClause.basePrice = priceFilter;
+    }
+
+    if (params.inStock) {
+      whereClause.stock = { gt: 0 };
+    }
+
+    let orderByClause: Record<string, "asc" | "desc"> = { createdAt: "desc" };
+    if (params.sort === "price_asc") {
+      orderByClause = { basePrice: "asc" };
+    } else if (params.sort === "price_desc") {
+      orderByClause = { basePrice: "desc" };
+    } else if (params.sort === "oldest") {
+      orderByClause = { createdAt: "asc" };
+    } else if (params.sort === "discount_desc") {
+      orderByClause = { compareAtPrice: "desc" };
     }
 
     const [products, total] = await Promise.all([
@@ -68,7 +109,7 @@ export class ProductService {
             orderBy: { createdAt: "asc" },
           },
         },
-        orderBy: { createdAt: "desc" },
+        orderBy: orderByClause,
         skip,
         take: limit,
       }),

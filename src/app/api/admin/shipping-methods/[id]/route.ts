@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { handleApiError, NotFoundError, AppError } from "@/lib/errors";
+import { requireAdminUser } from "@/core/auth/session";
 import { z } from "zod";
 
 export const dynamic = "force-dynamic";
@@ -21,6 +22,7 @@ const updateShippingMethodSchema = z.object({
 
 export async function GET(req: NextRequest, { params }: RouteParams) {
   try {
+    await requireAdminUser(req);
     const { id } = await params;
 
     const method = await prisma.shippingMethod.findUnique({
@@ -58,6 +60,7 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
 
 export async function PATCH(req: NextRequest, { params }: RouteParams) {
   try {
+    await requireAdminUser(req);
     const { id } = await params;
     const body = await req.json();
     const validated = updateShippingMethodSchema.parse(body);
@@ -105,6 +108,7 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
 
 export async function DELETE(req: NextRequest, { params }: RouteParams) {
   try {
+    await requireAdminUser(req);
     const { id } = await params;
 
     const method = await prisma.shippingMethod.findUnique({

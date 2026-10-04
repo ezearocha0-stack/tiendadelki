@@ -6,6 +6,37 @@ export async function middleware(req: NextRequest) {
   const cookieName = process.env.COOKIE_NAME || "td_auth_token";
   const token = req.cookies.get(cookieName)?.value || req.headers.get("authorization")?.replace("Bearer ", "");
 
+  // 0. Manejo estricto de CORS para llamadas entre dominios (Vercel <-> Render)
+  const origin = req.headers.get("origin");
+  const allowedOrigins = (process.env.ALLOWED_ORIGINS || process.env.NEXT_PUBLIC_SITE_URL || "")
+    .split(",")
+    .map((o) => o.trim().replace(/\/+$/, ""))
+    .filter(Boolean);
+
+  // Permitir localhost solo en desarrollo o testing
+  if (process.env.NODE_ENV !== "production") {
+    allowedOrigins.push("http://localhost:3000", "http://127.0.0.1:3000");
+  }
+
+  const isOriginAllowed = Boolean(origin && allowedOrigins.includes(origin.replace(/\/+$/, "")));
+
+  if (req.method === "OPTIONS") {
+    if (!isOriginAllowed || !origin) {
+      // Rechazar Preflight de orígenes no autorizados sin emitir cabeceras CORS
+      return new NextResponse(null, { status: 403 });
+    }
+    const preflight = new NextResponse(null, { status: 204 });
+    preflight.headers.set("Access-Control-Allow-Origin", origin);
+    preflight.headers.set("Access-Control-Allow-Credentials", "true");
+    preflight.headers.set("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
+    preflight.headers.set(
+      "Access-Control-Allow-Headers",
+      "Content-Type, Authorization, X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Date, X-Api-Version"
+    );
+    preflight.headers.set("Access-Control-Max-Age", "86400");
+    return preflight;
+  }
+
   // 1. Ruta pública de Login Administrativo
   if (pathname === "/admin/login") {
     if (token) {

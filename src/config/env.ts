@@ -7,7 +7,8 @@ const envSchema = z
     NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
     PORT: z.coerce.number().default(3000),
     NEXT_PUBLIC_SITE_URL: z.string().url().default("http://localhost:3000"),
-    DATABASE_URL: z.string().min(1, "DATABASE_URL es requerida"),
+    NEXT_PUBLIC_API_URL: z.string().url().optional(),
+    DATABASE_URL: z.string().optional(),
     JWT_SECRET: z
       .string()
       .min(16, "JWT_SECRET debe tener al menos 16 caracteres")
@@ -19,6 +20,7 @@ const envSchema = z
     UPLOAD_DIR: z.string().default("./public/uploads"),
     PRIVATE_STORAGE_DIR: z.string().default("./storage/private"),
     NEXT_PUBLIC_WHATSAPP_PHONE: z.string().default("8095550199"),
+    CROSS_ORIGIN_COOKIES: z.enum(["true", "false"]).default("false"),
 
     // Parámetros de Object Storage S3 / Cloudflare R2 (para hosting sin filesystem persistente)
     S3_ENDPOINT: z.string().url().optional(),
@@ -35,18 +37,30 @@ const envSchema = z
   .superRefine((data, ctx) => {
     // Validaciones críticas en producción
     if (data.NODE_ENV === "production") {
-      // 1. Rechazo de JWT_SECRET por defecto o débil
-      if (
-        data.JWT_SECRET.length < 32 ||
-        data.JWT_SECRET === DEFAULT_DEV_JWT ||
-        data.JWT_SECRET.includes("change-in-production")
-      ) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["JWT_SECRET"],
-          message:
-            "En producción, JWT_SECRET es obligatorio, debe tener al menos 32 caracteres y no puede ser el valor por defecto.",
-        });
+      const isFrontendVercel = Boolean(data.BACKEND_API_URL || data.NEXT_PUBLIC_API_URL);
+
+      if (!isFrontendVercel) {
+        // En Render / Backend / Monolito: DATABASE_URL y JWT_SECRET son obligatorios y estrictos
+        if (!data.DATABASE_URL) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ["DATABASE_URL"],
+            message: "En el backend de producción, DATABASE_URL es requerida.",
+          });
+        }
+
+        if (
+          data.JWT_SECRET.length < 32 ||
+          data.JWT_SECRET === DEFAULT_DEV_JWT ||
+          data.JWT_SECRET.includes("change-in-production")
+        ) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ["JWT_SECRET"],
+            message:
+              "En el backend de producción, JWT_SECRET es obligatorio, debe tener al menos 32 caracteres y no puede ser el valor por defecto.",
+          });
+        }
       }
 
       // 2. Comprobar HTTPS en NEXT_PUBLIC_SITE_URL
@@ -94,6 +108,7 @@ try {
     NODE_ENV: process.env.NODE_ENV,
     PORT: process.env.PORT,
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
     DATABASE_URL: process.env.DATABASE_URL,
     JWT_SECRET: process.env.JWT_SECRET,
     INITIAL_ADMIN_EMAIL: process.env.INITIAL_ADMIN_EMAIL,
@@ -103,6 +118,7 @@ try {
     UPLOAD_DIR: process.env.UPLOAD_DIR,
     PRIVATE_STORAGE_DIR: process.env.PRIVATE_STORAGE_DIR,
     NEXT_PUBLIC_WHATSAPP_PHONE: process.env.NEXT_PUBLIC_WHATSAPP_PHONE,
+    CROSS_ORIGIN_COOKIES: process.env.CROSS_ORIGIN_COOKIES,
     S3_ENDPOINT: process.env.S3_ENDPOINT,
     S3_BUCKET: process.env.S3_BUCKET,
     S3_REGION: process.env.S3_REGION,
@@ -143,6 +159,8 @@ try {
     UPLOAD_DIR: process.env.UPLOAD_DIR || "./public/uploads",
     PRIVATE_STORAGE_DIR: process.env.PRIVATE_STORAGE_DIR || "./storage/private",
     NEXT_PUBLIC_WHATSAPP_PHONE: process.env.NEXT_PUBLIC_WHATSAPP_PHONE || "8296734710",
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+    CROSS_ORIGIN_COOKIES: (process.env.CROSS_ORIGIN_COOKIES as "true" | "false") || "false",
     S3_REGION: "auto",
     BACKEND_API_URL: process.env.BACKEND_API_URL,
     ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS,

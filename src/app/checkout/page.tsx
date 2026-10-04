@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/db";
+import { getShippingMethods, getBankAccounts } from "@/lib/server-api";
 import { StoreHeader } from "@/components/store/store-header";
 import { StoreFooter } from "@/components/store/store-footer";
 import { WhatsAppFloatingButton } from "@/components/store/whatsapp-floating-button";
@@ -15,17 +15,11 @@ export const metadata: Metadata = {
 
 export default async function CheckoutPage() {
   const [shippingMethodsDb, bankAccountsDb] = await Promise.all([
-    prisma.shippingMethod.findMany({
-      where: { isActive: true },
-      orderBy: { sortOrder: "asc" },
-    }),
-    prisma.bankAccount.findMany({
-      where: { isActive: true },
-      orderBy: { sortOrder: "asc" },
-    }),
+    getShippingMethods(),
+    getBankAccounts(),
   ]);
 
-  const shippingMethods: ShippingMethodItem[] = shippingMethodsDb.map((m) => ({
+  const shippingMethods: ShippingMethodItem[] = shippingMethodsDb.map((m: any) => ({
     id: m.id,
     name: m.name,
     zoneDescription: m.zoneDescription,
@@ -34,7 +28,7 @@ export default async function CheckoutPage() {
     estimatedDays: m.estimatedDays,
   }));
 
-  const bankAccounts: BankAccountItem[] = bankAccountsDb.map((a) => ({
+  const bankAccounts: BankAccountItem[] = bankAccountsDb.map((a: any) => ({
     id: a.id,
     bankName: a.bankName,
     accountNumber: a.accountNumber,

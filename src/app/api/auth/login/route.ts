@@ -61,7 +61,6 @@ export async function POST(req: NextRequest) {
       name: `${user.firstName} ${user.lastName}`,
     });
 
-    // 8. Respuesta con Cookie HttpOnly Segura
     const response = NextResponse.json({
       success: true,
       message: "Autenticación exitosa",

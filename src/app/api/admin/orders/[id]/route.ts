@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { handleApiError, NotFoundError } from "@/lib/errors";
+import { requireAdminUser } from "@/core/auth/session";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -8,6 +9,7 @@ interface RouteParams {
 
 export async function GET(req: NextRequest, { params }: RouteParams) {
   try {
+    await requireAdminUser(req);
     const { id } = await params;
 
     const order = await prisma.order.findFirst({

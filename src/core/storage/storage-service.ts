@@ -84,18 +84,24 @@ class LocalStorageService implements IStorageService {
   }
 
   async readPrivateFile(relativePath: string): Promise<Buffer> {
-    const safeRelative = path.normalize(relativePath).replace(/^(\.\.(\/|\\|$))+/, "");
-    const filePath = path.join(this.privateBaseDir, safeRelative);
-    return await fs.readFile(filePath);
+    const resolvedPath = path.resolve(this.privateBaseDir, relativePath);
+    const rel = path.relative(this.privateBaseDir, resolvedPath);
+    if (rel.startsWith("..") || path.isAbsolute(rel)) {
+      throw new Error("Acceso denegado: intento de path traversal detectado en almacenamiento privado.");
+    }
+    return await fs.readFile(resolvedPath);
   }
 
   async deletePrivateFile(relativePath: string): Promise<void> {
     try {
-      const safeRelative = path.normalize(relativePath).replace(/^(\.\.(\/|\\|$))+/, "");
-      const filePath = path.join(this.privateBaseDir, safeRelative);
-      await fs.unlink(filePath);
+      const resolvedPath = path.resolve(this.privateBaseDir, relativePath);
+      const rel = path.relative(this.privateBaseDir, resolvedPath);
+      if (rel.startsWith("..") || path.isAbsolute(rel)) {
+        throw new Error("Acceso denegado: intento de path traversal detectado en almacenamiento privado.");
+      }
+      await fs.unlink(resolvedPath);
     } catch (error) {
-      // Si el archivo no existe, ignorar
+      // Si el archivo no existe o error, no propagar
     }
   }
 }

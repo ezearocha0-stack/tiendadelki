@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { handleApiError, NotFoundError, ValidationError } from "@/lib/errors";
 import { OrderStatus, MovementType } from "@prisma/client";
 import { validateStatusTransition, STATUS_LABELS } from "@/core/orders/order-status-machine";
+import { requireAdminUser } from "@/core/auth/session";
 import { z } from "zod";
 
 interface RouteParams {
@@ -20,21 +21,12 @@ const updateStatusSchema = z.object({
 
 export async function PATCH(req: NextRequest, { params }: RouteParams) {
   try {
+    const admin = await requireAdminUser(req);
     const { id } = await params;
     const body = await req.json();
     const validated = updateStatusSchema.parse(body);
 
-    const rawAdminUserId = req.headers.get("x-user-id") || null;
-    let adminUserId: string | null = null;
-    if (rawAdminUserId) {
-      const userExists = await prisma.user.findUnique({
-        where: { id: rawAdminUserId },
-        select: { id: true },
-      });
-      if (userExists) {
-        adminUserId = userExists.id;
-      }
-    }
+    const adminUserId = admin.userId;
 
     const order = await prisma.order.findFirst({
       where: {

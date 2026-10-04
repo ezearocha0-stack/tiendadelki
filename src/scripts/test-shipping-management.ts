@@ -1,6 +1,7 @@
 import { prisma } from "../lib/db";
 import { OrderStatus } from "@prisma/client";
 import { NextRequest } from "next/server";
+import { signJwt, AUTH_COOKIE_OPTIONS, Role } from "../core/auth/jwt";
 
 async function runShippingTests() {
   console.log("🚚 ========================================================");
@@ -13,6 +14,18 @@ async function runShippingTests() {
   let testOrderNumber = "";
 
   try {
+    const adminUser = await prisma.user.findFirst({ where: { role: { in: [Role.SUPER_ADMIN, Role.ADMIN] } } });
+    const adminToken = await signJwt({
+      sub: adminUser?.id || "admin-shipping-id",
+      email: adminUser?.email || "admin@tiendadelki.com",
+      role: Role.ADMIN,
+      name: "Admin Shipping",
+    });
+    const adminHeaders = {
+      "Content-Type": "application/json",
+      cookie: `${AUTH_COOKIE_OPTIONS.name}=${adminToken}`,
+    };
+
     const { GET: listAdminShippingApi, POST: createAdminShippingApi } = await import(
       "../app/api/admin/shipping-methods/route"
     );
@@ -25,7 +38,7 @@ async function runShippingTests() {
     // 1. VALIDACIÓN EN CREACIÓN: PRECIO NEGATIVO O NOMBRE VACÍO DEBE FALLAR
     const invalidReq = new NextRequest("http://localhost:3000/api/admin/shipping-methods", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: adminHeaders,
       body: JSON.stringify({
         name: "",
         price: -50,
@@ -42,7 +55,7 @@ async function runShippingTests() {
     // 2. CREAR MÉTODO DE ENVÍO VÁLIDO VÍA API
     const validCreateReq = new NextRequest("http://localhost:3000/api/admin/shipping-methods", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: adminHeaders,
       body: JSON.stringify({
         name: "Envío Express Cibao",
         zoneDescription: "Santiago, La Vega y Moca",
@@ -68,7 +81,7 @@ async function runShippingTests() {
     // 3. EDITAR MÉTODO (PATCH) Y TOGGLE DE ACTIVACIÓN
     const patchReq = new NextRequest(`http://localhost:3000/api/admin/shipping-methods/${testMethodId}`, {
       method: "PATCH",
-      headers: { "Content-Type": "application/json" },
+      headers: adminHeaders,
       body: JSON.stringify({
         price: 375.0,
         estimatedDays: "12 a 24 horas garantizado",
@@ -96,7 +109,7 @@ async function runShippingTests() {
     await updateAdminShippingApi(
       new NextRequest(`http://localhost:3000/api/admin/shipping-methods/${testMethodId}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: adminHeaders,
         body: JSON.stringify({ isActive: true }),
       }),
       { params: Promise.resolve({ id: testMethodId }) }
@@ -140,7 +153,7 @@ async function runShippingTests() {
     // Intentar eliminar el método vinculado -> Debe arrojar error 409 Conflict
     const tryDeleteLinkedReq = new NextRequest(
       `http://localhost:3000/api/admin/shipping-methods/${linkedMethodId}`,
-      { method: "DELETE" }
+      { method: "DELETE", headers: adminHeaders }
     );
     const tryDeleteLinkedRes = await deleteAdminShippingApi(tryDeleteLinkedReq, {
       params: Promise.resolve({ id: linkedMethodId }),
@@ -155,7 +168,7 @@ async function runShippingTests() {
     // 5. ELIMINACIÓN PERMITIDA CUANDO NO TIENE PEDIDOS ASOCIADOS
     const deleteFreeReq = new NextRequest(
       `http://localhost:3000/api/admin/shipping-methods/${testMethodId}`,
-      { method: "DELETE" }
+      { method: "DELETE", headers: adminHeaders }
     );
     const deleteFreeRes = await deleteAdminShippingApi(deleteFreeReq, {
       params: Promise.resolve({ id: testMethodId }),
@@ -189,7 +202,7 @@ async function runShippingTests() {
       `http://localhost:3000/api/admin/orders/${testOrderId}/status`,
       {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: adminHeaders,
         body: JSON.stringify({
           targetStatus: OrderStatus.ENVIADO,
           carrierName: "Metro Pac Express",

@@ -32,8 +32,10 @@ const nextConfig = {
     ],
   },
   async rewrites() {
-    if (process.env.BACKEND_API_URL) {
-      const backendUrl = process.env.BACKEND_API_URL.replace(/\/+$/, '');
+    const backendUrl = (process.env.BACKEND_API_URL || process.env.NEXT_PUBLIC_API_URL || '').replace(/\/+$/, '');
+    const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || '').replace(/\/+$/, '');
+    // Prevención estricta de bucles de proxy y auto-referencia
+    if (backendUrl && !backendUrl.includes('localhost:3000') && backendUrl !== siteUrl) {
       return [
         {
           source: '/api/:path*',

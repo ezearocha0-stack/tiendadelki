@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { prisma } from "@/lib/db";
+import { getCategories, getFeaturedProducts, getNewProducts, getDealProducts } from "@/lib/server-api";
 import { StoreHeader } from "@/components/store/store-header";
 import { StoreFooter } from "@/components/store/store-footer";
 import { WhatsAppFloatingButton } from "@/components/store/whatsapp-floating-button";
@@ -8,55 +8,17 @@ import { ProductCard } from "@/components/store/product-card";
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  // Consultar categorías activas
-  const categories = await prisma.category.findMany({
-    where: { isActive: true },
-    include: {
-      _count: { select: { products: { where: { status: "PUBLISHED" } } } },
-    },
-    orderBy: { sortOrder: "asc" },
-    take: 6,
-  });
+  // Consultar datos de catálogo mediante capa desacoplada (compatible con Vercel Frontend -> Render Backend)
+  const [categories, featuredProducts, newProducts, dealProducts] = await Promise.all([
+    getCategories(6),
+    getFeaturedProducts(8),
+    getNewProducts(8),
+    getDealProducts(8),
+  ]);
 
-  // Consultar productos destacados
-  const featuredProducts = await prisma.product.findMany({
-    where: { status: "PUBLISHED", isFeatured: true },
-    include: {
-      category: { select: { name: true } },
-      images: { orderBy: [{ isPrimary: "desc" }, { sortOrder: "asc" }], take: 1 },
-      variants: { where: { isActive: true } },
-    },
-    orderBy: { createdAt: "desc" },
-    take: 8,
-  });
-
-  // Consultar novedades
-  const newProducts = await prisma.product.findMany({
-    where: { status: "PUBLISHED", isNew: true },
-    include: {
-      category: { select: { name: true } },
-      images: { orderBy: [{ isPrimary: "desc" }, { sortOrder: "asc" }], take: 1 },
-      variants: { where: { isActive: true } },
-    },
-    orderBy: { createdAt: "desc" },
-    take: 8,
-  });
-
-  // Consultar ofertas
-  const dealProducts = await prisma.product.findMany({
-    where: { status: "PUBLISHED", compareAtPrice: { gt: 0 } },
-    include: {
-      category: { select: { name: true } },
-      images: { orderBy: [{ isPrimary: "desc" }, { sortOrder: "asc" }], take: 1 },
-      variants: { where: { isActive: true } },
-    },
-    orderBy: { createdAt: "desc" },
-    take: 8,
-  });
-
-  function checkOutOfStock(p: typeof featuredProducts[0]) {
+  function checkOutOfStock(p: any) {
     if (p.hasVariants) {
-      return p.variants.length > 0 && p.variants.every((v) => v.stock === 0);
+      return Boolean(p.variants && p.variants.length > 0 && p.variants.every((v: any) => v.stock === 0));
     }
     return p.stock === 0;
   }

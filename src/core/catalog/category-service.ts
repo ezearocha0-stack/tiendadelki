@@ -26,18 +26,29 @@ export class CategoryService {
     });
   }
 
-  static async getCategoryById(id: string) {
-    const category = await prisma.category.findUnique({
-      where: { id },
+  static async getCategoryById(identifier: string) {
+    const category = await prisma.category.findFirst({
+      where: {
+        OR: [{ id: identifier }, { slug: identifier }],
+      },
       include: {
         parent: true,
-        children: true,
+        children: { where: { isActive: true }, orderBy: { sortOrder: "asc" } },
+        products: {
+          where: { status: "PUBLISHED" },
+          include: {
+            category: { select: { id: true, name: true, slug: true } },
+            images: { orderBy: [{ isPrimary: "desc" }, { sortOrder: "asc" }], take: 1 },
+            variants: { where: { isActive: true } },
+          },
+          orderBy: { createdAt: "desc" },
+        },
         _count: { select: { products: true } },
       },
     });
 
     if (!category) {
-      throw new NotFoundError(`Categoría con ID '${id}' no encontrada.`);
+      throw new NotFoundError(`Categoría '${identifier}' no encontrada.`);
     }
 
     return category;
