@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   Script de restauracion controlada para la base de datos PostgreSQL de TiendaDelki.
 .DESCRIPTION
@@ -10,7 +10,8 @@ param(
   [Parameter(Mandatory = $true)]
   [string]$BackupFile,
   [switch]$Confirm,
-  [string]$EnvFile = ".env"
+  [string]$EnvFile = ".env",
+  [switch]$Clean
 )
 
 $ErrorActionPreference = "Stop"
@@ -73,14 +74,19 @@ $DbHost = $UriMatch.Groups["host"].Value
 $DbPort = if ($UriMatch.Groups["port"].Success) { $UriMatch.Groups["port"].Value } else { "5432" }
 $DbName = $UriMatch.Groups["dbname"].Value
 
-# 4. Confirmación de Seguridad
+# 4. Confirmacion de Seguridad
 Write-Host "`n[ATENCION] Se dispone a restaurar los datos en la base de datos:" -ForegroundColor Yellow
 Write-Host "   Host: ${DbHost}:${DbPort}" -ForegroundColor Yellow
 Write-Host "   Base de datos objetivo: $DbName" -ForegroundColor Yellow
 Write-Host "   Archivo fuente: $FullBackupPath" -ForegroundColor Yellow
+if ($Clean) {
+  Write-Host "   Modo: --clean activado (Eliminara objetos existentes antes de restaurar)" -ForegroundColor Red
+} else {
+  Write-Host "   Modo: Seguro (Sin --clean, apto para base de datos vacia/nueva)" -ForegroundColor Green
+}
 
 if (!$Confirm) {
-  $prompt = Read-Host "`nDesea continuar y SOBREESCRIBIR los datos actuales? Escriba 'SI, RESTAURAR' para proceder"
+  $prompt = Read-Host "`nDesea continuar con la restauracion? Escriba 'SI, RESTAURAR' para proceder"
   if ($prompt -ne "SI, RESTAURAR") {
     Write-Host "Operacion cancelada por el usuario." -ForegroundColor Gray
     exit 0
@@ -107,7 +113,7 @@ if (!$PgRestoreCmd) {
   exit 1
 }
 
-# 6. Ejecutar restauración
+# 6. Ejecutar restauracion
 Write-Host "`nRestaurando base de datos..." -ForegroundColor Cyan
 $env:PGPASSWORD = $DbPass
 try {
@@ -116,12 +122,16 @@ try {
     "-p", $DbPort,
     "-U", $DbUser,
     "-d", $DbName,
-    "--clean",
-    "--if-exists",
     "--no-owner",
-    "-v",
-    $FullBackupPath
+    "--no-privileges",
+    "-v"
   )
+
+  if ($Clean) {
+    $restoreArgs += @("--clean", "--if-exists")
+  }
+
+  $restoreArgs += $FullBackupPath
 
   & $PgRestoreCmd @restoreArgs
   Write-Host "[OK] Restauracion finalizada con exito." -ForegroundColor Green

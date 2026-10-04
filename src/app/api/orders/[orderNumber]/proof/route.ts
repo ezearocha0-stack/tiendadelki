@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { handleApiError, NotFoundError, ValidationError, UnauthorizedError, ForbiddenError } from "@/lib/errors";
-import { storageService } from "@/core/storage/storage-service";
-import { OrderStatus } from "@prisma/client";
-import { validateFileBuffer, detectFileMime, sanitizeFilename } from "@/lib/file-validator";
+import { handleApiError, NotFoundError, ForbiddenError, ValidationError, UnauthorizedError } from "@/lib/errors";
 import { getAuthenticatedUser } from "@/core/auth/session";
-import { signJwt, verifyJwt, Role, ADMIN_ROLES } from "@/core/auth/jwt";
+import { ADMIN_ROLES, Role, signJwt, verifyJwt } from "@/core/auth/jwt";
+import { storageService } from "@/core/storage/storage-service";
+import { validateFileBuffer, sanitizeFilename, detectFileMime } from "@/lib/file-validator";
+import { OrderStatus } from "@prisma/client";
 import path from "path";
 import fs from "fs/promises";
+import crypto from "crypto";
 import { env } from "@/config/env";
 
 export const dynamic = "force-dynamic";
@@ -26,6 +27,8 @@ interface RouteParams {
  * GET /api/orders/[orderNumber]/proof
  * Transmite de manera segura el comprobante privado únicamente a usuarios autorizados
  * (Administradores, el cliente propietario del pedido o poseedores de un token criptográfico de acceso).
+ * Busca prioritariamente en PostgreSQL (persistencia 100% gratuita a prueba de redeploys)
+ * con fallback al filesystem local.
  */
 export async function GET(req: NextRequest, { params }: RouteParams) {
   try {
@@ -79,25 +82,48 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
       throw new ForbiddenError("Acceso denegado: no tiene permisos para visualizar este comprobante bancario.");
     }
 
-    // 2. Localizar y leer el archivo (almacenamiento privado o legado público)
+    // 2. Localizar y leer el comprobante
     let buffer: Buffer | null = null;
+    let contentType = "application/octet-stream";
 
-    // Buscar clave de almacenamiento en adminNotes
     const receiptMatch = order.adminNotes?.match(/RECEIPT_FILE:([^\s|]+)/);
-    if (receiptMatch && receiptMatch[1]) {
+    const receiptPath = receiptMatch && receiptMatch[1] ? receiptMatch[1].trim() : null;
+
+    // 2.1 Buscar en PostgreSQL (100% persistente y gratuito)
+    const dbReceipt = await prisma.orderReceipt.findFirst({
+      where: {
+        OR: [
+          { orderId: order.id },
+          receiptPath ? { storagePath: receiptPath } : undefined,
+        ].filter(Boolean) as any,
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    if (dbReceipt && dbReceipt.data) {
+      buffer = Buffer.from(dbReceipt.data);
+      contentType = dbReceipt.mimeType || "application/octet-stream";
+    }
+
+    // 2.2 Fallback: filesystem privado local
+    if (!buffer && receiptPath) {
       try {
-        buffer = await storageService.readPrivateFile(receiptMatch[1]);
+        buffer = await storageService.readPrivateFile(receiptPath);
+        const detected = detectFileMime(buffer);
+        if (detected) contentType = detected.mime;
       } catch (e) {
-        // Continuar fallback
+        // Fallback local no encontrado
       }
     }
 
-    // Fallback: si el URL apuntaba a /uploads/receipts/...
+    // 2.3 Fallback histórico: si el URL apuntaba a /uploads/receipts/...
     if (!buffer && order.proofOfPaymentUrl.includes("/uploads/")) {
       const publicRelative = order.proofOfPaymentUrl.split("?")[0].replace(/^\/uploads\//, "");
       const fullPath = path.resolve(process.cwd(), env.UPLOAD_DIR, publicRelative);
       try {
         buffer = await fs.readFile(fullPath);
+        const detected = detectFileMime(buffer);
+        if (detected) contentType = detected.mime;
       } catch (e) {
         // Fallback no encontrado
       }
@@ -107,11 +133,7 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
       throw new NotFoundError("El archivo físico del comprobante no fue encontrado en el servidor.");
     }
 
-    // 3. Detectar tipo MIME real
-    const detected = detectFileMime(buffer);
-    const contentType = detected ? detected.mime : "application/octet-stream";
-
-    return new NextResponse(new Uint8Array(buffer), {
+    return new NextResponse(buffer as any, {
       status: 200,
       headers: {
         "Content-Type": contentType,
@@ -126,7 +148,8 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
 
 /**
  * POST /api/orders/[orderNumber]/proof
- * Recibe y valida criptográficamente (magic bytes) el comprobante, guardándolo en almacenamiento privado.
+ * Recibe, valida criptográficamente (magic bytes) y persiste el comprobante
+ * tanto en PostgreSQL (permanente) como en filesystem local (cache temporal).
  */
 export async function POST(req: NextRequest, { params }: RouteParams) {
   try {
@@ -190,9 +213,18 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
       );
     }
 
-    // Almacenar en directorio privado fuera de la carpeta pública
     const safeFilename = sanitizeFilename(file.name);
-    const stored = await storageService.uploadPrivateFile(buffer, safeFilename, "receipts");
+    const sha256 = crypto.createHash("sha256").update(buffer).digest("hex");
+    const mimeType = validation.detectedMime || "application/octet-stream";
+
+    // 1. Guardar en filesystem privado local (cache temporal)
+    let storedPath = `receipts/${Date.now()}-${safeFilename}`;
+    try {
+      const stored = await storageService.uploadPrivateFile(buffer, safeFilename, "receipts");
+      storedPath = stored.relativePath;
+    } catch (e) {
+      // Ignorar si el filesystem local fuera efímero o de solo lectura
+    }
 
     // Token criptográfico temporal para que el cliente que sube pueda visualizar su comprobante
     const proofToken = await signJwt(
@@ -206,17 +238,28 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
       "7d"
     );
 
-
     const secureProofUrl = `/api/orders/${order.orderNumber}/proof?token=${proofToken}`;
 
     // Actualizar pedido a PAGO_EN_REVISION atómicamente
     const updatedOrder = await prisma.$transaction(async (tx) => {
+      // 1. Guardar en PostgreSQL de forma atómica dentro de la transacción (cero riesgo de huérfanos)
+      await tx.orderReceipt.create({
+        data: {
+          orderId: order.id,
+          filename: safeFilename,
+          storagePath: storedPath,
+          mimeType,
+          size: buffer.length,
+          sha256,
+          data: buffer as any,
+        },
+      });
       const previousStatus = order.status;
       const newStatus = OrderStatus.PAGO_EN_REVISION;
 
       const adminNotes = order.adminNotes
-        ? `${order.adminNotes} | RECEIPT_FILE:${stored.relativePath}`
-        : `RECEIPT_FILE:${stored.relativePath}`;
+        ? `${order.adminNotes} | RECEIPT_FILE:${storedPath}`
+        : `RECEIPT_FILE:${storedPath}`;
 
       const orderUpdated = await tx.order.update({
         where: { id: order.id },
@@ -238,7 +281,7 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
           orderId: order.id,
           previousStatus,
           newStatus,
-          notes: "Comprobante de depósito/transferencia subido por el cliente y validado por cabeceras binarias.",
+          notes: "Comprobante de depósito/transferencia subido por el cliente y persistido en PostgreSQL.",
           changedBy: sessionUser?.userId || null,
         },
       });
@@ -248,11 +291,10 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json({
       success: true,
-      message: "Comprobante de pago recibido exitosamente. Pedido en revisión.",
+      message: "Comprobante de pago recibido y persistido exitosamente. Pedido en revisión.",
       data: updatedOrder,
     });
   } catch (error) {
     return handleApiError(error, "OrdersProofAPI.POST");
   }
 }
-

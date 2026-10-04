@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { verifyJwt, ADMIN_ROLES, CUSTOMER_ROLES } from "@/core/auth/jwt";
 
 export async function middleware(req: NextRequest) {
@@ -12,6 +12,9 @@ export async function middleware(req: NextRequest) {
     .split(",")
     .map((o) => o.trim().replace(/\/+$/, ""))
     .filter(Boolean);
+
+  // Asegurar que el dominio canónico de producción siempre sea reconocido para CORS
+  allowedOrigins.push("https://tiendadelki.vercel.app");
 
   // Permitir localhost solo en desarrollo o testing
   if (process.env.NODE_ENV !== "production") {
@@ -257,4 +260,3 @@ export const config = {
     "/api/settings",
   ],
 };
-

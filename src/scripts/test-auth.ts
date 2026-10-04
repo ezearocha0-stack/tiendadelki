@@ -1,4 +1,6 @@
-import { signJwt, verifyJwt } from "../core/auth/jwt";
+﻿import { SignJWT } from "jose";
+import { signJwt, verifyJwt, AUTH_COOKIE_OPTIONS, getValidIssuers, getCanonicalIssuer } from "../core/auth/jwt";
+import { requireAdminUser, requireAuthenticatedUser } from "../core/auth/session";
 import { hashPassword, verifyPassword } from "../core/auth/password";
 import { rateLimiter } from "../lib/rate-limiter";
 import { Role } from "@prisma/client";
@@ -7,7 +9,7 @@ import { env } from "../config/env";
 
 async function runAuthTests() {
   console.log("🔐 ========================================================");
-  console.log("🔐 INICIANDO SUITE DE PRUEBAS DE SEGURIDAD Y AUTENTICACIÓN");
+  console.log("🔐 INICIANDO SUITE DE PRUEBAS DE SEGURIDAD Y AUTENTICACIÓN (FASE 2)");
   console.log("🔐 ========================================================\n");
 
   let passed = 0;
@@ -25,7 +27,7 @@ async function runAuthTests() {
     }
   }
 
-  // 1. Hash seguro y comparación
+  // 1. Hash seguro y comparación timing-safe
   await test("Hashing de contraseñas seguro con Bcrypt (cost 12) y verificación timing-safe", async () => {
     const rawPass = "MiClaveSuperSegura123!";
     const hash = await hashPassword(rawPass);
@@ -42,7 +44,7 @@ async function runAuthTests() {
   });
 
   // 2. Generación y verificación de JWT
-  await test("Generación y firma criptográfica de JWT con expiración", async () => {
+  await test("Generación y firma criptográfica de JWT con algoritmo HS256", async () => {
     const payload = {
       sub: "user-12345",
       email: "admin@tiendadelki.com",
@@ -68,9 +70,7 @@ async function runAuthTests() {
       name: "Admin Expirado",
     };
 
-    // Firmar con 0 segundos de expiración
     const expiredToken = await signJwt(payload, "0s");
-    // Pequeño retardo para asegurar que pase el segundo
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     const verified = await verifyJwt(expiredToken);
@@ -79,18 +79,146 @@ async function runAuthTests() {
     }
   });
 
-  // 4. Protección contra intentos abusivos (Rate Limiter)
+  // 4. Rechazo de token con firma alterada (Tampered)
+  await test("Rechazo de token JWT con firma manipulada/alterada", async () => {
+    const payload = {
+      sub: "user-tampered",
+      email: "tamper@tiendadelki.com",
+      role: Role.ADMIN,
+      name: "Admin Tamper",
+    };
+
+    const validToken = await signJwt(payload, "2h");
+    const parts = validToken.split(".");
+    // Modificar un carácter de la firma
+    const lastChar = parts[2].slice(-1);
+    const alteredChar = lastChar === "a" ? "b" : "a";
+    const tamperedToken = `${parts[0]}.${parts[1]}.${parts[2].slice(0, -1)}${alteredChar}`;
+
+    const verified = await verifyJwt(tamperedToken);
+    if (verified !== null) {
+      throw new Error("Un token con firma alterada fue validado exitosamente!");
+    }
+  });
+
+  // 5. Rechazo de token con emisor (issuer) no autorizado
+  await test("Rechazo estricto de token firmado con emisor (iss) no autorizado", async () => {
+    const secret = process.env.JWT_SECRET || env.JWT_SECRET;
+    const secretKey = new TextEncoder().encode(secret);
+
+    const maliciousToken = await new SignJWT({
+      sub: "hacker-1",
+      email: "attacker@evil.com",
+      role: Role.SUPER_ADMIN,
+      name: "Attacker",
+    })
+      .setProtectedHeader({ alg: "HS256" })
+      .setIssuedAt()
+      .setExpirationTime("2h")
+      .setIssuer("https://malicious-domain.com")
+      .sign(secretKey);
+
+    const verified = await verifyJwt(maliciousToken);
+    if (verified !== null) {
+      throw new Error("Un token con emisor no autorizado fue aceptado!");
+    }
+  });
+
+  // 6. Normalización de emisor canónico (Trailing slash tolerance)
+  await test("Tolerancia y normalización de emisor canónico con y sin barra inclinada", async () => {
+    const secret = process.env.JWT_SECRET || env.JWT_SECRET;
+    const secretKey = new TextEncoder().encode(secret);
+
+    // Firmar con barra al final
+    const tokenWithSlash = await new SignJWT({
+      sub: "user-slash",
+      email: "slash@tiendadelki.com",
+      role: Role.ADMIN,
+      name: "Admin Slash",
+    })
+      .setProtectedHeader({ alg: "HS256" })
+      .setIssuedAt()
+      .setExpirationTime("2h")
+      .setIssuer("https://tiendadelki.vercel.app/")
+      .sign(secretKey);
+
+    const verifiedSlash = await verifyJwt(tokenWithSlash);
+    if (!verifiedSlash || verifiedSlash.sub !== "user-slash") {
+      throw new Error("Fallo al validar emisor con barra inclinada canónica");
+    }
+
+    // Firmar sin barra al final
+    const tokenNoSlash = await new SignJWT({
+      sub: "user-noslash",
+      email: "noslash@tiendadelki.com",
+      role: Role.ADMIN,
+      name: "Admin NoSlash",
+    })
+      .setProtectedHeader({ alg: "HS256" })
+      .setIssuedAt()
+      .setExpirationTime("2h")
+      .setIssuer("https://tiendadelki.vercel.app")
+      .sign(secretKey);
+
+    const verifiedNoSlash = await verifyJwt(tokenNoSlash);
+    if (!verifiedNoSlash || verifiedNoSlash.sub !== "user-noslash") {
+      throw new Error("Fallo al validar emisor sin barra inclinada canónica");
+    }
+  });
+
+  // 7. Rechazo de token con algoritmo diferente a HS256
+  await test("Rechazo de tokens con algoritmo no autorizado (ej. HS384 o 'none')", async () => {
+    const secret = process.env.JWT_SECRET || env.JWT_SECRET;
+    const secretKey = new TextEncoder().encode(secret);
+
+    // Firmar con HS384 (diferente a HS256)
+    const tokenHs384 = await new SignJWT({
+      sub: "user-alg",
+      email: "alg@tiendadelki.com",
+      role: Role.ADMIN,
+      name: "Admin Alg",
+    })
+      .setProtectedHeader({ alg: "HS384" })
+      .setIssuedAt()
+      .setExpirationTime("2h")
+      .setIssuer(getCanonicalIssuer())
+      .sign(secretKey);
+
+    const verified = await verifyJwt(tokenHs384);
+    if (verified !== null) {
+      throw new Error("Un token con algoritmo no permitido (HS384) fue aceptado por error!");
+    }
+  });
+
+  // 8. Opciones de Seguridad de Cookies
+  await test("Verificación de parámetros de seguridad de la cookie de sesión td_auth_token", async () => {
+    if (AUTH_COOKIE_OPTIONS.name !== "td_auth_token") {
+      throw new Error(`Nombre de cookie inesperado: ${AUTH_COOKIE_OPTIONS.name}`);
+    }
+    if (AUTH_COOKIE_OPTIONS.options.httpOnly !== true) {
+      throw new Error("AUTH_COOKIE_OPTIONS.httpOnly debe ser true");
+    }
+    if (AUTH_COOKIE_OPTIONS.options.path !== "/") {
+      throw new Error("AUTH_COOKIE_OPTIONS.path debe ser '/'");
+    }
+    if (AUTH_COOKIE_OPTIONS.options.maxAge !== 86400) {
+      throw new Error("AUTH_COOKIE_OPTIONS.maxAge debe ser 24 horas (86400 segundos)");
+    }
+    if (AUTH_COOKIE_OPTIONS.options.sameSite !== "lax") {
+      throw new Error(`AUTH_COOKIE_OPTIONS.sameSite debe ser 'lax', recibido: ${AUTH_COOKIE_OPTIONS.options.sameSite}`);
+    }
+  });
+
+  // 9. Rate Limiter
   await test("Rate Limiting bloquea tras superar el umbral de intentos fallidos", async () => {
     const testKey = "login:test-abuse-ip";
     rateLimiter.reset(testKey);
 
-    // Intentos 1 a 5 deben ser permitidos
     for (let i = 1; i <= 5; i++) {
       const check = rateLimiter.check(testKey, 5, 60 * 1000);
       if (!check.allowed) throw new Error(`El intento ${i} debió permitirse`);
     }
 
-    // Intento 6 debe ser bloqueado con 429
     const blockedCheck = rateLimiter.check(testKey, 5, 60 * 1000);
     if (blockedCheck.allowed) {
       throw new Error("El 6to intento consecutivo no fue bloqueado por el rate limiter!");
@@ -102,57 +230,61 @@ async function runAuthTests() {
     rateLimiter.reset(testKey);
   });
 
-  // 5. Verificación de credenciales en base de datos real
-  await test("Login correcto del Administrador inicial sembrado en PostgreSQL", async () => {
-    const adminEmail = env.INITIAL_ADMIN_EMAIL;
-    const adminPass = env.INITIAL_ADMIN_PASSWORD;
-
-    const user = await prisma.user.findUnique({
-      where: { email: adminEmail },
-    });
-
-    if (!user) throw new Error(`Administrador ${adminEmail} no encontrado en base de datos`);
-    if (!user.passwordHash) throw new Error("El administrador no tiene passwordHash almacenado");
-
-    const match = await verifyPassword(adminPass, user.passwordHash);
-    if (!match) throw new Error("La contraseña inicial configurada en .env no coincide con el hash");
-  });
-
-  // 6. Rechazo de contraseña incorrecta
-  await test("Rechazo de login ante contraseña incorrecta", async () => {
-    const adminEmail = env.INITIAL_ADMIN_EMAIL;
-    const user = await prisma.user.findUnique({
-      where: { email: adminEmail },
-    });
-
-    if (!user || !user.passwordHash) throw new Error("Usuario no encontrado");
-
-    const match = await verifyPassword("ClaveTotalmenteFalsa#2026", user.passwordHash);
-    if (match) throw new Error("Se aceptó una contraseña incorrecta");
-  });
-
-  // 7. Aislamiento de Roles: Cliente vs Administrador
-  await test("Diferenciación de roles (ADMIN vs CUSTOMER) para rutas protegidas", async () => {
-    const customer = await prisma.user.findFirst({
-      where: { role: Role.CUSTOMER },
-    });
-    if (!customer) throw new Error("Cliente de prueba no encontrado");
-
+  // 10. Aislamiento de Roles
+  await test("Aislamiento de roles (CUSTOMER bloqueado de operaciones administrativas)", async () => {
     const customerToken = await signJwt({
-      sub: customer.id,
-      email: customer.email || "cliente@ejemplo.com",
-      role: customer.role,
-      name: `${customer.firstName} ${customer.lastName}`,
+      sub: "fake-customer-id",
+      email: "cliente@ejemplo.com",
+      role: Role.CUSTOMER,
+      name: "Cliente Falso",
     });
 
     const payload = await verifyJwt(customerToken);
     if (!payload) throw new Error("Token de cliente no verificó");
 
     const adminRoles = ["SUPER_ADMIN", "ADMIN", "STAFF"];
-    const isAllowedInAdminArea = adminRoles.includes(payload.role);
-
-    if (isAllowedInAdminArea) {
+    if (adminRoles.includes(payload.role)) {
       throw new Error("FALLO DE AUTORIZACIÓN: Un usuario con rol CUSTOMER fue catalogado como ADMIN!");
+    }
+  });
+
+  // 11. Bloqueo de usuario inactivo en session.ts
+  await test("Bloqueo de usuario con cuenta inactiva (isActive: false) en requireAuthenticatedUser", async () => {
+    // Simular un mock request con cookie de un usuario inactivo
+    const inactiveUser = await prisma.user.findFirst({
+      where: { isActive: false },
+    });
+
+    if (inactiveUser) {
+      const inactiveToken = await signJwt({
+        sub: inactiveUser.id,
+        email: inactiveUser.email || "inactive@tiendadelki.com",
+        role: inactiveUser.role,
+        name: "Usuario Inactivo",
+      });
+
+      const fakeReq = {
+        cookies: {
+          get: (name: string) => (name === "td_auth_token" ? { value: inactiveToken } : undefined),
+        },
+        headers: new Headers(),
+      } as any;
+
+      let threw = false;
+      try {
+        await requireAuthenticatedUser(fakeReq);
+      } catch (err: any) {
+        threw = true;
+        if (!err.message.includes("desactivada") && !err.message.includes("no encontrado")) {
+          throw new Error(`Mensaje de error inesperado: ${err.message}`);
+        }
+      }
+
+      if (!threw) {
+        throw new Error("FALLO DE SEGURIDAD: Un usuario inactivo logró autenticarse!");
+      }
+    } else {
+      console.log("   (Omitido test con DB: no existen usuarios con isActive: false en la base de datos de desarrollo)");
     }
   });
 

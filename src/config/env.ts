@@ -1,4 +1,4 @@
-import { z } from "zod";
+﻿import { z } from "zod";
 
 const DEFAULT_DEV_JWT = "tiendadelki-jwt-secret-key-change-in-production-min-32-chars-long";
 
@@ -40,7 +40,22 @@ const envSchema = z
     if (data.NODE_ENV === "production") {
       const isFrontendVercel = Boolean(data.BACKEND_API_URL || data.NEXT_PUBLIC_API_URL);
 
-      if (!isFrontendVercel) {
+      if (isFrontendVercel) {
+        // En Vercel (Frontend en Producción): JWT_SECRET es obligatorio para verificar la sesión en el Edge
+        if (
+          !data.JWT_SECRET ||
+          data.JWT_SECRET.length < 32 ||
+          data.JWT_SECRET === DEFAULT_DEV_JWT ||
+          data.JWT_SECRET.includes("change-in-production")
+        ) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ["JWT_SECRET"],
+            message:
+              "En Vercel (producción), JWT_SECRET es obligatorio, debe tener al menos 32 caracteres y debe ser idéntico al configurado en Render.",
+          });
+        }
+      } else {
         // En Render / Backend / Monolito: DATABASE_URL y JWT_SECRET son obligatorios y estrictos
         if (!data.DATABASE_URL) {
           ctx.addIssue({
@@ -51,6 +66,7 @@ const envSchema = z
         }
 
         if (
+          !data.JWT_SECRET ||
           data.JWT_SECRET.length < 32 ||
           data.JWT_SECRET === DEFAULT_DEV_JWT ||
           data.JWT_SECRET.includes("change-in-production")

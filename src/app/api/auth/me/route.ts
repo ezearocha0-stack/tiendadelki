@@ -1,11 +1,13 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { handleApiError, UnauthorizedError } from "@/lib/errors";
 import { verifyJwt, AUTH_COOKIE_OPTIONS } from "@/core/auth/jwt";
 
 export async function GET(req: NextRequest) {
   try {
-    const token = req.cookies.get(AUTH_COOKIE_OPTIONS.name)?.value;
+    const token =
+      req.cookies.get(AUTH_COOKIE_OPTIONS.name)?.value ||
+      req.headers.get("authorization")?.replace("Bearer ", "");
 
     if (!token) {
       throw new UnauthorizedError("No hay sesión activa.");
@@ -32,7 +34,7 @@ export async function GET(req: NextRequest) {
     });
 
     if (!user || !user.isActive) {
-      throw new UnauthorizedError("Usuario no encontrado o inactivo.");
+      throw new UnauthorizedError("Usuario no encontrado o cuenta inactiva.");
     }
 
     return NextResponse.json({

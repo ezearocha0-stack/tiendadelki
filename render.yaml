@@ -1,5 +1,5 @@
 # ==============================================================================
-# RENDER BLUEPRINT - TIENDADELKI BACKEND / API (NEON POSTGRESQL + PERSISTENT DISK)
+# RENDER BLUEPRINT - TIENDADELKI BACKEND / API (100% GRATUITO - PLAN FREE)
 # ==============================================================================
 # Documentación oficial: https://render.com/docs/blueprint-spec
 
@@ -8,14 +8,10 @@ services:
     name: tiendadelki-backend
     runtime: node
     region: oregon
-    plan: starter
+    plan: free
     buildCommand: "npm install && npx prisma generate && npm run build"
-    startCommand: "npx prisma migrate deploy && npm start"
+    startCommand: "npm start"
     healthCheckPath: /api/health
-    disk:
-      name: tiendadelki-uploads
-      mountPath: /data/tiendadelki
-      sizeGB: 10
     envVars:
       - key: NODE_ENV
         value: production
@@ -24,9 +20,9 @@ services:
       - key: STORAGE_PROVIDER
         value: local
       - key: UPLOAD_DIR
-        value: /data/tiendadelki/uploads
+        value: ./public/uploads
       - key: PRIVATE_STORAGE_DIR
-        value: /data/tiendadelki/storage_private
+        value: ./storage/private
       - key: COOKIE_NAME
         value: td_auth_token
       - key: NEXT_PUBLIC_WHATSAPP_PHONE
@@ -36,13 +32,13 @@ services:
       # Las variables con sync: false se administran directamente en el panel
       # de Render y nunca se exponen ni sobrescriben desde el repositorio Git.
       # ==========================================================================
-      # Conexión Neon PostgreSQL (Pooled / PgBouncer para runtime de la aplicación):
+      # Conexión Render PostgreSQL (Internal Database URL para runtime seguro y rápido):
       - key: DATABASE_URL
         sync: false
-      # Conexión Neon PostgreSQL (Directa / Unpooled para migraciones Prisma):
+      # Conexión Render PostgreSQL (Directa / Idéntica a DATABASE_URL en Render PostgreSQL):
       - key: DIRECT_URL
         sync: false
-      # Clave criptográfica para firmas JWT (mínimo 32 caracteres):
+      # Clave criptográfica para firmas JWT (mínimo 32 caracteres, idéntica a Vercel):
       - key: JWT_SECRET
         sync: false
       # URL pública canónica del frontend en Vercel:
@@ -51,9 +47,8 @@ services:
       # Dominios de frontend autorizados para CORS:
       - key: ALLOWED_ORIGINS
         sync: false
-      # Credenciales del Administrador Inicial (para seed en primera ejecución):
+      # Credenciales del Administrador Inicial (para seed en desarrollo/primera ejecución):
       - key: INITIAL_ADMIN_EMAIL
         sync: false
       - key: INITIAL_ADMIN_PASSWORD
         sync: false
-
