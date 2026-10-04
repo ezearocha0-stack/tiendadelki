@@ -9,6 +9,7 @@ const envSchema = z
     NEXT_PUBLIC_SITE_URL: z.string().url().default("http://localhost:3000"),
     NEXT_PUBLIC_API_URL: z.string().url().optional(),
     DATABASE_URL: z.string().optional(),
+    DIRECT_URL: z.string().optional(),
     JWT_SECRET: z
       .string()
       .min(16, "JWT_SECRET debe tener al menos 16 caracteres")
@@ -110,6 +111,7 @@ try {
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
     DATABASE_URL: process.env.DATABASE_URL,
+    DIRECT_URL: process.env.DIRECT_URL,
     JWT_SECRET: process.env.JWT_SECRET,
     INITIAL_ADMIN_EMAIL: process.env.INITIAL_ADMIN_EMAIL,
     INITIAL_ADMIN_PASSWORD: process.env.INITIAL_ADMIN_PASSWORD,
@@ -149,6 +151,10 @@ try {
     PORT: Number(process.env.PORT) || 3000,
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
     DATABASE_URL:
+      process.env.DATABASE_URL ||
+      "postgresql://postgres:postgres@localhost:5432/tiendadelki_dev?schema=public",
+    DIRECT_URL:
+      process.env.DIRECT_URL ||
       process.env.DATABASE_URL ||
       "postgresql://postgres:postgres@localhost:5432/tiendadelki_dev?schema=public",
     JWT_SECRET: process.env.JWT_SECRET || DEFAULT_DEV_JWT,

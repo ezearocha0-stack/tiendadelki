@@ -33,11 +33,27 @@ services:
         value: "8296734710"
       # ==========================================================================
       # VARIABLES SECRETAS OBLIGATORIAS (Configurar en Render Dashboard):
+      # Las variables con sync: false se administran directamente en el panel
+      # de Render y nunca se exponen ni sobrescriben desde el repositorio Git.
       # ==========================================================================
-      # - DATABASE_URL: URL de conexión de Neon PostgreSQL (ej. postgresql://user:pass@ep-xyz.us-east-2.aws.neon.tech/neondb?sslmode=require)
-      # - JWT_SECRET: Clave criptográfica de 64 caracteres (openssl rand -hex 32)
-      # - NEXT_PUBLIC_SITE_URL: URL pública del frontend en Vercel (ej. https://tiendadelki.vercel.app o dominio propio)
-      # - ALLOWED_ORIGINS: Dominio del frontend de Vercel autorizado para CORS (ej. https://tiendadelki.vercel.app)
-      # - INITIAL_ADMIN_EMAIL: Correo para el administrador inicial (ej. admin@tiendadelki.com)
-      # - INITIAL_ADMIN_PASSWORD: Contraseña para el administrador inicial (mínimo 8 caracteres)
-      # ==========================================================================
+      # Conexión Neon PostgreSQL (Pooled / PgBouncer para runtime de la aplicación):
+      - key: DATABASE_URL
+        sync: false
+      # Conexión Neon PostgreSQL (Directa / Unpooled para migraciones Prisma):
+      - key: DIRECT_URL
+        sync: false
+      # Clave criptográfica para firmas JWT (mínimo 32 caracteres):
+      - key: JWT_SECRET
+        sync: false
+      # URL pública canónica del frontend en Vercel:
+      - key: NEXT_PUBLIC_SITE_URL
+        sync: false
+      # Dominios de frontend autorizados para CORS:
+      - key: ALLOWED_ORIGINS
+        sync: false
+      # Credenciales del Administrador Inicial (para seed en primera ejecución):
+      - key: INITIAL_ADMIN_EMAIL
+        sync: false
+      - key: INITIAL_ADMIN_PASSWORD
+        sync: false
+
