@@ -32,6 +32,14 @@ public/uploads/*
 storage/private/*
 !storage/private/.gitkeep
 
+# Backups y volcados de base de datos
+*.dump
+*.dump.sha256
+*.zip
+*.tar.gz
+*.sql
+!prisma/migrations/**/*.sql
+
 # Archivos de Sistema Operativo
 .DS_Store
 Thumbs.db
