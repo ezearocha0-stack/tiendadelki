@@ -15,7 +15,6 @@
     "db:push": "prisma db push",
     "db:seed": "tsx --env-file=.env prisma/seed.ts",
     "db:backup": "powershell -ExecutionPolicy Bypass -File ./scripts/backup-db.ps1",
-
     "test:health": "tsx --env-file=.env src/scripts/test-health.ts",
     "test:db": "tsx --env-file=.env src/scripts/test-db.ts",
     "test:auth": "tsx --env-file=.env src/scripts/test-auth.ts",
@@ -32,7 +31,6 @@
     "test:seo": "tsx --env-file=.env src/scripts/test-seo-performance.ts",
     "test:security": "tsx --env-file=.env src/scripts/test-security-audit.ts"
   },
-
   "dependencies": {
     "@prisma/client": "^6.4.1",
     "bcryptjs": "^3.0.3",
@@ -45,8 +43,8 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
-    "@types/node": "^22.13.5",
-    "@types/react": "^19.0.10",
+    "@types/node": "^20.17.6",
+    "@types/react": "^19.3.0",
     "@types/react-dom": "^19.0.4",
     "prisma": "^6.4.1",
     "tsx": "^4.19.3",
