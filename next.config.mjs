@@ -36,16 +36,18 @@ const nextConfig = {
     const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || '').replace(/\/+$/, '');
     // Prevención estricta de bucles de proxy y auto-referencia
     if (backendUrl && !backendUrl.includes('localhost:3000') && backendUrl !== siteUrl) {
-      return [
-        {
-          source: '/api/:path*',
-          destination: `${backendUrl}/api/:path*`,
-        },
-        {
-          source: '/uploads/:path*',
-          destination: `${backendUrl}/uploads/:path*`,
-        },
-      ];
+      return {
+        beforeFiles: [
+          {
+            source: '/api/:path*',
+            destination: `${backendUrl}/api/:path*`,
+          },
+          {
+            source: '/uploads/:path*',
+            destination: `${backendUrl}/uploads/:path*`,
+          },
+        ],
+      };
     }
     return [];
   },
