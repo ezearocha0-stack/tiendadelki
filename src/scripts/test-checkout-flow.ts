@@ -1,5 +1,6 @@
 import { prisma } from "../lib/db";
 import { OrderStatus } from "@prisma/client";
+import { NextRequest } from "next/server";
 
 async function runCheckoutTests() {
   console.log("🛒 ========================================================");
@@ -10,6 +11,7 @@ async function runCheckoutTests() {
   let testVariantId = "";
   let testShippingMethodId = "";
   let createdOrderNumber = "";
+  let createdOrderToken = "";
 
   try {
     // 1. Preparar datos de prueba
@@ -116,6 +118,37 @@ async function runCheckoutTests() {
     const createdOrder = orderJson.data;
     createdOrderNumber = createdOrder.orderNumber;
 
+    // 1. Verificacion explicita de que orderToken y datos privados NO se exponen en JSON de POST /api/orders
+    const forbiddenPostFields = [
+      "orderToken",
+      "guestPhone",
+      "guestWhatsapp",
+      "guestEmail",
+      "shippingAddress",
+      "customerNotes",
+      "adminNotes",
+      "proofOfPaymentUrl",
+      "proofRejectionReason",
+    ];
+    for (const field of forbiddenPostFields) {
+      if (createdOrder[field] !== undefined) {
+        throw new Error(`VIOLACION DE PRIVACIDAD: ${field} expuesto en JSON de POST /api/orders`);
+      }
+    }
+
+
+    // 2. Extraer token de la cookie HttpOnly Set-Cookie
+    const setCookieHeader = orderRes.headers.get("set-cookie") || "";
+    if (orderRes.cookies && typeof orderRes.cookies.get === "function") {
+      createdOrderToken = orderRes.cookies.get(`order_token_${createdOrderNumber}`)?.value || "";
+    } else if (setCookieHeader) {
+      const match = setCookieHeader.match(new RegExp(`(?:^|; )order_token_${createdOrderNumber}=([^;]*)`));
+      createdOrderToken = match ? decodeURIComponent(match[1]) : "";
+    }
+    if (!createdOrderToken) {
+      throw new Error("Fallo: No se encontró la cookie HttpOnly order_token en la respuesta de creación de orden");
+    }
+
     if (Number(createdOrder.subtotal) !== 2700) {
       throw new Error(`Zero-Trust Pricing falló: Subtotal esperado 2700, recibido ${createdOrder.subtotal}`);
     }
@@ -209,6 +242,102 @@ async function runCheckoutTests() {
     console.log(`✅ [PASS] Carga de Comprobante: URL asignado (${updatedOrder.proofOfPaymentUrl})`);
     console.log(`✅ [PASS] Transición de Estado: Pedido actualizado exitosamente a PAGO_EN_REVISION`);
     console.log(`✅ [PASS] Trazabilidad: Evento auditado en OrderStatusHistory con fecha y notas`);
+
+    // 7. Probar Separación de Contrato de Datos y Privacidad (/api/orders/[orderNumber])
+    const { GET: getOrderRouteApi } = await import("../app/api/orders/[orderNumber]/route");
+
+    // A) Solicitud Pública (No Autenticada): Debe devolver únicamente datos de tracking público
+    const anonReq = new NextRequest("http://localhost:3000/api/orders/" + createdOrderNumber);
+    const anonRes = await getOrderRouteApi(anonReq, {
+      params: Promise.resolve({ orderNumber: createdOrderNumber }),
+    });
+    const anonJson = await anonRes.json();
+    if (!anonJson.success || !anonJson.data) {
+      throw new Error("Endpoint público falló al responder: " + JSON.stringify(anonJson));
+    }
+
+    const anonData = anonJson.data;
+    // Verificación estricta de que un usuario no autenticado NO puede obtener datos privados
+    if (anonData.guestPhone !== undefined) {
+      throw new Error("VIOLACIÓN DE PRIVACIDAD: guestPhone expuesto en endpoint público");
+    }
+    if (anonData.guestWhatsapp !== undefined) {
+      throw new Error("VIOLACIÓN DE PRIVACIDAD: guestWhatsapp expuesto en endpoint público");
+    }
+    if (anonData.guestEmail !== undefined) {
+      throw new Error("VIOLACIÓN DE PRIVACIDAD: guestEmail expuesto en endpoint público");
+    }
+    if (anonData.shippingAddress !== undefined) {
+      throw new Error("VIOLACIÓN DE PRIVACIDAD: shippingAddress expuesto en endpoint público");
+    }
+    if (anonData.customerNotes !== undefined) {
+      throw new Error("VIOLACIÓN DE PRIVACIDAD: customerNotes expuesto en endpoint público");
+    }
+    if (anonData.adminNotes !== undefined) {
+      throw new Error("VIOLACIÓN DE PRIVACIDAD: adminNotes expuesto en endpoint público");
+    }
+    if (anonData.proofOfPaymentUrl !== undefined) {
+      throw new Error("VIOLACIÓN DE PRIVACIDAD: proofOfPaymentUrl expuesto en endpoint público");
+    }
+    if (anonData.proofRejectionReason !== undefined) {
+      throw new Error("VIOLACIÓN DE PRIVACIDAD: proofRejectionReason expuesto en endpoint público");
+    }
+    // Verificación de que el historial público de tracking NO expone notas internas
+    if (anonData.history && anonData.history.some((h: any) => h.notes !== undefined)) {
+      throw new Error("VIOLACIÓN DE PRIVACIDAD: history.notes expuesto en endpoint público de tracking");
+    }
+    console.log("   🔒 [PRIVACIDAD]: Validado que el endpoint público oculta teléfonos, email, dirección, notas internas y comprobantes");
+
+    // B) Solicitud Protegida de Confirmación mediante Token Criptográfico (?token=...)
+    if (createdOrderToken) {
+      const authWithTokenReq = new NextRequest(
+        "http://localhost:3000/api/orders/" + createdOrderNumber + "?token=" + encodeURIComponent(createdOrderToken)
+      );
+      const authWithTokenRes = await getOrderRouteApi(authWithTokenReq, {
+        params: Promise.resolve({ orderNumber: createdOrderNumber }),
+      });
+      const authWithTokenJson = await authWithTokenRes.json();
+      if (
+        !authWithTokenJson.success ||
+        !authWithTokenJson.data.shippingAddress ||
+        !authWithTokenJson.data.guestPhone ||
+        !authWithTokenJson.data.guestEmail
+      ) {
+        throw new Error("Fallo al obtener datos completos de pedido mediante token de confirmación");
+      }
+      console.log("   🔑 [CONFIRMACIÓN]: Token de confirmación permite acceso seguro a datos completos del pedido");
+
+      // B2) Solicitud con Cookie HttpOnly (Flujo principal de producción)
+      const authWithCookieReq = new NextRequest(
+        "http://localhost:3000/api/orders/" + createdOrderNumber,
+        {
+          headers: {
+            Cookie: `order_token_${createdOrderNumber}=${encodeURIComponent(createdOrderToken)}`,
+          },
+        }
+      );
+      const authWithCookieRes = await getOrderRouteApi(authWithCookieReq, {
+        params: Promise.resolve({ orderNumber: createdOrderNumber }),
+      });
+      const authWithCookieJson = await authWithCookieRes.json();
+      if (
+        !authWithCookieJson.success ||
+        !authWithCookieJson.data.shippingAddress ||
+        !authWithCookieJson.data.guestPhone
+      ) {
+        throw new Error("Fallo al obtener datos mediante Cookie HttpOnly");
+      }
+      console.log("   🍪 [COOKIE VIP]: Cookie HttpOnly verificada exitosamente para acceso a confirmación sin exponer token en URL");
+    }
+
+    // C) Solicitud de Servidor SSR mediante getOrderByNumber (Server-to-Server JWT)
+    const { getOrderByNumber } = await import("../lib/server-api");
+    const serverOrder = await getOrderByNumber(createdOrderNumber, createdOrderToken);
+    if (!serverOrder || !serverOrder.shippingAddress || !serverOrder.guestPhone) {
+      throw new Error("Fallo en getOrderByNumber con autenticación interna de servidor");
+    }
+    console.log("   🛡️ [SSR SEGURO]: getOrderByNumber obtiene pedido completo con shippingAddress protegido");
+
 
     console.log("\n🛒 ========================================================");
     console.log("🛒 RESULTADOS: 7/7 PRUEBAS DE CHECKOUT SUPERADAS");

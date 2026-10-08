@@ -222,7 +222,7 @@ async function runShippingTests() {
     }
     console.log("✅ [6/7] Registro de Tracking: Despacho completado con Metro Pac Express / Guía MP-RD-990011");
 
-    // 7. CONSULTA PÚBLICA DE ESTADO Y TRACKING (/api/orders/[orderNumber])
+    // 7. CONSULTA PÚBLICA DE ESTADO Y TRACKING (/api/orders/[orderNumber]) CON VALIDACIÓN ESTRICTA DE PRIVACIDAD
     const publicTrackReq = new NextRequest(`http://localhost:3000/api/orders/${testOrderNumber}`);
     const publicTrackRes = await publicTrackingApi(publicTrackReq, {
       params: Promise.resolve({ orderNumber: testOrderNumber }),
@@ -243,6 +243,50 @@ async function runShippingTests() {
     ) {
       throw new Error(`Datos de tracking incompletos o incorrectos: ${JSON.stringify(trackData)}`);
     }
+
+    // VALIDACIÓN ESTRICTA DE PRIVACIDAD: Usuario no autenticado NUNCA debe recibir datos sensibles
+    if (trackData.guestPhone !== undefined) {
+      throw new Error("VIOLACIÓN DE PRIVACIDAD: guestPhone expuesto en endpoint público");
+    }
+    if (trackData.guestWhatsapp !== undefined) {
+      throw new Error("VIOLACIÓN DE PRIVACIDAD: guestWhatsapp expuesto en endpoint público");
+    }
+    if (trackData.guestEmail !== undefined) {
+      throw new Error("VIOLACIÓN DE PRIVACIDAD: guestEmail expuesto en endpoint público");
+    }
+    if (trackData.shippingAddress !== undefined) {
+      throw new Error("VIOLACIÓN DE PRIVACIDAD: shippingAddress expuesto en endpoint público");
+    }
+    if (trackData.customerNotes !== undefined) {
+      throw new Error("VIOLACIÓN DE PRIVACIDAD: customerNotes expuesto en endpoint público");
+    }
+    if (trackData.adminNotes !== undefined) {
+      throw new Error("VIOLACIÓN DE PRIVACIDAD: adminNotes expuesto en endpoint público");
+    }
+    if (trackData.proofOfPaymentUrl !== undefined) {
+      throw new Error("VIOLACIÓN DE PRIVACIDAD: proofOfPaymentUrl expuesto en endpoint público");
+    }
+    if (trackData.proofRejectionReason !== undefined) {
+      throw new Error("VIOLACIÓN DE PRIVACIDAD: proofRejectionReason expuesto en endpoint público");
+    }
+    console.log("   🔒 [PRIVACIDAD]: Validado que el endpoint público oculta teléfonos, email, dirección, notas y comprobantes");
+
+    // CONSULTA AUTORIZADA (Mecanismo protegido para Confirmación / Admin): Debe retornar datos completos
+    const authTrackReq = new NextRequest(`http://localhost:3000/api/orders/${testOrderNumber}`, {
+      headers: { Authorization: `Bearer ${adminToken}` },
+    });
+    const authTrackRes = await publicTrackingApi(authTrackReq, {
+      params: Promise.resolve({ orderNumber: testOrderNumber }),
+    });
+    const authTrackJson = await authTrackRes.json();
+    if (
+      !authTrackJson.success ||
+      !authTrackJson.data.shippingAddress ||
+      !authTrackJson.data.guestPhone
+    ) {
+      throw new Error("Fallo en consulta autorizada de confirmación: datos completos no retornados");
+    }
+    console.log("   🔑 [CONFIRMACIÓN]: Validado que la solicitud autorizada recibe datos completos correctamente");
 
     // Consulta de orden inexistente arroja 404
     const fakeTrackReq = new NextRequest("http://localhost:3000/api/orders/TK-INEXISTENTE-999");

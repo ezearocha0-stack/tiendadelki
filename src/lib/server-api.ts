@@ -226,11 +226,24 @@ export async function getBankAccounts(): Promise<any[]> {
 /**
  * Obtiene los detalles públicos de un pedido por su número de orden.
  */
-export async function getOrderByNumber(orderNumber: string): Promise<any | null> {
+function maskName(name: string | null | undefined): string {
+  if (!name) return "Cliente";
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0];
+  return `${parts[0]} ${parts[1][0]}.`;
+}
+
+/**
+ * Obtiene los detalles de un pedido por su número de orden.
+ * Requiere un token válido de confirmación (o administrativo) para entregar datos privados.
+ * Si el visitante no presenta token o el token no corresponde al pedido, NO entrega datos privados.
+ */
+export async function getOrderByNumber(orderNumber: string, token?: string): Promise<any | null> {
+  const cleanNumber = orderNumber.trim().toUpperCase().replace(/^#/, "");
+
   if (isDirectDbMode()) {
     const { prisma } = await import("@/lib/db");
-    const cleanNumber = orderNumber.trim().toUpperCase().replace(/^#/, "");
-    return prisma.order.findFirst({
+    const order = await prisma.order.findFirst({
       where: {
         OR: [{ orderNumber: cleanNumber }, { id: cleanNumber }],
       },
@@ -242,7 +255,132 @@ export async function getOrderByNumber(orderNumber: string): Promise<any | null>
         },
       },
     });
+
+    if (!order) return null;
+
+    // Si NO se proporciona token, retornar estrictamente DTO público (sin dirección, teléfono ni email)
+    if (!token) {
+      return {
+        id: order.id,
+        orderNumber: order.orderNumber,
+        maskedGuestName: maskName(order.guestName),
+        status: order.status,
+        createdAt: order.createdAt,
+        updatedAt: order.updatedAt,
+        total: Number(order.total),
+        carrierName: order.carrierName,
+        trackingNumber: order.trackingNumber,
+        trackingUrl: order.trackingUrl,
+        shippedAt: order.shippedAt,
+        shippingMethodName: order.shippingMethod?.name,
+        estimatedDeliveryDays: order.shippingMethod?.estimatedDays,
+        itemsCount: order.items.reduce((acc, it) => acc + it.quantity, 0),
+        items: order.items.map((it) => ({
+          productTitle: it.productTitle,
+          variantTitle: it.variantTitle,
+          quantity: it.quantity,
+          totalPrice: Number(it.totalPrice),
+        })),
+        history: order.statusHistory.map((h) => ({
+          status: h.newStatus,
+          timestamp: h.createdAt,
+        })),
+      };
+    }
+
+    // Si SE proporciona token, validar firma y vinculación estricta al pedido
+    const { verifyJwt, ADMIN_ROLES } = await import("@/core/auth/jwt");
+    const payload = await verifyJwt(token);
+    if (!payload) {
+      // Token inválido o expirado
+      return null;
+    }
+
+    const isAdmin = payload.role && ADMIN_ROLES.includes(payload.role);
+    const isMatchingConfirmation =
+      payload.purpose === "order_confirmation" &&
+      (payload.orderNumber === cleanNumber ||
+        payload.orderNumber === order.orderNumber ||
+        payload.sub === order.id);
+
+    if (!isAdmin && !isMatchingConfirmation) {
+      // Token de otro pedido o con propósito incorrecto
+      return null;
+    }
+
+    // DTO Seguro y Especifico de Confirmacion / Admin (sin spread ciego de ...order)
+    return {
+      id: order.id,
+      orderNumber: order.orderNumber,
+      guestName: order.guestName,
+      maskedGuestName: maskName(order.guestName),
+      guestPhone: order.guestPhone,
+      guestWhatsapp: order.guestWhatsapp,
+      guestEmail: order.guestEmail,
+      status: order.status,
+      createdAt: order.createdAt,
+      updatedAt: order.updatedAt,
+      subtotal: Number(order.subtotal),
+      shippingCost: Number(order.shippingCost),
+      discountAmount: Number(order.discountAmount),
+      total: Number(order.total),
+      shippingAddress: order.shippingAddress,
+      shippingMethod: order.shippingMethod,
+      shippingMethodName: order.shippingMethod?.name,
+      estimatedDeliveryDays: order.shippingMethod?.estimatedDays,
+      carrierName: order.carrierName,
+      trackingNumber: order.trackingNumber,
+      trackingUrl: order.trackingUrl,
+      shippedAt: order.shippedAt,
+      proofOfPaymentUrl: order.proofOfPaymentUrl,
+      proofUploadedAt: order.proofUploadedAt,
+      proofRejectionReason: order.proofRejectionReason,
+      customerNotes: order.customerNotes,
+      adminNotes: isAdmin ? order.adminNotes : undefined,
+      itemsCount: order.items.reduce((acc, it) => acc + it.quantity, 0),
+      items: order.items.map((it) => ({
+        id: it.id,
+        productTitle: it.productTitle,
+        variantTitle: it.variantTitle,
+        title: it.productTitle,
+        variant: it.variantTitle,
+        sku: it.sku,
+        quantity: it.quantity,
+        unitPrice: Number(it.unitPrice),
+        price: Number(it.unitPrice),
+        totalPrice: Number(it.totalPrice),
+      })),
+      ...(isAdmin
+        ? {
+            statusHistory: order.statusHistory.map((h) => ({
+              id: h.id,
+              previousStatus: h.previousStatus,
+              newStatus: h.newStatus,
+              notes: h.notes,
+              createdAt: h.createdAt,
+              status: h.newStatus,
+              timestamp: h.createdAt,
+            })),
+          }
+        : {}),
+      history: order.statusHistory.map((h) => ({
+        status: h.newStatus,
+        timestamp: h.createdAt,
+        ...(isAdmin ? { notes: h.notes } : {}),
+      })),
+    };
   }
 
-  return fetchFromBackend<any>(`/api/orders/${encodeURIComponent(orderNumber)}`);
+  // Modo desacoplado (Vercel SSR llamando al backend en Render):
+  // Transmitir el token del cliente ÚNICAMENTE si existe. NUNCA emitir automáticamente
+  // un JWT con rol ADMIN para peticiones anónimas sin autorización.
+  const authHeaders: Record<string, string> = {};
+  if (token) {
+    authHeaders["Authorization"] = `Bearer ${token}`;
+    authHeaders["x-order-token"] = token;
+  }
+
+  return fetchFromBackend<any>(`/api/orders/${encodeURIComponent(cleanNumber)}`, {
+    headers: authHeaders,
+  });
 }

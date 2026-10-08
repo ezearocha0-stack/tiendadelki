@@ -1,4 +1,5 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import Link from "next/link";
 import { getOrderByNumber, getBankAccounts } from "@/lib/server-api";
 import { StoreHeader } from "@/components/store/store-header";
@@ -12,6 +13,7 @@ export const dynamic = "force-dynamic";
 
 interface OrderConfirmationPageProps {
   params: Promise<{ orderNumber: string }>;
+  searchParams?: Promise<{ token?: string }>;
 }
 
 export async function generateMetadata({ params }: OrderConfirmationPageProps): Promise<Metadata> {
@@ -92,12 +94,25 @@ const ORDER_STEPS = [
   { step: 5, label: "Entregado" },
 ];
 
-export default async function OrderConfirmationPage({ params }: OrderConfirmationPageProps) {
+export default async function OrderConfirmationPage({ params, searchParams }: OrderConfirmationPageProps) {
   const { orderNumber } = await params;
+  const cleanNumber = orderNumber.trim().toUpperCase().replace(/^#/, "");
 
-  // Consultar pedido y cuentas bancarias mediante capa desacoplada
+  // 1. Obtener token desde Cookie HttpOnly en el dominio de Vercel (flujo estándar seguro)
+  const cookieStore = await cookies();
+  const cookieToken =
+    cookieStore.get(`order_token_${cleanNumber}`)?.value ||
+    cookieStore.get("order_token")?.value;
+
+  // 2. Fallback opcional por query param si viene de un enlace directo autorizado
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
+  const queryToken = resolvedSearchParams?.token;
+
+  const token = cookieToken || queryToken;
+
+  // 3. Consultar pedido enviando el token (sin token válido, getOrderByNumber no devuelve datos privados)
   const [order, bankAccounts] = await Promise.all([
-    getOrderByNumber(orderNumber),
+    getOrderByNumber(orderNumber, token),
     getBankAccounts(),
   ]);
 
@@ -105,24 +120,37 @@ export default async function OrderConfirmationPage({ params }: OrderConfirmatio
     notFound();
   }
 
+  // 4. Si el visitante no tiene autorización para datos privados (shippingAddress no presente),
+  // redirigir al portal público de rastreo para no mostrar la confirmación privada.
+  if (!order.shippingAddress) {
+    redirect(`/rastreo?guia=${encodeURIComponent(cleanNumber)}`);
+  }
+
+  // Parseo resiliente y defensivo de dirección de entrega (soporta objeto, string JSON o null/undefined)
   const shippingAddr =
     typeof order.shippingAddress === "string"
-      ? JSON.parse(order.shippingAddress)
-      : (order.shippingAddress as Record<string, string>);
+      ? (() => {
+          try {
+            return JSON.parse(order.shippingAddress);
+          } catch {
+            return {};
+          }
+        })()
+      : (order.shippingAddress as Record<string, string>) || {};
 
-  const subtotal = Number(order.subtotal);
-  const shippingCost = Number(order.shippingCost);
-  const total = Number(order.total);
+  const subtotal = Number(order.subtotal || 0);
+  const shippingCost = Number(order.shippingCost || 0);
+  const total = Number(order.total || 0);
 
   const statusMeta = STATUS_CONFIG[order.status] || {
-    label: order.status,
+    label: order.status || "RECIBIDO",
     bg: "#f3f4f6",
     color: "#374151",
     step: 1,
     icon: "📋",
   };
 
-  const formattedAccounts = bankAccounts.map((a) => ({
+  const formattedAccounts = (bankAccounts || []).map((a) => ({
     id: a.id,
     bankName: a.bankName,
     accountNumber: a.accountNumber,
@@ -186,7 +214,7 @@ export default async function OrderConfirmationPage({ params }: OrderConfirmatio
           <h1 style={{ fontSize: "1.75rem", fontWeight: 800, margin: "0 0 0.5rem" }}>
             {order.status === "CANCELADO"
               ? `Pedido #${order.orderNumber} Cancelado`
-              : `¡Gracias por tu compra, ${order.guestName}!`}
+              : `¡Gracias por tu compra, ${order.guestName || "Cliente"}!`}
           </h1>
           <p style={{ color: "var(--color-text-muted)", fontSize: "1rem", margin: "0 0 1.25rem" }}>
             {order.status === "CANCELADO"
@@ -310,17 +338,25 @@ export default async function OrderConfirmationPage({ params }: OrderConfirmatio
         {/* Action Buttons: WhatsApp, Receipt, Tracking details */}
         <OrderConfirmationActions
           orderNumber={order.orderNumber}
-          guestName={order.guestName}
-          guestPhone={order.guestPhone}
+          guestName={order.guestName || "Cliente"}
+          guestPhone={order.guestPhone || ""}
           total={total}
           bankAccounts={formattedAccounts}
-          initialStatus={order.status}
-          initialProofUrl={order.proofOfPaymentUrl}
-          proofRejectionReason={order.proofRejectionReason}
-          carrierName={order.carrierName}
-          trackingNumber={order.trackingNumber}
-          trackingUrl={order.trackingUrl}
-          shippedAt={order.shippedAt ? order.shippedAt.toISOString() : null}
+          initialStatus={order.status || "PENDIENTE_DE_PAGO"}
+          initialProofUrl={order.proofOfPaymentUrl || null}
+          proofRejectionReason={order.proofRejectionReason || null}
+          carrierName={order.carrierName || null}
+          trackingNumber={order.trackingNumber || null}
+          trackingUrl={order.trackingUrl || null}
+          shippedAt={
+            order.shippedAt
+              ? typeof order.shippedAt === "string"
+                ? order.shippedAt
+                : order.shippedAt instanceof Date
+                ? order.shippedAt.toISOString()
+                : String(order.shippedAt)
+              : null
+          }
         />
 
         {/* Order Details & Items Grid */}
@@ -348,30 +384,39 @@ export default async function OrderConfirmationPage({ params }: OrderConfirmatio
             </h2>
 
             <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem", marginBottom: "1.25rem" }}>
-              {order.items.map((item: any) => (
-                <div
-                  key={item.id}
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    paddingBottom: "0.75rem",
-                    borderBottom: "1px solid var(--color-border)",
-                    fontSize: "0.95rem",
-                  }}
-                >
-                  <div>
-                    <div style={{ fontWeight: 600 }}>{item.productTitle}</div>
-                    <div style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>
-                      {item.variantTitle ? `${item.variantTitle} • ` : ""}
-                      SKU: {item.sku} • Cant: {item.quantity} × {formatCurrency(Number(item.unitPrice))}
+              {(order.items || []).map((item: any, idx: number) => {
+                const itemTitle = item.productTitle || item.title || "Producto";
+                const itemVariant = item.variantTitle || item.variant || null;
+                const itemSku = item.sku || null;
+                const itemQuantity = Number(item.quantity || 1);
+                const itemUnit = Number(item.unitPrice ?? item.price ?? 0);
+                const itemTotal = Number(item.totalPrice ?? itemUnit * itemQuantity);
+
+                return (
+                  <div
+                    key={item.id || item.sku || `order-item-${idx}`}
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      paddingBottom: "0.75rem",
+                      borderBottom: "1px solid var(--color-border)",
+                      fontSize: "0.95rem",
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontWeight: 600 }}>{itemTitle}</div>
+                      <div style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)" }}>
+                        {itemVariant ? `${itemVariant} • ` : ""}
+                        {itemSku ? `SKU: ${itemSku} • ` : ""}Cant: {itemQuantity} × {formatCurrency(itemUnit)}
+                      </div>
+                    </div>
+                    <div style={{ fontWeight: 700, whiteSpace: "nowrap" }}>
+                      {formatCurrency(itemTotal)}
                     </div>
                   </div>
-                  <div style={{ fontWeight: 700, whiteSpace: "nowrap" }}>
-                    {formatCurrency(Number(item.totalPrice))}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", fontSize: "0.95rem" }}>
@@ -381,7 +426,7 @@ export default async function OrderConfirmationPage({ params }: OrderConfirmatio
               </div>
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <span style={{ color: "var(--color-text-muted)" }}>
-                  Envío ({order.shippingMethod?.name})
+                  Envío ({order.shippingMethod?.name || order.shippingMethodName || "Método Seleccionado"})
                 </span>
                 <span style={{ fontWeight: 600, color: shippingCost === 0 ? "#10b981" : "inherit" }}>
                   {shippingCost === 0 ? "GRATIS" : formatCurrency(shippingCost)}
@@ -414,17 +459,27 @@ export default async function OrderConfirmationPage({ params }: OrderConfirmatio
                 <strong style={{ color: "var(--color-text-muted)", fontSize: "0.85rem", display: "block" }}>
                   Destinatario:
                 </strong>
-                {order.guestName} ({order.guestPhone} / WhatsApp: {order.guestWhatsapp})
+                {order.guestName || "Cliente"}
+                {order.guestPhone
+                  ? ` (${order.guestPhone}${order.guestWhatsapp ? ` / WhatsApp: ${order.guestWhatsapp}` : ""})`
+                  : ""}
               </div>
 
               <div>
                 <strong style={{ color: "var(--color-text-muted)", fontSize: "0.85rem", display: "block" }}>
                   Dirección:
                 </strong>
-                {shippingAddr.streetAddress}, {shippingAddr.sectorOrNeighborhood}, {shippingAddr.city}, {shippingAddr.provinceOrState}
+                {[
+                  shippingAddr?.streetAddress,
+                  shippingAddr?.sectorOrNeighborhood,
+                  shippingAddr?.city,
+                  shippingAddr?.provinceOrState,
+                ]
+                  .filter(Boolean)
+                  .join(", ") || "Dirección registrada con el pedido"}
               </div>
 
-              {shippingAddr.deliveryNotes && (
+              {shippingAddr?.deliveryNotes && (
                 <div>
                   <strong style={{ color: "var(--color-text-muted)", fontSize: "0.85rem", display: "block" }}>
                     Referencia de Entrega:

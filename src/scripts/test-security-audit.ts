@@ -379,8 +379,99 @@ async function runSecurityAuditVerification() {
     }
     console.log("  ✅ PASS: Máquina de estados rechaza transiciones inválidas en backend.");
 
+    // -------------------------------------------------------------
+    // INVARIANTE 9: Autorización estricta de pedidos y privacidad (Token A -> Pedido B rechazado)
+    // -------------------------------------------------------------
+    console.log("▶ [INVARIANTE 9] Verificando autorización estricta de pedidos y protección de privacidad...");
+    const { GET: getOrderRouteApi } = await import("../app/api/orders/[orderNumber]/route");
+    const { NextRequest } = await import("next/server");
+
+    // Token legítimo para Pedido A
+    const tokenOrderA = await signJwt(
+      {
+        sub: testOrderId,
+        orderNumber: testOrderNumber,
+        role: Role.CUSTOMER,
+        name: "Cliente Audit",
+        email: "audit@delki.do",
+        purpose: "order_confirmation",
+      },
+      "1h"
+    );
+
+    // Pedido B secundario
+    const testOrderBNumber = `TK-AUDIT-B-${Date.now()}`;
+    const orderBRecord = await prisma.order.create({
+      data: {
+        orderNumber: testOrderBNumber,
+        storeId: store.id,
+        guestName: "Cliente B Auditoría",
+        guestPhone: "8095559999",
+        guestWhatsapp: "8095559999",
+        guestEmail: "cliente.b@delki.do",
+        shippingMethodId: testShippingMethodId,
+        shippingCost: 0,
+        subtotal: 500,
+        total: 500,
+        status: OrderStatus.PENDIENTE_DE_PAGO,
+        shippingAddress: { city: "Santiago", streetAddress: "Calle Secreta #99" },
+      },
+    });
+
+    try {
+      // 1. Token A en Pedido A -> Exitoso con datos completos
+      const reqAWithTokenA = new NextRequest(`http://localhost:3000/api/orders/${testOrderNumber}?token=${tokenOrderA}`);
+      const resA = await getOrderRouteApi(reqAWithTokenA, { params: Promise.resolve({ orderNumber: testOrderNumber }) });
+      const jsonA = await resA.json();
+      if (!jsonA.success || !jsonA.data?.shippingAddress) {
+        throw new Error("Invariante 9 Falló: Token A no pudo obtener datos autorizados de Pedido A.");
+      }
+
+      // 2. Token A en Pedido B -> RECHAZADO (403 Forbidden)
+      const reqBWithTokenA = new NextRequest(`http://localhost:3000/api/orders/${testOrderBNumber}?token=${tokenOrderA}`);
+      const resB = await getOrderRouteApi(reqBWithTokenA, { params: Promise.resolve({ orderNumber: testOrderBNumber }) });
+      const jsonB = await resB.json();
+      if (resB.status !== 403 || jsonB.success) {
+        throw new Error("Invariante 9 Falló: Token A debió ser rechazado al consultar Pedido B.");
+      }
+
+      // 3. Consulta anónima Pedido A -> Solo datos públicos (sin dirección ni teléfono)
+      const reqAnon = new NextRequest(`http://localhost:3000/api/orders/${testOrderNumber}`);
+      const resAnon = await getOrderRouteApi(reqAnon, { params: Promise.resolve({ orderNumber: testOrderNumber }) });
+      const jsonAnon = await resAnon.json();
+      if (!jsonAnon.success || jsonAnon.data?.shippingAddress || jsonAnon.data?.guestPhone) {
+        throw new Error("Invariante 9 Falló: Consulta pública expuso datos privados.");
+      }
+
+      // 4. Token expirado -> RECHAZADO (401 Unauthorized)
+      const expiredToken = await signJwt({ sub: testOrderId, orderNumber: testOrderNumber, role: Role.CUSTOMER, name: "Cliente Audit", email: "audit@delki.do", purpose: "order_confirmation" }, "-10s");
+      const resExp = await getOrderRouteApi(new NextRequest(`http://localhost:3000/api/orders/${testOrderNumber}?token=${expiredToken}`), { params: Promise.resolve({ orderNumber: testOrderNumber }) });
+      if (resExp.status !== 401) {
+        throw new Error("Invariante 9 Falló: Token expirado debió ser rechazado con 401.");
+      }
+
+      // 5. Token manipulado -> RECHAZADO (401 Unauthorized)
+      const tampered = tokenOrderA.slice(0, -6) + "xxxxxx";
+      const resTamp = await getOrderRouteApi(new NextRequest(`http://localhost:3000/api/orders/${testOrderNumber}?token=${tampered}`), { params: Promise.resolve({ orderNumber: testOrderNumber }) });
+      if (resTamp.status !== 401) {
+        throw new Error("Invariante 9 Falló: Token manipulado debió ser rechazado con 401.");
+      }
+
+      // 6. Token con purpose incorrecto -> RECHAZADO (403 Forbidden)
+      const wrongPurpose = await signJwt({ sub: testOrderId, orderNumber: testOrderNumber, role: Role.CUSTOMER, name: "Cliente Audit", email: "audit@delki.do", purpose: "invalid_purpose" }, "1h");
+      const resWrong = await getOrderRouteApi(new NextRequest(`http://localhost:3000/api/orders/${testOrderNumber}?token=${wrongPurpose}`), { params: Promise.resolve({ orderNumber: testOrderNumber }) });
+      if (resWrong.status !== 403) {
+        throw new Error("Invariante 9 Falló: Token con propósito incorrecto debió ser rechazado con 403.");
+      }
+
+      console.log("  ✅ PASS: Token A -> Pedido B estrictamente rechazado (403), token expirado/manipulado/wrong-purpose rechazados, y datos públicos protegidos.");
+    } finally {
+      await prisma.order.delete({ where: { id: orderBRecord.id } }).catch(() => {});
+    }
+
+
     console.log("\n🛡️ ========================================================");
-    console.log("🛡️ TODAS LAS 8 VERIFICACIONES DE SEGURIDAD FUERON SUPERADAS");
+    console.log("🛡️ TODAS LAS 9 VERIFICACIONES DE SEGURIDAD FUERON SUPERADAS");
     console.log("🛡️ ========================================================\n");
   } catch (error) {
     console.error("❌ Error en verificación de auditoría de seguridad:", error);

@@ -245,7 +245,7 @@ export function CheckoutForm({ shippingMethods, bankAccounts }: CheckoutFormProp
       }
 
       const orderNumber = json.data?.orderNumber;
-      if (!orderNumber) {
+            if (!orderNumber) {
         throw new Error("No se recibió el número de confirmación del pedido.");
       }
 
@@ -275,7 +275,7 @@ export function CheckoutForm({ shippingMethods, bankAccounts }: CheckoutFormProp
       // Clear cart
       clearCart();
 
-      // Redirect to confirmation page
+      // Redirect to confirmation page (URL limpia protegida por cookie HttpOnly)
       router.push(`/pedido/confirmacion/${orderNumber}`);
     } catch (err: any) {
       console.error("Error creating order:", err);

@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { handleApiError, NotFoundError, InsufficientStockError, ValidationError } from "@/lib/errors";
+import { handleApiError, NotFoundError, InsufficientStockError, ValidationError, AppError } from "@/lib/errors";
 import { createOrderSchema } from "@/core/orders/validation";
 import { generateOrderNumber } from "@/lib/formatters";
 import { OrderStatus, MovementType } from "@prisma/client";
 import { getAuthenticatedUser, requireAdminUser } from "@/core/auth/session";
+import { signJwt, Role } from "@/core/auth/jwt";
 
 export async function GET(req: NextRequest) {
   try {
@@ -105,7 +106,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 3. Ejecutar creación atómica con Bloqueo Pesimista (FOR UPDATE) y Zero-Trust Pricing
-    const createdOrder = await prisma.$transaction(async (tx) => {
+    const { createdOrder, orderToken } = await prisma.$transaction(async (tx) => {
       let calculatedSubtotal = 0;
       const orderItemsToCreate = [];
       const orderNumber = generateOrderNumber();
@@ -128,17 +129,17 @@ export async function POST(req: NextRequest) {
               product_status: string;
             }>
           >`
-            SELECT 
-              v.id, 
-              v.stock, 
-              v.price, 
-              v.compare_at_price, 
-              v.title, 
-              v.sku, 
-              v.is_active, 
-              v.attributes, 
-              v.product_id, 
-              p.name as product_name, 
+            SELECT
+              v.id,
+              v.stock,
+              v.price,
+              v.compare_at_price,
+              v.title,
+              v.sku,
+              v.is_active,
+              v.attributes,
+              v.product_id,
+              p.name as product_name,
               p.status as product_status
             FROM "product_variants" v
             JOIN "products" p ON p.id = v.product_id
@@ -345,17 +346,63 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      return order;
+      // 3.3 Generar token criptografico DENTRO de la transaccion atomica
+      // Garantiza atomicidad estricta: si la firma falla, PostgreSQL hace ROLLBACK
+      // completo de la orden, los items, el historial y los movimientos de inventario.
+      const orderToken = await signJwt(
+        {
+          sub: order.id,
+          orderNumber: order.orderNumber,
+          role: Role.CUSTOMER,
+          name: order.guestName || "Customer",
+          email: order.guestEmail || "guest@delki.do",
+          purpose: "order_confirmation",
+        },
+        "7d"
+      );
+
+      if (!orderToken) {
+        throw new AppError(
+          "No se pudo generar la credencial de confirmacion del pedido.",
+          500,
+          "TOKEN_GENERATION_ERROR"
+        );
+      }
+
+      return { createdOrder: order, orderToken };
     });
 
-    return NextResponse.json(
+
+
+    const cleanNumber = createdOrder.orderNumber.trim().toUpperCase().replace(/^#/, "");
+    const response = NextResponse.json(
       {
         success: true,
         message: "Pedido creado exitosamente",
-        data: createdOrder,
+        data: {
+          id: createdOrder.id,
+          orderNumber: createdOrder.orderNumber,
+          status: createdOrder.status,
+          subtotal: Number(createdOrder.subtotal),
+          shippingCost: Number(createdOrder.shippingCost),
+          total: Number(createdOrder.total),
+          createdAt: createdOrder.createdAt,
+        },
       },
       { status: 201 }
     );
+
+    response.cookies.set({
+      name: `order_token_${cleanNumber}`,
+      value: orderToken,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7, // 7 dias
+    });
+
+    return response;
   } catch (error) {
     return handleApiError(error, "OrdersAPI.POST");
   }
