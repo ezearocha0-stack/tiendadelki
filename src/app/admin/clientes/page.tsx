@@ -102,7 +102,7 @@ export default function AdminClientesPage() {
               flex: 1,
               minWidth: "260px",
               padding: "0.65rem 1rem",
-              backgroundColor: "var(--bg-app)",
+              backgroundColor: "var(--bg-surface)",
               border: "1px solid var(--border-subtle)",
               borderRadius: "var(--radius-md)",
               color: "var(--text-primary)",
@@ -111,15 +111,8 @@ export default function AdminClientesPage() {
           />
           <button
             type="submit"
-            style={{
-              padding: "0.65rem 1.25rem",
-              backgroundColor: "var(--color-brand-accent)",
-              color: "#ffffff",
-              borderRadius: "var(--radius-md)",
-              fontWeight: "700",
-              fontSize: "0.85rem",
-              cursor: "pointer",
-            }}
+            className="btn btn-primary"
+            style={{ padding: "0.65rem 1.4rem" }}
           >
             Buscar
           </button>
@@ -131,15 +124,8 @@ export default function AdminClientesPage() {
                 setPage(1);
                 setTimeout(fetchCustomers, 10);
               }}
-              style={{
-                padding: "0.65rem 1rem",
-                backgroundColor: "var(--bg-surface-elevated)",
-                color: "var(--text-muted)",
-                border: "1px solid var(--border-subtle)",
-                borderRadius: "var(--radius-md)",
-                fontSize: "0.85rem",
-                cursor: "pointer",
-              }}
+              className="btn btn-secondary"
+              style={{ padding: "0.65rem 1rem" }}
             >
               Limpiar
             </button>
@@ -148,46 +134,32 @@ export default function AdminClientesPage() {
       </div>
 
       {/* Tabla de Clientes */}
-      <div className="card" style={{ padding: 0, overflow: "hidden" }}>
+      <div className="table-saas-container">
         {loading ? (
           <div style={{ textAlign: "center", padding: "3rem", color: "var(--text-muted)" }}>
             Cargando clientes...
           </div>
         ) : customers.length === 0 ? (
           <div style={{ textAlign: "center", padding: "3.5rem 1rem", color: "var(--text-muted)" }}>
-            <p style={{ fontSize: "1.1rem", fontWeight: "600", marginBottom: "0.5rem" }}>
+            <p style={{ fontSize: "1.1rem", fontWeight: "600", marginBottom: "0.5rem", color: "var(--text-primary)" }}>
               No se encontraron clientes registrados
             </p>
-            <p style={{ fontSize: "0.85rem" }}>
+            <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>
               {search ? "Intenta modificar los términos de búsqueda." : "Los clientes que creen cuenta aparecerán listados aquí."}
             </p>
           </div>
         ) : (
           <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "0.9rem" }}>
+            <table className="table-saas" style={{ width: "100%", textAlign: "left" }}>
               <thead>
-                <tr style={{ backgroundColor: "var(--bg-surface-elevated)", borderBottom: "1px solid var(--border-subtle)" }}>
-                  <th style={{ padding: "0.85rem 1rem", color: "var(--text-muted)", fontWeight: "700", fontSize: "0.8rem", textTransform: "uppercase" }}>
-                    Cliente
-                  </th>
-                  <th style={{ padding: "0.85rem 1rem", color: "var(--text-muted)", fontWeight: "700", fontSize: "0.8rem", textTransform: "uppercase" }}>
-                    Contacto
-                  </th>
-                  <th style={{ padding: "0.85rem 1rem", color: "var(--text-muted)", fontWeight: "700", fontSize: "0.8rem", textTransform: "uppercase" }}>
-                    WhatsApp
-                  </th>
-                  <th style={{ padding: "0.85rem 1rem", color: "var(--text-muted)", fontWeight: "700", fontSize: "0.8rem", textTransform: "uppercase" }}>
-                    Fecha Registro
-                  </th>
-                  <th style={{ padding: "0.85rem 1rem", color: "var(--text-muted)", fontWeight: "700", fontSize: "0.8rem", textTransform: "uppercase", textAlign: "center" }}>
-                    Pedidos
-                  </th>
-                  <th style={{ padding: "0.85rem 1rem", color: "var(--text-muted)", fontWeight: "700", fontSize: "0.8rem", textTransform: "uppercase", textAlign: "right" }}>
-                    Total Compras
-                  </th>
-                  <th style={{ padding: "0.85rem 1rem", color: "var(--text-muted)", fontWeight: "700", fontSize: "0.8rem", textTransform: "uppercase", textAlign: "right" }}>
-                    Acciones
-                  </th>
+                <tr>
+                  <th>Cliente</th>
+                  <th>Contacto</th>
+                  <th>WhatsApp</th>
+                  <th>Fecha Registro</th>
+                  <th style={{ textAlign: "center" }}>Pedidos</th>
+                  <th style={{ textAlign: "right" }}>Total Compras</th>
+                  <th style={{ textAlign: "right" }}>Acciones</th>
                 </tr>
               </thead>
               <tbody>
@@ -196,19 +168,13 @@ export default function AdminClientesPage() {
                   const waNumber = cleanPhone.length === 10 ? `1${cleanPhone}` : cleanPhone;
 
                   return (
-                    <tr
-                      key={c.id}
-                      style={{
-                        borderBottom: "1px solid var(--border-subtle)",
-                        transition: "background-color 0.15s ease",
-                      }}
-                    >
-                      <td style={{ padding: "1rem" }}>
+                    <tr key={c.id}>
+                      <td>
                         <div style={{ fontWeight: "700", color: "var(--text-primary)" }}>{c.name}</div>
                         <div style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>{c.email}</div>
                       </td>
 
-                      <td style={{ padding: "1rem" }}>
+                      <td>
                         {c.phone ? (
                           <a
                             href={`tel:${c.phone}`}
@@ -221,7 +187,7 @@ export default function AdminClientesPage() {
                         )}
                       </td>
 
-                      <td style={{ padding: "1rem" }}>
+                      <td>
                         {c.whatsapp ? (
                           <a
                             href={`https://wa.me/${waNumber}?text=Hola%20${encodeURIComponent(c.firstName)},%20te%20escribimos%20de%20TiendaDelki`}
@@ -232,8 +198,9 @@ export default function AdminClientesPage() {
                               alignItems: "center",
                               gap: "0.3rem",
                               padding: "0.2rem 0.6rem",
-                              backgroundColor: "rgba(16, 185, 129, 0.12)",
-                              color: "#34d399",
+                              backgroundColor: "#ecfdf5",
+                              color: "#059669",
+                              border: "1px solid #a7f3d0",
                               borderRadius: "var(--radius-full)",
                               fontSize: "0.8rem",
                               fontWeight: "700",
@@ -248,7 +215,7 @@ export default function AdminClientesPage() {
                         )}
                       </td>
 
-                      <td style={{ padding: "1rem", color: "var(--text-secondary)", fontSize: "0.85rem" }}>
+                      <td style={{ color: "var(--text-secondary)", fontSize: "0.85rem" }}>
                         {new Date(c.createdAt).toLocaleDateString("es-DO", {
                           year: "numeric",
                           month: "short",
@@ -256,39 +223,20 @@ export default function AdminClientesPage() {
                         })}
                       </td>
 
-                      <td style={{ padding: "1rem", textAlign: "center" }}>
-                        <span
-                          style={{
-                            display: "inline-block",
-                            padding: "0.2rem 0.6rem",
-                            borderRadius: "var(--radius-full)",
-                            backgroundColor: c.ordersCount > 0 ? "rgba(37, 99, 235, 0.15)" : "var(--bg-app)",
-                            color: c.ordersCount > 0 ? "#60a5fa" : "var(--text-muted)",
-                            fontWeight: "800",
-                            fontSize: "0.85rem",
-                          }}
-                        >
+                      <td style={{ textAlign: "center" }}>
+                        <span className={c.ordersCount > 0 ? "badge badge-info" : "badge badge-neutral"}>
                           {c.ordersCount}
                         </span>
                       </td>
 
-                      <td style={{ padding: "1rem", textAlign: "right", fontWeight: "800", color: "#34d399" }}>
+                      <td style={{ textAlign: "right", fontWeight: "800", color: "var(--text-primary)" }}>
                         {formatCurrency(c.totalSpent)}
                       </td>
 
-                      <td style={{ padding: "1rem", textAlign: "right" }}>
+                      <td style={{ textAlign: "right" }}>
                         <Link
                           href={`/admin/clientes/${c.id}`}
-                          style={{
-                            padding: "0.4rem 0.85rem",
-                            backgroundColor: "var(--bg-surface-elevated)",
-                            color: "var(--color-brand-accent)",
-                            border: "1px solid var(--border-strong)",
-                            borderRadius: "var(--radius-md)",
-                            fontSize: "0.8rem",
-                            fontWeight: "700",
-                            textDecoration: "none",
-                          }}
+                          className="btn btn-sm btn-secondary"
                         >
                           Ver Historial →
                         </Link>

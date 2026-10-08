@@ -14,6 +14,7 @@
     "db:migrate:prod": "prisma migrate deploy",
     "db:push": "prisma db push",
     "db:seed": "tsx --env-file=.env prisma/seed.ts",
+    "db:clean-demo": "tsx --env-file=.env src/scripts/delete-demo-products.ts",
     "db:backup": "powershell -ExecutionPolicy Bypass -File ./scripts/backup-db.ps1",
     "test:health": "tsx --env-file=.env src/scripts/test-health.ts",
     "test:db": "tsx --env-file=.env src/scripts/test-db.ts",

@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Categorías de Productos",
-  description: "Explora todas las categorías de TiendaDelki: ropa, calzado, accesorios, hogar y más con entregas en toda República Dominicana.",
+  description: "Explora todas las categorías de TiendaDelki: ropa, calzado, accesorios, hogar y más en San Fernando de Montecristi con catálogo en tiempo real.",
   alternates: {
     canonical: "/categorias",
   },

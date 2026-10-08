@@ -11,7 +11,7 @@ import {
 } from "@/core/whatsapp/whatsapp-helper";
 
 // Fallback por defecto configurado
-const FALLBACK_PHONE = "8296734710";
+const FALLBACK_PHONE = "";
 
 export function useWhatsApp(initialPhone?: string) {
   const [phone, setPhone] = useState<string>(initialPhone || FALLBACK_PHONE);
@@ -49,21 +49,24 @@ export function useWhatsApp(initialPhone?: string) {
   const formattedPhone = formatWhatsAppPhone(phone);
 
   function openCartWhatsApp(items: CartWhatsAppItem[], subtotal: number) {
+    if (!phone) return;
     const message = buildCartWhatsAppMessage(items, subtotal);
     const url = generateWhatsAppUrl(phone, message);
-    window.open(url, "_blank", "noopener,noreferrer");
+    if (url) window.open(url, "_blank", "noopener,noreferrer");
   }
 
   function openProductWhatsApp(product: ProductInquiryData) {
+    if (!phone) return;
     const message = buildProductInquiryMessage(product);
     const url = generateWhatsAppUrl(phone, message);
-    window.open(url, "_blank", "noopener,noreferrer");
+    if (url) window.open(url, "_blank", "noopener,noreferrer");
   }
 
   function openDirectWhatsApp(customText?: string) {
+    if (!phone) return;
     const defaultMsg = "¡Hola TiendaDelki! Deseo consultar sobre sus productos y catálogo disponible.";
     const url = generateWhatsAppUrl(phone, customText || defaultMsg);
-    window.open(url, "_blank", "noopener,noreferrer");
+    if (url) window.open(url, "_blank", "noopener,noreferrer");
   }
 
   return {

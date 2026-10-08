@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Finalizar Compra (Checkout) - TiendaDelki",
-  description: "Completa tu pedido de forma segura en TiendaDelki. Envíos a todo Santo Domingo y el interior del país.",
+  description: "Completa tu pedido de forma segura en TiendaDelki. Ventas locales y retiro en tienda física en San Fernando de Montecristi.",
 };
 
 export default async function CheckoutPage() {

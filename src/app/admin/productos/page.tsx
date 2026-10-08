@@ -155,8 +155,8 @@ export default function AdminProductsPage() {
               style={{
                 width: "100%",
                 padding: "0.65rem 1rem",
-                backgroundColor: "var(--bg-app)",
-                border: "1px solid var(--border-strong)",
+                backgroundColor: "var(--bg-surface)",
+                border: "1px solid var(--border-subtle)",
                 borderRadius: "var(--radius-md)",
                 color: "var(--text-primary)",
                 fontSize: "0.9rem",
@@ -171,8 +171,8 @@ export default function AdminProductsPage() {
               style={{
                 width: "100%",
                 padding: "0.65rem 1rem",
-                backgroundColor: "var(--bg-app)",
-                border: "1px solid var(--border-strong)",
+                backgroundColor: "var(--bg-surface)",
+                border: "1px solid var(--border-subtle)",
                 borderRadius: "var(--radius-md)",
                 color: "var(--text-primary)",
                 fontSize: "0.9rem",
@@ -194,8 +194,8 @@ export default function AdminProductsPage() {
               style={{
                 width: "100%",
                 padding: "0.65rem 1rem",
-                backgroundColor: "var(--bg-app)",
-                border: "1px solid var(--border-strong)",
+                backgroundColor: "var(--bg-surface)",
+                border: "1px solid var(--border-subtle)",
                 borderRadius: "var(--radius-md)",
                 color: "var(--text-primary)",
                 fontSize: "0.9rem",

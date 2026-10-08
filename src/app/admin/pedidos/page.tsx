@@ -306,8 +306,8 @@ export default function AdminPedidosPage() {
                 width: "100%",
                 padding: "0.65rem 1rem",
                 borderRadius: "var(--radius-md)",
-                border: "1px solid var(--border-strong)",
-                backgroundColor: "var(--bg-app)",
+                border: "1px solid var(--border-subtle)",
+                backgroundColor: "var(--bg-surface)",
                 fontSize: "0.9rem",
               }}
             />
@@ -366,9 +366,9 @@ export default function AdminPedidosPage() {
                   fontWeight: active ? 700 : 500,
                   cursor: "pointer",
                   border: active ? "1px solid var(--color-brand-primary)" : "1px solid var(--border-subtle)",
-                  backgroundColor: active ? "var(--color-brand-primary)" : "var(--bg-app)",
+                  backgroundColor: active ? "var(--color-brand-primary)" : "var(--bg-surface)",
                   color: active ? "#ffffff" : "var(--text-secondary)",
-                  boxShadow: active ? "0 1px 3px rgba(79, 70, 229, 0.3)" : "none",
+                  boxShadow: active ? "var(--shadow-sm)" : "none",
                   transition: "all 0.15s ease",
                 }}
               >
@@ -525,7 +525,7 @@ export default function AdminPedidosPage() {
                           {ord.shippingMethod?.name || "Envío Estándar"}
                         </div>
                         <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
-                          {addr?.city || "Santo Domingo"}, {addr?.provinceOrState || ""}
+                          {addr?.city || "San Fernando de Montecristi"}, {addr?.provinceOrState || ""}
                         </div>
                       </td>
 

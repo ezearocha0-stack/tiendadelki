@@ -261,21 +261,8 @@ export default function AdminShippingMethodsPage() {
         <button
           type="button"
           onClick={openCreateModal}
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "0.5rem",
-            backgroundColor: "var(--color-brand-accent, #2563eb)",
-            color: "#ffffff",
-            border: "none",
-            borderRadius: "var(--radius-md, 8px)",
-            padding: "0.75rem 1.5rem",
-            fontWeight: 700,
-            fontSize: "0.95rem",
-            cursor: "pointer",
-            boxShadow: "0 4px 12px rgba(37, 99, 235, 0.25)",
-            transition: "all 0.15s ease",
-          }}
+          className="btn btn-primary"
+          style={{ padding: "0.65rem 1.35rem", fontSize: "0.9rem" }}
         >
           <span>＋</span>
           <span>Nuevo Método de Envío</span>
@@ -295,8 +282,9 @@ export default function AdminShippingMethodsPage() {
           style={{
             background: "var(--bg-surface)",
             border: "1px solid var(--border-subtle)",
-            borderRadius: "12px",
+            borderRadius: "var(--radius-lg)",
             padding: "1.25rem",
+            boxShadow: "var(--shadow-card)",
           }}
         >
           <span style={{ fontSize: "0.85rem", color: "var(--text-secondary)", fontWeight: 600 }}>
@@ -311,8 +299,9 @@ export default function AdminShippingMethodsPage() {
           style={{
             background: "var(--bg-surface)",
             border: "1px solid var(--border-subtle)",
-            borderRadius: "12px",
+            borderRadius: "var(--radius-lg)",
             padding: "1.25rem",
+            boxShadow: "var(--shadow-card)",
           }}
         >
           <span style={{ fontSize: "0.85rem", color: "#16a34a", fontWeight: 600 }}>
@@ -327,8 +316,9 @@ export default function AdminShippingMethodsPage() {
           style={{
             background: "var(--bg-surface)",
             border: "1px solid var(--border-subtle)",
-            borderRadius: "12px",
+            borderRadius: "var(--radius-lg)",
             padding: "1.25rem",
+            boxShadow: "var(--shadow-card)",
           }}
         >
           <span style={{ fontSize: "0.85rem", color: "var(--text-secondary)", fontWeight: 600 }}>
@@ -346,14 +336,16 @@ export default function AdminShippingMethodsPage() {
           type="button"
           onClick={() => setFilterTab("ALL")}
           style={{
-            padding: "0.5rem 1rem",
-            borderRadius: "8px",
-            border: "1px solid var(--border-subtle)",
-            background: filterTab === "ALL" ? "var(--color-brand-accent, #2563eb)" : "var(--bg-surface)",
-            color: filterTab === "ALL" ? "#ffffff" : "inherit",
+            padding: "0.45rem 1rem",
+            borderRadius: "9999px",
+            border: filterTab === "ALL" ? "1px solid var(--color-brand-primary)" : "1px solid var(--border-subtle)",
+            background: filterTab === "ALL" ? "var(--color-brand-primary)" : "var(--bg-surface)",
+            color: filterTab === "ALL" ? "#ffffff" : "var(--text-secondary)",
             fontWeight: 600,
-            fontSize: "0.875rem",
+            fontSize: "0.85rem",
             cursor: "pointer",
+            boxShadow: filterTab === "ALL" ? "0 1px 3px rgba(79, 70, 229, 0.3)" : "none",
+            transition: "all 0.15s ease",
           }}
         >
           Todos ({methods.length})
@@ -362,14 +354,16 @@ export default function AdminShippingMethodsPage() {
           type="button"
           onClick={() => setFilterTab("ACTIVE")}
           style={{
-            padding: "0.5rem 1rem",
-            borderRadius: "8px",
-            border: "1px solid var(--border-subtle)",
-            background: filterTab === "ACTIVE" ? "var(--color-brand-accent, #2563eb)" : "var(--bg-surface)",
-            color: filterTab === "ACTIVE" ? "#ffffff" : "inherit",
+            padding: "0.45rem 1rem",
+            borderRadius: "9999px",
+            border: filterTab === "ACTIVE" ? "1px solid var(--color-brand-primary)" : "1px solid var(--border-subtle)",
+            background: filterTab === "ACTIVE" ? "var(--color-brand-primary)" : "var(--bg-surface)",
+            color: filterTab === "ACTIVE" ? "#ffffff" : "var(--text-secondary)",
             fontWeight: 600,
-            fontSize: "0.875rem",
+            fontSize: "0.85rem",
             cursor: "pointer",
+            boxShadow: filterTab === "ACTIVE" ? "0 1px 3px rgba(79, 70, 229, 0.3)" : "none",
+            transition: "all 0.15s ease",
           }}
         >
           Activos ({activeCount})
@@ -378,14 +372,16 @@ export default function AdminShippingMethodsPage() {
           type="button"
           onClick={() => setFilterTab("INACTIVE")}
           style={{
-            padding: "0.5rem 1rem",
-            borderRadius: "8px",
-            border: "1px solid var(--border-subtle)",
-            background: filterTab === "INACTIVE" ? "var(--color-brand-accent, #2563eb)" : "var(--bg-surface)",
-            color: filterTab === "INACTIVE" ? "#ffffff" : "inherit",
+            padding: "0.45rem 1rem",
+            borderRadius: "9999px",
+            border: filterTab === "INACTIVE" ? "1px solid var(--color-brand-primary)" : "1px solid var(--border-subtle)",
+            background: filterTab === "INACTIVE" ? "var(--color-brand-primary)" : "var(--bg-surface)",
+            color: filterTab === "INACTIVE" ? "#ffffff" : "var(--text-secondary)",
             fontWeight: 600,
-            fontSize: "0.875rem",
+            fontSize: "0.85rem",
             cursor: "pointer",
+            boxShadow: filterTab === "INACTIVE" ? "0 1px 3px rgba(79, 70, 229, 0.3)" : "none",
+            transition: "all 0.15s ease",
           }}
         >
           Inactivos ({inactiveCount})
@@ -394,13 +390,7 @@ export default function AdminShippingMethodsPage() {
 
       {/* Methods Table */}
       <div
-        style={{
-          background: "var(--bg-surface)",
-          borderRadius: "12px",
-          border: "1px solid var(--border-subtle)",
-          overflow: "hidden",
-          boxShadow: "var(--shadow-sm)",
-        }}
+        className="table-saas-container"
       >
         {loading ? (
           <div style={{ padding: "3rem", textAlign: "center", color: "var(--text-secondary)" }}>
@@ -412,30 +402,16 @@ export default function AdminShippingMethodsPage() {
           </div>
         ) : (
           <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "0.95rem" }}>
+            <table className="table-saas">
               <thead>
-                <tr style={{ background: "rgba(255,255,255,0.02)", borderBottom: "1px solid var(--border-subtle)" }}>
-                  <th style={{ padding: "1rem", fontWeight: 700, color: "var(--text-secondary)", fontSize: "0.8rem", textTransform: "uppercase" }}>
-                    Método / Zona
-                  </th>
-                  <th style={{ padding: "1rem", fontWeight: 700, color: "var(--text-secondary)", fontSize: "0.8rem", textTransform: "uppercase" }}>
-                    Precio
-                  </th>
-                  <th style={{ padding: "1rem", fontWeight: 700, color: "var(--text-secondary)", fontSize: "0.8rem", textTransform: "uppercase" }}>
-                    Envío Gratis
-                  </th>
-                  <th style={{ padding: "1rem", fontWeight: 700, color: "var(--text-secondary)", fontSize: "0.8rem", textTransform: "uppercase" }}>
-                    Tiempo Estimado
-                  </th>
-                  <th style={{ padding: "1rem", fontWeight: 700, color: "var(--text-secondary)", fontSize: "0.8rem", textTransform: "uppercase" }}>
-                    Estado
-                  </th>
-                  <th style={{ padding: "1rem", fontWeight: 700, color: "var(--text-secondary)", fontSize: "0.8rem", textTransform: "uppercase" }}>
-                    Historial
-                  </th>
-                  <th style={{ padding: "1rem", fontWeight: 700, color: "var(--text-secondary)", fontSize: "0.8rem", textTransform: "uppercase", textAlign: "right" }}>
-                    Acciones
-                  </th>
+                <tr>
+                  <th>Método / Zona</th>
+                  <th>Precio</th>
+                  <th>Envío Gratis</th>
+                  <th>Tiempo Estimado</th>
+                  <th>Estado</th>
+                  <th>Historial</th>
+                  <th style={{ textAlign: "right" }}>Acciones</th>
                 </tr>
               </thead>
               <tbody>
@@ -507,16 +483,7 @@ export default function AdminShippingMethodsPage() {
                         <button
                           type="button"
                           onClick={() => openEditModal(m)}
-                          style={{
-                            background: "transparent",
-                            border: "1px solid var(--border-subtle)",
-                            borderRadius: "6px",
-                            padding: "0.35rem 0.75rem",
-                            fontSize: "0.8rem",
-                            fontWeight: 600,
-                            cursor: "pointer",
-                            color: "var(--text-primary)",
-                          }}
+                          className="btn btn-secondary btn-sm"
                         >
                           ✏️ Editar
                         </button>
@@ -527,16 +494,7 @@ export default function AdminShippingMethodsPage() {
                             setDeleteError(null);
                             setDeletingMethod(m);
                           }}
-                          style={{
-                            background: "transparent",
-                            border: "1px solid rgba(239, 68, 68, 0.4)",
-                            borderRadius: "6px",
-                            padding: "0.35rem 0.75rem",
-                            fontSize: "0.8rem",
-                            fontWeight: 600,
-                            cursor: "pointer",
-                            color: "#ef4444",
-                          }}
+                          className="btn btn-danger btn-sm"
                         >
                           🗑️ Eliminar
                         </button>
@@ -553,236 +511,150 @@ export default function AdminShippingMethodsPage() {
       {/* CREATE / EDIT MODAL */}
       {isModalOpen && (
         <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "rgba(0, 0, 0, 0.65)",
-            backdropFilter: "blur(4px)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000,
-            padding: "1rem",
-          }}
+          className="modal-backdrop"
+          onClick={() => setIsModalOpen(false)}
         >
           <div
-            style={{
-              background: "var(--bg-surface)",
-              borderRadius: "16px",
-              border: "1px solid var(--border-subtle)",
-              width: "100%",
-              maxWidth: "520px",
-              padding: "2rem",
-              boxShadow: "0 10px 30px rgba(0,0,0,0.5)",
-            }}
+            className="modal-dialog"
+            onClick={(e) => e.stopPropagation()}
+            style={{ maxWidth: "540px" }}
           >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
-              <h2 style={{ fontSize: "1.3rem", fontWeight: 800, margin: 0, color: "var(--text-primary)" }}>
+            <div className="modal-header">
+              <h2 className="modal-title">
                 {editingMethod ? "Editar Método de Envío" : "Nuevo Método de Envío"}
               </h2>
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                style={{ background: "transparent", border: "none", fontSize: "1.25rem", cursor: "pointer", color: "var(--text-secondary)" }}
+                className="modal-close-btn"
+                aria-label="Cerrar ventana"
               >
                 ✕
               </button>
             </div>
 
             {formError && (
-              <div style={{ background: "#fef2f2", color: "#991b1b", border: "1px solid #f87171", borderRadius: "8px", padding: "0.75rem 1rem", marginBottom: "1rem", fontSize: "0.875rem" }}>
+              <div style={{ background: "#fef2f2", color: "#991b1b", border: "1px solid #fecaca", borderRadius: "var(--radius-md)", padding: "0.75rem 1rem", marginBottom: "1rem", fontSize: "0.875rem" }}>
                 ⚠️ {formError}
               </div>
             )}
 
             <form onSubmit={handleSaveForm} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
               <div>
-                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, marginBottom: "0.35rem", color: "var(--text-primary)" }}>
+                <label htmlFor="envio-name" style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, marginBottom: "0.35rem", color: "var(--text-primary)" }}>
                   Nombre del Método *
                 </label>
                 <input
+                  id="envio-name"
                   type="text"
                   required
-                  placeholder="Ej. Envío local, Recogida en tienda..."
+                  placeholder="Ej. Retiro en tienda física, Venta local..."
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  style={{
-                    width: "100%",
-                    padding: "0.75rem 1rem",
-                    borderRadius: "8px",
-                    border: "1px solid var(--border-subtle)",
-                    background: "var(--bg-base, #111)",
-                    color: "var(--text-primary)",
-                    fontSize: "0.95rem",
-                    boxSizing: "border-box",
-                  }}
                 />
               </div>
 
               <div>
-                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, marginBottom: "0.35rem", color: "var(--text-primary)" }}>
+                <label htmlFor="envio-zone" style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, marginBottom: "0.35rem", color: "var(--text-primary)" }}>
                   Zona de Cobertura / Descripción
                 </label>
                 <textarea
+                  id="envio-zone"
                   rows={2}
-                  placeholder="Ej. Distrito Nacional, Gran Santo Domingo..."
+                  placeholder="Ej. Retiro en tienda física, San Fernando de Montecristi..."
                   value={formData.zoneDescription}
                   onChange={(e) => setFormData({ ...formData, zoneDescription: e.target.value })}
-                  style={{
-                    width: "100%",
-                    padding: "0.75rem 1rem",
-                    borderRadius: "8px",
-                    border: "1px solid var(--border-subtle)",
-                    background: "var(--bg-base, #111)",
-                    color: "var(--text-primary)",
-                    fontSize: "0.9rem",
-                    boxSizing: "border-box",
-                    resize: "vertical",
-                  }}
+                  style={{ resize: "vertical" }}
                 />
               </div>
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
                 <div>
-                  <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, marginBottom: "0.35rem", color: "var(--text-primary)" }}>
+                  <label htmlFor="envio-price" style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, marginBottom: "0.35rem", color: "var(--text-primary)" }}>
                     Tarifa (RD$) *
                   </label>
                   <input
+                    id="envio-price"
                     type="number"
                     min="0"
                     step="0.01"
                     required
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
-                    style={{
-                      width: "100%",
-                      padding: "0.75rem 1rem",
-                      borderRadius: "8px",
-                      border: "1px solid var(--border-subtle)",
-                      background: "var(--bg-base, #111)",
-                      color: "var(--text-primary)",
-                      fontSize: "0.95rem",
-                      boxSizing: "border-box",
-                    }}
                   />
-                  <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>0 = Envío Gratis</span>
+                  <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginTop: "0.25rem", display: "block" }}>
+                    0 = Envío Gratis
+                  </span>
                 </div>
 
                 <div>
-                  <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, marginBottom: "0.35rem", color: "var(--text-primary)" }}>
+                  <label htmlFor="envio-threshold" style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, marginBottom: "0.35rem", color: "var(--text-primary)" }}>
                     Envío Gratis desde (RD$)
                   </label>
                   <input
+                    id="envio-threshold"
                     type="number"
                     min="0"
                     step="0.01"
                     placeholder="Opcional"
                     value={formData.freeShippingThreshold}
                     onChange={(e) => setFormData({ ...formData, freeShippingThreshold: e.target.value })}
-                    style={{
-                      width: "100%",
-                      padding: "0.75rem 1rem",
-                      borderRadius: "8px",
-                      border: "1px solid var(--border-subtle)",
-                      background: "var(--bg-base, #111)",
-                      color: "var(--text-primary)",
-                      fontSize: "0.95rem",
-                      boxSizing: "border-box",
-                    }}
                   />
                 </div>
               </div>
 
               <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "1rem" }}>
                 <div>
-                  <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, marginBottom: "0.35rem", color: "var(--text-primary)" }}>
+                  <label htmlFor="envio-days" style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, marginBottom: "0.35rem", color: "var(--text-primary)" }}>
                     Tiempo Estimado de Entrega
                   </label>
                   <input
+                    id="envio-days"
                     type="text"
                     placeholder="Ej. Mismo día, 24 a 48 horas..."
                     value={formData.estimatedDays}
                     onChange={(e) => setFormData({ ...formData, estimatedDays: e.target.value })}
-                    style={{
-                      width: "100%",
-                      padding: "0.75rem 1rem",
-                      borderRadius: "8px",
-                      border: "1px solid var(--border-subtle)",
-                      background: "var(--bg-base, #111)",
-                      color: "var(--text-primary)",
-                      fontSize: "0.95rem",
-                      boxSizing: "border-box",
-                    }}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, marginBottom: "0.35rem", color: "var(--text-primary)" }}>
+                  <label htmlFor="envio-order" style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, marginBottom: "0.35rem", color: "var(--text-primary)" }}>
                     Orden
                   </label>
                   <input
+                    id="envio-order"
                     type="number"
                     value={formData.sortOrder}
                     onChange={(e) => setFormData({ ...formData, sortOrder: parseInt(e.target.value) || 0 })}
-                    style={{
-                      width: "100%",
-                      padding: "0.75rem 1rem",
-                      borderRadius: "8px",
-                      border: "1px solid var(--border-subtle)",
-                      background: "var(--bg-base, #111)",
-                      color: "var(--text-primary)",
-                      fontSize: "0.95rem",
-                      boxSizing: "border-box",
-                    }}
                   />
                 </div>
               </div>
 
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginTop: "0.5rem" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginTop: "0.35rem", padding: "0.5rem 0" }}>
                 <input
                   type="checkbox"
                   id="isActiveToggle"
                   checked={formData.isActive}
                   onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                  style={{ width: "18px", height: "18px", cursor: "pointer" }}
+                  style={{ width: "18px", height: "18px", cursor: "pointer", accentColor: "var(--color-brand-primary)" }}
                 />
-                <label htmlFor="isActiveToggle" style={{ fontSize: "0.9rem", fontWeight: 600, cursor: "pointer", color: "var(--text-primary)" }}>
+                <label htmlFor="isActiveToggle" style={{ fontSize: "0.9rem", fontWeight: 600, cursor: "pointer", color: "var(--text-primary)", margin: 0 }}>
                   Activar de inmediato para selección en el Checkout
                 </label>
               </div>
 
-              <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem", marginTop: "1.25rem" }}>
+              <div className="modal-footer">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  style={{
-                    background: "transparent",
-                    border: "1px solid var(--border-subtle)",
-                    borderRadius: "8px",
-                    padding: "0.65rem 1.25rem",
-                    fontWeight: 600,
-                    cursor: "pointer",
-                    color: "var(--text-secondary)",
-                  }}
+                  className="btn btn-secondary"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={isSaving}
-                  style={{
-                    backgroundColor: "var(--color-brand-accent, #2563eb)",
-                    color: "#ffffff",
-                    border: "none",
-                    borderRadius: "8px",
-                    padding: "0.65rem 1.5rem",
-                    fontWeight: 700,
-                    cursor: isSaving ? "not-allowed" : "pointer",
-                    boxShadow: "0 2px 8px rgba(37, 99, 235, 0.3)",
-                  }}
+                  className="btn btn-primary"
                 >
                   {isSaving ? "Guardando..." : editingMethod ? "Guardar Cambios" : "Crear Método"}
                 </button>
@@ -795,32 +667,13 @@ export default function AdminShippingMethodsPage() {
       {/* DELETE MODAL (Safe Deletion) */}
       {deletingMethod && (
         <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "rgba(0, 0, 0, 0.65)",
-            backdropFilter: "blur(4px)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000,
-            padding: "1rem",
-          }}
+          className="modal-backdrop"
+          onClick={() => setDeletingMethod(null)}
         >
           <div
-            style={{
-              background: "var(--bg-surface)",
-              borderRadius: "16px",
-              border: "1px solid var(--border-subtle)",
-              width: "100%",
-              maxWidth: "460px",
-              padding: "2rem",
-              boxShadow: "0 10px 30px rgba(0,0,0,0.5)",
-              textAlign: "center",
-            }}
+            className="modal-dialog"
+            onClick={(e) => e.stopPropagation()}
+            style={{ maxWidth: "460px", textAlign: "center" }}
           >
             <div style={{ fontSize: "2.5rem", marginBottom: "0.5rem" }}>
               {deletingMethod.ordersCount > 0 ? "🛡️" : "🗑️"}
@@ -843,24 +696,16 @@ export default function AdminShippingMethodsPage() {
                 </p>
 
                 {deleteError && (
-                  <div style={{ background: "#fef2f2", color: "#991b1b", padding: "0.75rem", borderRadius: "8px", marginBottom: "1rem", fontSize: "0.85rem" }}>
+                  <div style={{ background: "#fef2f2", color: "#991b1b", padding: "0.75rem", borderRadius: "var(--radius-md)", marginBottom: "1rem", fontSize: "0.85rem" }}>
                     {deleteError}
                   </div>
                 )}
 
-                <div style={{ display: "flex", justifyContent: "center", gap: "0.75rem" }}>
+                <div style={{ display: "flex", justifyContent: "center", gap: "0.75rem", marginTop: "1rem" }}>
                   <button
                     type="button"
                     onClick={() => setDeletingMethod(null)}
-                    style={{
-                      background: "transparent",
-                      border: "1px solid var(--border-subtle)",
-                      borderRadius: "8px",
-                      padding: "0.65rem 1.25rem",
-                      fontWeight: 600,
-                      cursor: "pointer",
-                      color: "var(--text-primary)",
-                    }}
+                    className="btn btn-secondary"
                   >
                     Cerrar
                   </button>
@@ -871,14 +716,11 @@ export default function AdminShippingMethodsPage() {
                       setDeletingMethod(null);
                       if (target.isActive) handleToggleActive(target);
                     }}
+                    className="btn"
                     style={{
-                      backgroundColor: "#eab308",
-                      color: "#000",
+                      backgroundColor: "#f59e0b",
+                      color: "#ffffff",
                       border: "none",
-                      borderRadius: "8px",
-                      padding: "0.65rem 1.25rem",
-                      fontWeight: 700,
-                      cursor: "pointer",
                     }}
                   >
                     Desactivar Método
@@ -892,24 +734,16 @@ export default function AdminShippingMethodsPage() {
                 </p>
 
                 {deleteError && (
-                  <div style={{ background: "#fef2f2", color: "#991b1b", padding: "0.75rem", borderRadius: "8px", marginBottom: "1rem", fontSize: "0.85rem" }}>
+                  <div style={{ background: "#fef2f2", color: "#991b1b", padding: "0.75rem", borderRadius: "var(--radius-md)", marginBottom: "1rem", fontSize: "0.85rem" }}>
                     {deleteError}
                   </div>
                 )}
 
-                <div style={{ display: "flex", justifyContent: "center", gap: "0.75rem" }}>
+                <div style={{ display: "flex", justifyContent: "center", gap: "0.75rem", marginTop: "1rem" }}>
                   <button
                     type="button"
                     onClick={() => setDeletingMethod(null)}
-                    style={{
-                      background: "transparent",
-                      border: "1px solid var(--border-subtle)",
-                      borderRadius: "8px",
-                      padding: "0.65rem 1.25rem",
-                      fontWeight: 600,
-                      cursor: "pointer",
-                      color: "var(--text-primary)",
-                    }}
+                    className="btn btn-secondary"
                   >
                     Cancelar
                   </button>
@@ -917,15 +751,7 @@ export default function AdminShippingMethodsPage() {
                     type="button"
                     disabled={isDeleting}
                     onClick={handleConfirmDelete}
-                    style={{
-                      backgroundColor: "#ef4444",
-                      color: "#ffffff",
-                      border: "none",
-                      borderRadius: "8px",
-                      padding: "0.65rem 1.25rem",
-                      fontWeight: 700,
-                      cursor: isDeleting ? "not-allowed" : "pointer",
-                    }}
+                    className="btn btn-danger"
                   >
                     {isDeleting ? "Eliminando..." : "Sí, Eliminar"}
                   </button>

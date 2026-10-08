@@ -1,4 +1,4 @@
-﻿import { z } from "zod";
+import { z } from "zod";
 
 const DEFAULT_DEV_JWT = "tiendadelki-jwt-secret-key-change-in-production-min-32-chars-long";
 
@@ -20,7 +20,7 @@ const envSchema = z
     STORAGE_PROVIDER: z.enum(["local", "s3", "r2"]).default("local"),
     UPLOAD_DIR: z.string().default("./public/uploads"),
     PRIVATE_STORAGE_DIR: z.string().default("./storage/private"),
-    NEXT_PUBLIC_WHATSAPP_PHONE: z.string().default("8095550199"),
+    NEXT_PUBLIC_WHATSAPP_PHONE: z.string().default(""),
     CROSS_ORIGIN_COOKIES: z.enum(["true", "false"]).default("false"),
 
     // Parámetros de Object Storage S3 / Cloudflare R2 (para hosting sin filesystem persistente)
@@ -180,7 +180,7 @@ try {
     STORAGE_PROVIDER: (process.env.STORAGE_PROVIDER as "local" | "s3" | "r2") || "local",
     UPLOAD_DIR: process.env.UPLOAD_DIR || "./public/uploads",
     PRIVATE_STORAGE_DIR: process.env.PRIVATE_STORAGE_DIR || "./storage/private",
-    NEXT_PUBLIC_WHATSAPP_PHONE: process.env.NEXT_PUBLIC_WHATSAPP_PHONE || "8296734710",
+    NEXT_PUBLIC_WHATSAPP_PHONE: process.env.NEXT_PUBLIC_WHATSAPP_PHONE || "",
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
     CROSS_ORIGIN_COOKIES: (process.env.CROSS_ORIGIN_COOKIES as "true" | "false") || "false",
     S3_REGION: "auto",

@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { getProducts, getCategories, getCategoryBySlug } from "@/lib/server-api";
+import { getProducts, getCategories, getCategoryBySlug, getPublicStoreSettings } from "@/lib/server-api";
+import { formatWhatsAppPhone } from "@/core/whatsapp/whatsapp-helper";
 import { StoreHeader } from "@/components/store/store-header";
 import { StoreFooter } from "@/components/store/store-footer";
 import { WhatsAppFloatingButton } from "@/components/store/whatsapp-floating-button";
@@ -15,7 +16,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Catálogo de Productos | TiendaDelki",
-    description: "Colección completa de ropa y accesorios con envíos a toda República Dominicana.",
+    description: "Colección completa de ropa y accesorios en San Fernando de Montecristi con catálogo en tiempo real.",
     url: "https://tiendadelki.com/tienda",
   },
 };
@@ -45,7 +46,7 @@ export default async function TiendaPage({ searchParams }: TiendaPageProps) {
   const onlyInStock = params.inStock === "true";
 
   // Consultar categorías y productos mediante capa desacoplada (Frontend Vercel -> Backend Render)
-  const [categories, productsResult, selectedCategoryData] = await Promise.all([
+  const [categories, productsResult, selectedCategoryData, settings] = await Promise.all([
     getCategories(),
     getProducts({
       search,
@@ -60,6 +61,7 @@ export default async function TiendaPage({ searchParams }: TiendaPageProps) {
       limit: 60,
     }),
     categorySlug ? getCategoryBySlug(categorySlug) : Promise.resolve(null),
+    getPublicStoreSettings(),
   ]);
 
   const products = productsResult.data;
@@ -282,22 +284,24 @@ export default async function TiendaPage({ searchParams }: TiendaPageProps) {
                 >
                   Ver Todo el Catálogo
                 </Link>
-                <a
-                  href="https://wa.me/18095550100?text=Hola,%20busco%20un%20producto%20específico%20en%20TiendaDelki"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    padding: "0.6rem 1.25rem",
-                    borderRadius: "var(--radius-md)",
-                    backgroundColor: "var(--color-brand-whatsapp)",
-                    color: "#ffffff",
-                    fontSize: "0.875rem",
-                    fontWeight: "600",
-                    textDecoration: "none",
-                  }}
-                >
-                  Preguntar por WhatsApp
-                </a>
+                {settings?.whatsapp && (
+                  <a
+                    href={`https://wa.me/${formatWhatsAppPhone(settings.whatsapp)}?text=${encodeURIComponent("Hola, busco un producto específico en TiendaDelki")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      padding: "0.6rem 1.25rem",
+                      borderRadius: "var(--radius-md)",
+                      backgroundColor: "var(--color-brand-whatsapp)",
+                      color: "#ffffff",
+                      fontSize: "0.875rem",
+                      fontWeight: "600",
+                      textDecoration: "none",
+                    }}
+                  >
+                    Preguntar por WhatsApp
+                  </a>
+                )}
               </div>
             </div>
           ) : (

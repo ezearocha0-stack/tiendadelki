@@ -1052,9 +1052,10 @@ export default function AdminInventoryPage() {
               style={{
                 padding: "0.55rem 1rem",
                 borderRadius: "var(--radius-md)",
-                border: "1px solid var(--border-subtle)",
-                backgroundColor: "rgba(0,0,0,0.2)",
+                border: "1px solid var(--border-strong)",
+                backgroundColor: "var(--bg-surface)",
                 color: "var(--text-primary)",
+                maxWidth: "320px",
               }}
             >
               <option value="">Todos los Movimientos</option>
@@ -1087,17 +1088,12 @@ export default function AdminInventoryPage() {
             </div>
           ) : (
             <div
-              style={{
-                backgroundColor: "var(--bg-surface)",
-                borderRadius: "var(--radius-md)",
-                border: "1px solid var(--border-subtle)",
-                overflow: "hidden",
-              }}
+              className="table-saas-container"
             >
-              <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "0.85rem" }}>
+              <table className="table-saas">
                 <thead>
-                  <tr style={{ backgroundColor: "rgba(255,255,255,0.03)", borderBottom: "1px solid var(--border-subtle)" }}>
-                    <th style={{ padding: "0.85rem 1rem", color: "var(--text-muted)", fontWeight: "600" }}>FECHA / HORA</th>
+                  <tr>
+                    <th>FECHA / HORA</th>
                     <th style={{ padding: "0.85rem 1rem", color: "var(--text-muted)", fontWeight: "600" }}>TIPO</th>
                     <th style={{ padding: "0.85rem 1rem", color: "var(--text-muted)", fontWeight: "600" }}>PRODUCTO / VARIANTE</th>
                     <th style={{ padding: "0.85rem 1rem", color: "var(--text-muted)", fontWeight: "600", textAlign: "center" }}>CANTIDAD</th>
@@ -1205,41 +1201,25 @@ export default function AdminInventoryPage() {
       {/* MODAL: VENTA FÍSICA RÁPIDA */}
       {activeModal === "QUICK_SALE" && (
         <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            backgroundColor: "rgba(0,0,0,0.75)",
-            backdropFilter: "blur(4px)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 100,
-            padding: "1rem",
-          }}
+          className="modal-backdrop"
           onClick={() => setActiveModal(null)}
         >
           <div
-            style={{
-              backgroundColor: "#181d27",
-              border: "2px solid #10b981",
-              borderRadius: "var(--radius-lg)",
-              maxWidth: "540px",
-              width: "100%",
-              padding: "1.75rem",
-              boxShadow: "0 20px 50px rgba(0,0,0,0.8)",
-            }}
+            className="modal-dialog"
             onClick={(e) => e.stopPropagation()}
+            style={{ maxWidth: "560px" }}
           >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
+            <div className="modal-header">
               <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                <span style={{ fontSize: "1.75rem" }}>⚡</span>
-                <h2 style={{ fontSize: "1.35rem", fontWeight: "800", color: "#10b981", margin: 0 }}>
-                  Vendido Físicamente
+                <span style={{ fontSize: "1.5rem" }}>⚡</span>
+                <h2 className="modal-title" style={{ color: "var(--text-primary)" }}>
+                  Registrar Venta Física en Mostrador
                 </h2>
               </div>
               <button
                 onClick={() => setActiveModal(null)}
-                style={{ background: "none", border: "none", color: "var(--text-muted)", fontSize: "1.5rem", cursor: "pointer" }}
+                className="modal-close-btn"
+                aria-label="Cerrar ventana"
               >
                 ✕
               </button>
@@ -1247,43 +1227,37 @@ export default function AdminInventoryPage() {
 
             <div
               style={{
-                backgroundColor: "rgba(16, 185, 129, 0.08)",
-                border: "1px solid rgba(16, 185, 129, 0.2)",
-                padding: "0.75rem",
+                backgroundColor: "#ecfdf5",
+                border: "1px solid #a7f3d0",
+                padding: "0.75rem 1rem",
                 borderRadius: "var(--radius-md)",
-                fontSize: "0.8rem",
-                color: "#34d399",
+                fontSize: "0.825rem",
+                color: "#065f46",
                 marginBottom: "1.25rem",
+                lineHeight: 1.45,
               }}
             >
-              <strong>Regla Fundamental:</strong> Descuenta stock de inmediato. No crea pedidos web, no emite facturas ni solicita datos al cliente presencial.
+              <strong>Venta Presencial Directa:</strong> Descuenta el inventario físico en tiempo real de forma inmediata. No altera pedidos web de clientes.
             </div>
 
             {/* Selector de Producto si no estaba preseleccionado */}
             {!selectedProduct ? (
               <div style={{ marginBottom: "1.25rem" }}>
-                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: "700", marginBottom: "0.4rem", color: "var(--text-secondary)" }}>
-                  1. Buscar Producto:
+                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: "700", marginBottom: "0.4rem", color: "var(--text-primary)" }}>
+                  1. Buscar Producto por Nombre o SKU:
                 </label>
                 <input
                   ref={searchInputRef}
                   type="text"
-                  placeholder="Escriba nombre o SKU del producto..."
+                  placeholder="Escriba el nombre o código SKU..."
                   value={quickSaleSearch}
                   onChange={(e) => setQuickSaleSearch(e.target.value)}
                   style={{
-                    width: "100%",
-                    padding: "0.75rem 1rem",
-                    borderRadius: "var(--radius-md)",
-                    border: "1px solid var(--border-subtle)",
-                    backgroundColor: "rgba(0,0,0,0.3)",
-                    color: "var(--text-primary)",
-                    fontSize: "0.95rem",
                     marginBottom: "0.5rem",
                   }}
                 />
 
-                <div style={{ maxHeight: "180px", overflowY: "auto", borderRadius: "var(--radius-md)", border: "1px solid var(--border-subtle)" }}>
+                <div style={{ maxHeight: "200px", overflowY: "auto", borderRadius: "var(--radius-md)", border: "1px solid var(--border-subtle)", backgroundColor: "#ffffff" }}>
                   {quickSaleFilteredProducts.slice(0, 10).map((p) => (
                     <div
                       key={p.id}
@@ -1294,21 +1268,22 @@ export default function AdminInventoryPage() {
                         }
                       }}
                       style={{
-                        padding: "0.6rem 0.85rem",
-                        borderBottom: "1px solid rgba(255,255,255,0.05)",
+                        padding: "0.65rem 0.85rem",
+                        borderBottom: "1px solid var(--border-subtle)",
                         cursor: "pointer",
                         display: "flex",
                         justifyContent: "space-between",
                         alignItems: "center",
+                        transition: "background-color 0.15s ease",
                       }}
-                      onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.05)")}
+                      onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "var(--bg-subtle)")}
                       onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
                     >
                       <div>
                         <span style={{ fontWeight: "700", color: "var(--text-primary)" }}>{p.name}</span>
                         {p.sku && <span style={{ color: "var(--text-muted)", fontSize: "0.75rem", marginLeft: "0.5rem" }}>({p.sku})</span>}
                       </div>
-                      <span style={{ fontWeight: "700", color: p.totalStock > 0 ? "#10b981" : "#ef4444" }}>
+                      <span style={{ fontWeight: "700", fontSize: "0.825rem", color: p.totalStock > 0 ? "#16a34a" : "#dc2626" }}>
                         Stock: {p.totalStock}
                       </span>
                     </div>
@@ -1318,10 +1293,10 @@ export default function AdminInventoryPage() {
             ) : (
               <div
                 style={{
-                  backgroundColor: "rgba(255,255,255,0.03)",
+                  backgroundColor: "var(--bg-subtle)",
                   border: "1px solid var(--border-subtle)",
                   borderRadius: "var(--radius-md)",
-                  padding: "0.85rem",
+                  padding: "0.85rem 1rem",
                   marginBottom: "1.25rem",
                   display: "flex",
                   justifyContent: "space-between",
@@ -1329,22 +1304,15 @@ export default function AdminInventoryPage() {
                 }}
               >
                 <div>
-                  <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>PRODUCTO SELECCIONADO:</div>
-                  <div style={{ fontWeight: "800", color: "var(--text-primary)", fontSize: "1.05rem" }}>
+                  <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", fontWeight: "700", textTransform: "uppercase" }}>PRODUCTO SELECCIONADO:</div>
+                  <div style={{ fontWeight: "800", color: "var(--text-primary)", fontSize: "1.05rem", marginTop: "0.15rem" }}>
                     {selectedProduct.name}
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => setSelectedProduct(null)}
-                  style={{
-                    backgroundColor: "transparent",
-                    color: "#60a5fa",
-                    border: "none",
-                    fontSize: "0.8rem",
-                    cursor: "pointer",
-                    textDecoration: "underline",
-                  }}
+                  className="btn btn-secondary btn-sm"
                 >
                   Cambiar
                 </button>
@@ -1354,7 +1322,7 @@ export default function AdminInventoryPage() {
             {/* Selector de Variante si tiene variantes */}
             {selectedProduct && selectedProduct.hasVariants && (
               <div style={{ marginBottom: "1.25rem" }}>
-                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: "700", marginBottom: "0.4rem", color: "var(--text-secondary)" }}>
+                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: "700", marginBottom: "0.4rem", color: "var(--text-primary)" }}>
                   2. Seleccionar Variante:
                 </label>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: "0.5rem" }}>
@@ -1367,16 +1335,17 @@ export default function AdminInventoryPage() {
                         style={{
                           padding: "0.6rem 0.8rem",
                           borderRadius: "var(--radius-md)",
-                          border: isSelected ? "2px solid #10b981" : "1px solid var(--border-subtle)",
-                          backgroundColor: isSelected ? "rgba(16, 185, 129, 0.15)" : "rgba(0,0,0,0.2)",
+                          border: isSelected ? "2px solid #10b981" : "1px solid var(--border-strong)",
+                          backgroundColor: isSelected ? "#ecfdf5" : "#ffffff",
                           cursor: "pointer",
                           textAlign: "center",
+                          transition: "all 0.15s ease",
                         }}
                       >
-                        <div style={{ fontWeight: "700", fontSize: "0.9rem", color: "var(--text-primary)" }}>
+                        <div style={{ fontWeight: "700", fontSize: "0.9rem", color: isSelected ? "#065f46" : "var(--text-primary)" }}>
                           {v.title}
                         </div>
-                        <div style={{ fontSize: "0.75rem", color: v.stock > 0 ? "#34d399" : "#f87171", fontWeight: "600" }}>
+                        <div style={{ fontSize: "0.75rem", color: v.stock > 0 ? "#15803d" : "#dc2626", fontWeight: "600", marginTop: "0.15rem" }}>
                           Stock: {v.stock}
                         </div>
                       </div>
@@ -1389,23 +1358,20 @@ export default function AdminInventoryPage() {
             {/* Selector de Cantidad */}
             {selectedProduct && (
               <div style={{ marginBottom: "1.5rem" }}>
-                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: "700", marginBottom: "0.4rem", color: "var(--text-secondary)" }}>
-                  3. Cantidad a Vender:
+                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: "700", marginBottom: "0.4rem", color: "var(--text-primary)" }}>
+                  3. Cantidad a Descontar:
                 </label>
-                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
                   <button
                     type="button"
                     onClick={() => setFormQuantity(Math.max(1, formQuantity - 1))}
+                    className="btn btn-secondary"
                     style={{
                       width: "42px",
                       height: "42px",
-                      borderRadius: "var(--radius-md)",
-                      border: "1px solid var(--border-subtle)",
-                      backgroundColor: "rgba(255,255,255,0.05)",
-                      color: "var(--text-primary)",
+                      padding: 0,
                       fontSize: "1.2rem",
                       fontWeight: "700",
-                      cursor: "pointer",
                     }}
                   >
                     -
@@ -1421,10 +1387,8 @@ export default function AdminInventoryPage() {
                       height: "42px",
                       textAlign: "center",
                       borderRadius: "var(--radius-md)",
-                      border: "1px solid var(--border-subtle)",
-                      backgroundColor: "rgba(0,0,0,0.2)",
-                      color: "var(--text-primary)",
-                      fontSize: "1.25rem",
+                      border: "1px solid var(--border-strong)",
+                      fontSize: "1.2rem",
                       fontWeight: "800",
                     }}
                   />
@@ -1432,41 +1396,37 @@ export default function AdminInventoryPage() {
                   <button
                     type="button"
                     onClick={() => setFormQuantity(formQuantity + 1)}
+                    className="btn btn-secondary"
                     style={{
                       width: "42px",
                       height: "42px",
-                      borderRadius: "var(--radius-md)",
-                      border: "1px solid var(--border-subtle)",
-                      backgroundColor: "rgba(255,255,255,0.05)",
-                      color: "var(--text-primary)",
+                      padding: 0,
                       fontSize: "1.2rem",
                       fontWeight: "700",
-                      cursor: "pointer",
                     }}
                   >
                     +
                   </button>
 
                   {/* Atajos de cantidad rápida */}
-                  {[1, 2, 3, 5].map((q) => (
-                    <button
-                      key={q}
-                      type="button"
-                      onClick={() => setFormQuantity(q)}
-                      style={{
-                        padding: "0.45rem 0.75rem",
-                        borderRadius: "var(--radius-md)",
-                        border: formQuantity === q ? "1px solid #10b981" : "1px solid var(--border-subtle)",
-                        backgroundColor: formQuantity === q ? "rgba(16, 185, 129, 0.15)" : "transparent",
-                        color: formQuantity === q ? "#10b981" : "var(--text-muted)",
-                        fontWeight: "700",
-                        fontSize: "0.85rem",
-                        cursor: "pointer",
-                      }}
-                    >
-                      {q}
-                    </button>
-                  ))}
+                  <div style={{ display: "flex", gap: "0.4rem", marginLeft: "0.5rem" }}>
+                    {[1, 2, 3, 5].map((q) => (
+                      <button
+                        key={q}
+                        type="button"
+                        onClick={() => setFormQuantity(q)}
+                        className="btn btn-sm"
+                        style={{
+                          border: formQuantity === q ? "1px solid #10b981" : "1px solid var(--border-strong)",
+                          backgroundColor: formQuantity === q ? "#ecfdf5" : "#ffffff",
+                          color: formQuantity === q ? "#065f46" : "var(--text-secondary)",
+                          fontWeight: "700",
+                        }}
+                      >
+                        {q} ud.
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             )}
@@ -1480,9 +1440,9 @@ export default function AdminInventoryPage() {
                   marginBottom: "1.25rem",
                   fontSize: "0.9rem",
                   fontWeight: "600",
-                  backgroundColor: modalMessage.type === "success" ? "rgba(16, 185, 129, 0.15)" : "rgba(239, 68, 68, 0.15)",
-                  color: modalMessage.type === "success" ? "#34d399" : "#f87171",
-                  border: `1px solid ${modalMessage.type === "success" ? "rgba(16, 185, 129, 0.3)" : "rgba(239, 68, 68, 0.3)"}`,
+                  backgroundColor: modalMessage.type === "success" ? "#ecfdf5" : "#fef2f2",
+                  color: modalMessage.type === "success" ? "#065f46" : "#991b1b",
+                  border: `1px solid ${modalMessage.type === "success" ? "#a7f3d0" : "#fecaca"}`,
                 }}
               >
                 {modalMessage.text}
@@ -1490,24 +1450,27 @@ export default function AdminInventoryPage() {
             )}
 
             {/* Botón de Confirmación */}
-            <button
-              onClick={() => handleExecuteQuickSale()}
-              disabled={submitting || !selectedProduct}
-              style={{
-                width: "100%",
-                padding: "0.95rem",
-                borderRadius: "var(--radius-md)",
-                backgroundColor: "#10b981",
-                color: "#ffffff",
-                border: "none",
-                fontWeight: "800",
-                fontSize: "1.1rem",
-                cursor: submitting || !selectedProduct ? "not-allowed" : "pointer",
-                boxShadow: "0 4px 15px rgba(16, 185, 129, 0.4)",
-              }}
-            >
-              {submitting ? "Descontando stock..." : `⚡ Confirmar Venta Física (${formQuantity} ud.)`}
-            </button>
+            <div className="modal-footer">
+              <button
+                type="button"
+                onClick={() => setActiveModal(null)}
+                className="btn btn-secondary"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={() => handleExecuteQuickSale()}
+                disabled={submitting || !selectedProduct}
+                className="btn btn-whatsapp"
+                style={{
+                  padding: "0.7rem 1.5rem",
+                  fontSize: "0.95rem",
+                  opacity: submitting || !selectedProduct ? 0.6 : 1,
+                }}
+              >
+                {submitting ? "Descontando stock..." : `⚡ Confirmar Venta (${formQuantity} ud.)`}
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -1515,66 +1478,44 @@ export default function AdminInventoryPage() {
       {/* MODAL: ENTRADA / AJUSTE / DEVOLUCIÓN */}
       {(activeModal === "ENTRY" || activeModal === "ADJUSTMENT" || activeModal === "RETURN") && selectedProduct && (
         <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            backgroundColor: "rgba(0,0,0,0.75)",
-            backdropFilter: "blur(4px)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 100,
-            padding: "1rem",
-          }}
+          className="modal-backdrop"
           onClick={() => setActiveModal(null)}
         >
           <div
-            style={{
-              backgroundColor: "var(--bg-surface)",
-              border: "1px solid var(--border-subtle)",
-              borderRadius: "var(--radius-lg)",
-              maxWidth: "500px",
-              width: "100%",
-              padding: "1.75rem",
-            }}
+            className="modal-dialog"
             onClick={(e) => e.stopPropagation()}
+            style={{ maxWidth: "520px" }}
           >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
-              <h2 style={{ fontSize: "1.25rem", fontWeight: "800", color: "var(--text-primary)", margin: 0 }}>
+            <div className="modal-header">
+              <h2 className="modal-title">
                 {activeModal === "ENTRY" && "📥 Entrada de Mercancía"}
                 {activeModal === "ADJUSTMENT" && "⚖️ Ajuste Manual de Inventario"}
                 {activeModal === "RETURN" && "🔄 Devolución de Producto"}
               </h2>
               <button
                 onClick={() => setActiveModal(null)}
-                style={{ background: "none", border: "none", color: "var(--text-muted)", fontSize: "1.25rem", cursor: "pointer" }}
+                className="modal-close-btn"
+                aria-label="Cerrar ventana"
               >
                 ✕
               </button>
             </div>
 
             <form onSubmit={handleExecuteMovement}>
-              <div style={{ marginBottom: "1rem" }}>
-                <div style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>PRODUCTO:</div>
-                <div style={{ fontWeight: "700", color: "var(--text-primary)" }}>{selectedProduct.name}</div>
+              <div style={{ marginBottom: "1rem", backgroundColor: "var(--bg-subtle)", padding: "0.75rem", borderRadius: "var(--radius-md)", border: "1px solid var(--border-subtle)" }}>
+                <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontWeight: "700" }}>PRODUCTO:</div>
+                <div style={{ fontWeight: "700", color: "var(--text-primary)", fontSize: "0.95rem", marginTop: "0.15rem" }}>{selectedProduct.name}</div>
               </div>
 
               {selectedProduct.hasVariants && (
                 <div style={{ marginBottom: "1rem" }}>
-                  <label style={{ display: "block", fontSize: "0.85rem", fontWeight: "600", marginBottom: "0.3rem", color: "var(--text-secondary)" }}>
+                  <label htmlFor="variant-select" style={{ display: "block", fontSize: "0.85rem", fontWeight: "600", marginBottom: "0.3rem", color: "var(--text-primary)" }}>
                     Variante:
                   </label>
                   <select
+                    id="variant-select"
                     value={selectedVariantId}
                     onChange={(e) => setSelectedVariantId(e.target.value)}
-                    style={{
-                      width: "100%",
-                      padding: "0.6rem",
-                      borderRadius: "var(--radius-md)",
-                      border: "1px solid var(--border-subtle)",
-                      backgroundColor: "rgba(0,0,0,0.2)",
-                      color: "var(--text-primary)",
-                    }}
                   >
                     {selectedProduct.variants.map((v) => (
                       <option key={v.id} value={v.id}>
@@ -1589,7 +1530,7 @@ export default function AdminInventoryPage() {
               {activeModal === "ADJUSTMENT" ? (
                 <>
                   <div style={{ marginBottom: "1rem" }}>
-                    <label style={{ display: "block", fontSize: "0.85rem", fontWeight: "600", marginBottom: "0.3rem", color: "var(--text-secondary)" }}>
+                    <label style={{ display: "block", fontSize: "0.85rem", fontWeight: "600", marginBottom: "0.3rem", color: "var(--text-primary)" }}>
                       Tipo de Ajuste:
                     </label>
                     <div style={{ display: "flex", gap: "1rem" }}>
@@ -1615,20 +1556,15 @@ export default function AdminInventoryPage() {
                   </div>
 
                   <div style={{ marginBottom: "1rem" }}>
-                    <label style={{ display: "block", fontSize: "0.85rem", fontWeight: "600", marginBottom: "0.3rem", color: "var(--text-secondary)" }}>
+                    <label htmlFor="inv-adj-value" style={{ display: "block", fontSize: "0.85rem", fontWeight: "600", marginBottom: "0.3rem", color: "var(--text-primary)" }}>
                       {formAdjType === "DELTA" ? "Variación (ej. -2 por merma, +5 por recuento):" : "Nuevo Stock Físico Exacto:"}
                     </label>
                     <input
+                      id="inv-adj-value"
                       type="number"
                       value={formAdjValue}
                       onChange={(e) => setFormAdjValue(parseInt(e.target.value) || 0)}
                       style={{
-                        width: "100%",
-                        padding: "0.6rem",
-                        borderRadius: "var(--radius-md)",
-                        border: "1px solid var(--border-subtle)",
-                        backgroundColor: "rgba(0,0,0,0.2)",
-                        color: "var(--text-primary)",
                         fontSize: "1.1rem",
                         fontWeight: "700",
                       }}
@@ -1638,14 +1574,14 @@ export default function AdminInventoryPage() {
                   {/* Confirmación destructiva */}
                   <div
                     style={{
-                      padding: "0.75rem",
+                      padding: "0.75rem 1rem",
                       borderRadius: "var(--radius-md)",
-                      backgroundColor: "rgba(245, 158, 11, 0.1)",
-                      border: "1px solid rgba(245, 158, 11, 0.25)",
+                      backgroundColor: "#fffbeb",
+                      border: "1px solid #fde68a",
                       marginBottom: "1rem",
                     }}
                   >
-                    <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.85rem", color: "#fbbf24", cursor: "pointer" }}>
+                    <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.85rem", color: "#92400e", cursor: "pointer", margin: 0 }}>
                       <input
                         type="checkbox"
                         checked={confirmDestructive}
@@ -1657,21 +1593,16 @@ export default function AdminInventoryPage() {
                 </>
               ) : (
                 <div style={{ marginBottom: "1rem" }}>
-                  <label style={{ display: "block", fontSize: "0.85rem", fontWeight: "600", marginBottom: "0.3rem", color: "var(--text-secondary)" }}>
+                  <label htmlFor="inv-qty-input" style={{ display: "block", fontSize: "0.85rem", fontWeight: "600", marginBottom: "0.3rem", color: "var(--text-primary)" }}>
                     Cantidad:
                   </label>
                   <input
+                    id="inv-qty-input"
                     type="number"
                     min="1"
                     value={formQuantity}
                     onChange={(e) => setFormQuantity(Math.max(1, parseInt(e.target.value) || 1))}
                     style={{
-                      width: "100%",
-                      padding: "0.6rem",
-                      borderRadius: "var(--radius-md)",
-                      border: "1px solid var(--border-subtle)",
-                      backgroundColor: "rgba(0,0,0,0.2)",
-                      color: "var(--text-primary)",
                       fontSize: "1.1rem",
                       fontWeight: "700",
                     }}
@@ -1679,55 +1610,41 @@ export default function AdminInventoryPage() {
                 </div>
               )}
 
-              <div style={{ marginBottom: "1.5rem" }}>
-                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: "600", marginBottom: "0.3rem", color: "var(--text-secondary)" }}>
+              <div style={{ marginBottom: "1.25rem" }}>
+                <label htmlFor="inv-notes-input" style={{ display: "block", fontSize: "0.85rem", fontWeight: "600", marginBottom: "0.3rem", color: "var(--text-primary)" }}>
                   Motivo / Notas {activeModal === "ADJUSTMENT" && "(Requerido)"}:
                 </label>
                 <textarea
+                  id="inv-notes-input"
                   rows={2}
                   required={activeModal === "ADJUSTMENT"}
                   value={formNotes}
                   onChange={(e) => setFormNotes(e.target.value)}
                   placeholder="Ej. Recuento físico en almacén, recepción factura 0023, rotura..."
-                  style={{
-                    width: "100%",
-                    padding: "0.6rem",
-                    borderRadius: "var(--radius-md)",
-                    border: "1px solid var(--border-subtle)",
-                    backgroundColor: "rgba(0,0,0,0.2)",
-                    color: "var(--text-primary)",
-                    fontSize: "0.9rem",
-                  }}
                 />
               </div>
 
               {modalMessage && (
                 <div
                   style={{
-                    padding: "0.75rem",
+                    padding: "0.75rem 1rem",
                     borderRadius: "var(--radius-md)",
                     marginBottom: "1rem",
                     fontSize: "0.85rem",
-                    backgroundColor: modalMessage.type === "success" ? "rgba(16, 185, 129, 0.15)" : "rgba(239, 68, 68, 0.15)",
-                    color: modalMessage.type === "success" ? "#34d399" : "#f87171",
+                    backgroundColor: modalMessage.type === "success" ? "#ecfdf5" : "#fef2f2",
+                    color: modalMessage.type === "success" ? "#065f46" : "#991b1b",
+                    border: `1px solid ${modalMessage.type === "success" ? "#a7f3d0" : "#fecaca"}`,
                   }}
                 >
                   {modalMessage.text}
                 </div>
               )}
 
-              <div style={{ display: "flex", gap: "0.75rem", justifyContent: "flex-end" }}>
+              <div className="modal-footer">
                 <button
                   type="button"
                   onClick={() => setActiveModal(null)}
-                  style={{
-                    padding: "0.6rem 1rem",
-                    backgroundColor: "transparent",
-                    color: "var(--text-muted)",
-                    border: "1px solid var(--border-subtle)",
-                    borderRadius: "var(--radius-md)",
-                    cursor: "pointer",
-                  }}
+                  className="btn btn-secondary"
                 >
                   Cancelar
                 </button>
@@ -1735,15 +1652,7 @@ export default function AdminInventoryPage() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  style={{
-                    padding: "0.6rem 1.25rem",
-                    backgroundColor: "var(--color-brand-accent)",
-                    color: "#ffffff",
-                    border: "none",
-                    borderRadius: "var(--radius-md)",
-                    fontWeight: "700",
-                    cursor: submitting ? "not-allowed" : "pointer",
-                  }}
+                  className="btn btn-primary"
                 >
                   {submitting ? "Aplicando..." : "Confirmar Operación"}
                 </button>

@@ -339,8 +339,8 @@ export default function NewProductPage() {
                 style={{
                   width: "100%",
                   padding: "0.75rem",
-                  backgroundColor: "var(--bg-app)",
-                  border: "1px solid var(--border-strong)",
+                  backgroundColor: "var(--bg-surface)",
+                  border: "1px solid var(--border-subtle)",
                   borderRadius: "var(--radius-md)",
                   color: "var(--text-primary)",
                   fontSize: "1rem",
@@ -365,8 +365,8 @@ export default function NewProductPage() {
                   style={{
                     width: "100%",
                     padding: "0.75rem",
-                    backgroundColor: "var(--bg-app)",
-                    border: "1px solid var(--border-strong)",
+                    backgroundColor: "var(--bg-surface)",
+                    border: "1px solid var(--border-subtle)",
                     borderRadius: "var(--radius-md)",
                     color: "var(--text-primary)",
                     fontSize: "0.9rem",
@@ -385,8 +385,8 @@ export default function NewProductPage() {
                   style={{
                     width: "100%",
                     padding: "0.75rem",
-                    backgroundColor: "var(--bg-app)",
-                    border: "1px solid var(--border-strong)",
+                    backgroundColor: "var(--bg-surface)",
+                    border: "1px solid var(--border-subtle)",
                     borderRadius: "var(--radius-md)",
                     color: "var(--text-primary)",
                     fontSize: "0.9rem",
@@ -414,8 +414,8 @@ export default function NewProductPage() {
                 style={{
                   width: "100%",
                   padding: "0.75rem",
-                  backgroundColor: "var(--bg-app)",
-                  border: "1px solid var(--border-strong)",
+                  backgroundColor: "var(--bg-surface)",
+                  border: "1px solid var(--border-subtle)",
                   borderRadius: "var(--radius-md)",
                   color: "var(--text-primary)",
                   fontSize: "0.9rem",
@@ -435,8 +435,8 @@ export default function NewProductPage() {
                 style={{
                   width: "100%",
                   padding: "0.75rem",
-                  backgroundColor: "var(--bg-app)",
-                  border: "1px solid var(--border-strong)",
+                  backgroundColor: "var(--bg-surface)",
+                  border: "1px solid var(--border-subtle)",
                   borderRadius: "var(--radius-md)",
                   color: "var(--text-primary)",
                   fontSize: "0.9rem",
@@ -466,8 +466,8 @@ export default function NewProductPage() {
                 style={{
                   width: "100%",
                   padding: "0.75rem",
-                  backgroundColor: "var(--bg-app)",
-                  border: "1px solid var(--border-strong)",
+                  backgroundColor: "var(--bg-surface)",
+                  border: "1px solid var(--border-subtle)",
                   borderRadius: "var(--radius-md)",
                   color: "var(--text-primary)",
                   fontSize: "1rem",
@@ -490,8 +490,8 @@ export default function NewProductPage() {
                 style={{
                   width: "100%",
                   padding: "0.75rem",
-                  backgroundColor: "var(--bg-app)",
-                  border: "1px solid var(--border-strong)",
+                  backgroundColor: "var(--bg-surface)",
+                  border: "1px solid var(--border-subtle)",
                   borderRadius: "var(--radius-md)",
                   color: "var(--text-muted)",
                   fontSize: "1rem",
@@ -569,8 +569,8 @@ export default function NewProductPage() {
                   style={{
                     width: "100%",
                     padding: "0.75rem",
-                    backgroundColor: "var(--bg-app)",
-                    border: "1px solid var(--border-strong)",
+                    backgroundColor: "var(--bg-surface)",
+                    border: "1px solid var(--border-subtle)",
                     borderRadius: "var(--radius-md)",
                     color: "var(--text-primary)",
                   }}
@@ -590,8 +590,8 @@ export default function NewProductPage() {
                     style={{
                       width: "100%",
                       padding: "0.75rem",
-                      backgroundColor: "var(--bg-app)",
-                      border: "1px solid var(--border-strong)",
+                      backgroundColor: "var(--bg-surface)",
+                      border: "1px solid var(--border-subtle)",
                       borderRadius: "var(--radius-md)",
                       color: "var(--text-primary)",
                     }}
@@ -609,8 +609,8 @@ export default function NewProductPage() {
                     style={{
                       width: "100%",
                       padding: "0.75rem",
-                      backgroundColor: "var(--bg-app)",
-                      border: "1px solid var(--border-strong)",
+                      backgroundColor: "var(--bg-surface)",
+                      border: "1px solid var(--border-subtle)",
                       borderRadius: "var(--radius-md)",
                       color: "var(--text-primary)",
                     }}
@@ -1022,8 +1022,8 @@ export default function NewProductPage() {
                 style={{
                   width: "100%",
                   padding: "0.75rem",
-                  backgroundColor: "var(--bg-app)",
-                  border: "1px solid var(--border-strong)",
+                  backgroundColor: "var(--bg-surface)",
+                  border: "1px solid var(--border-subtle)",
                   borderRadius: "var(--radius-md)",
                   color: "var(--text-primary)",
                   fontSize: "0.9rem",
@@ -1044,8 +1044,8 @@ export default function NewProductPage() {
                 style={{
                   width: "100%",
                   padding: "0.75rem",
-                  backgroundColor: "var(--bg-app)",
-                  border: "1px solid var(--border-strong)",
+                  backgroundColor: "var(--bg-surface)",
+                  border: "1px solid var(--border-subtle)",
                   borderRadius: "var(--radius-md)",
                   color: "var(--text-primary)",
                   fontSize: "0.9rem",

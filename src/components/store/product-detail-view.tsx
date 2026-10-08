@@ -57,7 +57,7 @@ interface ProductDetailProps {
 
 export function ProductDetailView({ product, relatedProducts }: ProductDetailProps) {
   const { addItem } = useCart();
-  const { openProductWhatsApp } = useWhatsApp();
+  const { openProductWhatsApp, phone } = useWhatsApp();
 
   // Imagen activa en la galería
   const primaryImage = product.images.find((img) => img.isPrimary) || product.images[0];
@@ -607,49 +607,51 @@ export function ProductDetailView({ product, relatedProducts }: ProductDetailPro
             </div>
 
             {/* Botón 2: Consultar por WhatsApp */}
-            <button
-              type="button"
-              onClick={() => {
-                openProductWhatsApp({
-                  name: product.name,
-                  variantTitle: currentVariant?.title || null,
-                  sku: currentVariant?.sku || product.sku || null,
-                  price: currentPrice,
-                  productUrl: typeof window !== "undefined" ? window.location.href : undefined,
-                });
-              }}
-              style={{
-                width: "100%",
-                padding: "0.85rem",
-                borderRadius: "var(--radius-md)",
-                backgroundColor: "var(--color-brand-whatsapp)",
-                color: "#ffffff",
-                fontWeight: "600",
-                fontSize: "0.925rem",
-                border: "none",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "0.5rem",
-                boxShadow: "var(--shadow-xs)",
-                minHeight: "44px",
-                transition: "background-color 0.15s ease",
-              }}
-              onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "var(--color-brand-whatsapp-hover)")}
-              onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "var(--color-brand-whatsapp)")}
-            >
-              <span>Consultar por WhatsApp</span>
-            </button>
+            {phone && (
+              <button
+                type="button"
+                onClick={() => {
+                  openProductWhatsApp({
+                    name: product.name,
+                    variantTitle: currentVariant?.title || null,
+                    sku: currentVariant?.sku || product.sku || null,
+                    price: currentPrice,
+                    productUrl: typeof window !== "undefined" ? window.location.href : undefined,
+                  });
+                }}
+                style={{
+                  width: "100%",
+                  padding: "0.85rem",
+                  borderRadius: "var(--radius-md)",
+                  backgroundColor: "var(--color-brand-whatsapp)",
+                  color: "#ffffff",
+                  fontWeight: "600",
+                  fontSize: "0.925rem",
+                  border: "none",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "0.5rem",
+                  boxShadow: "var(--shadow-xs)",
+                  minHeight: "44px",
+                  transition: "background-color 0.15s ease",
+                }}
+                onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "var(--color-brand-whatsapp-hover)")}
+                onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "var(--color-brand-whatsapp)")}
+              >
+                <span>Consultar por WhatsApp</span>
+              </button>
+            )}
           </div>
 
           {/* Puntos de confianza del producto */}
           <div style={{ backgroundColor: "#ffffff", padding: "1.25rem", borderRadius: "var(--radius-lg)", border: "1px solid var(--border-subtle)", boxShadow: "var(--shadow-xs)" }}>
             <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.55rem", fontSize: "0.825rem", color: "var(--text-secondary)" }}>
-              <li><strong>Entrega Rápida:</strong> Envíos en 24h en Santo Domingo y a todo el país.</li>
-              <li><strong>Pago Oficial:</strong> Transferencia o depósito (Popular, Banreservas, BHD).</li>
-              <li><strong>Tienda Física:</strong> Recogida disponible en local en Santo Domingo.</li>
-              <li><strong>Garantía:</strong> Cambios permitidos dentro de 48 horas en perfecto estado.</li>
+              <li><strong>Retiro en Tienda:</strong> Pedidos listos para retirar en nuestra tienda física.</li>
+              <li><strong>Pago Oficial:</strong> Transferencia o depósito bancario verificado.</li>
+              <li><strong>Ubicación:</strong> Tienda física en San Fernando de Montecristi.</li>
+              <li><strong>Garantía:</strong> Cambios permitidos dentro del plazo establecido en perfecto estado.</li>
             </ul>
           </div>
         </div>

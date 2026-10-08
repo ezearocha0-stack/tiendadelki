@@ -180,7 +180,7 @@ INITIAL_ADMIN_PASSWORD="<CONTRASEÑA_SEGURA_INICIAL>"
 STORAGE_PROVIDER="local"
 UPLOAD_DIR="/var/www/tiendadelki/public/uploads"
 PRIVATE_STORAGE_DIR="/var/www/tiendadelki/storage/private"
-NEXT_PUBLIC_WHATSAPP_PHONE="8095550100"
+NEXT_PUBLIC_WHATSAPP_PHONE=""
 ```
 
 ### Paso 5: Despliegue de Base de Datos y Compilación

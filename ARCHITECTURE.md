@@ -270,7 +270,7 @@ Además del checkout formal, el cliente puede pulsar el botón **"Comprar / Coor
 
 👤 *MIS DATOS:*
 Nombre: Carlos Gómez
-Teléfono: 809-555-0199
+Teléfono: 809-000-0000
 
 ¿Tienen disponibilidad para procesar mi pago por transferencia?
 ```

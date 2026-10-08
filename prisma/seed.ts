@@ -1,4 +1,4 @@
-import { PrismaClient, Role, MovementType, OrderStatus, ProductStatus } from "@prisma/client";
+import { PrismaClient, Role } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
@@ -39,8 +39,8 @@ async function main() {
         passwordHash: adminPasswordHash,
         firstName: process.env.INITIAL_ADMIN_FIRST_NAME || "Delki",
         lastName: process.env.INITIAL_ADMIN_LAST_NAME || "Admin",
-        phone: process.env.INITIAL_ADMIN_PHONE || "8095550100",
-        whatsapp: process.env.INITIAL_ADMIN_PHONE || "8095550100",
+        phone: process.env.INITIAL_ADMIN_PHONE || "",
+        whatsapp: process.env.INITIAL_ADMIN_PHONE || "",
         role: Role.SUPER_ADMIN,
         isActive: true,
       },
@@ -61,8 +61,8 @@ async function main() {
           passwordHash: staffPasswordHash,
           firstName: "Marcos",
           lastName: "Vendedor",
-          phone: "8095550101",
-          whatsapp: "8095550101",
+          phone: "",
+          whatsapp: "",
           role: Role.STAFF,
           isActive: true,
         },
@@ -77,15 +77,15 @@ async function main() {
           email: "cliente@ejemplo.com",
           firstName: "Carlos",
           lastName: "Gómez",
-          phone: "8095550199",
-          whatsapp: "8095550199",
+          phone: "",
+          whatsapp: "",
           role: Role.CUSTOMER,
           isActive: true,
           addresses: {
             create: {
               label: "Casa",
               recipientName: "Carlos Gómez",
-              recipientPhone: "8095550199",
+              recipientPhone: "8090000000",
               streetAddress: "Calle Las Palmas #45, Edf. Coral Apto 3B",
               sectorOrNeighborhood: "Bella Vista",
               city: "Santo Domingo",
@@ -183,7 +183,7 @@ async function main() {
   // 6. Parámetros del Sistema
   const settingsData = [
     { key: "STORE_NAME", value: "TiendaDelki", description: "Nombre comercial del comercio" },
-    { key: "WHATSAPP_STORE_NUMBER", value: "8296734710", description: "Teléfono WhatsApp oficial para recepción de pedidos" },
+    { key: "WHATSAPP_STORE_NUMBER", value: "", description: "Teléfono WhatsApp oficial para recepción de pedidos" },
     { key: "CURRENCY_SYMBOL", value: "RD$", description: "Moneda de facturación local" },
     { key: "ORDER_EXPIRATION_HOURS", value: "48", description: "Horas máximas para subir comprobante antes de cancelar pedido" },
   ];
@@ -269,142 +269,21 @@ async function main() {
     create: { name: "Zara", slug: "zara" },
   });
 
-  // 9. Productos de Prueba (Con y Sin Variantes)
-
-  // A) Producto con Variantes (Ropa: Camisa Nike con Tallas y Colores)
-  const prodCamisa = await prisma.product.upsert({
-    where: { slug: "camisa-nike-dri-fit-sport" },
-    update: {},
-    create: {
-      storeId: store.id,
-      categoryId: catCamisas.id,
-      brandId: brandNike.id,
-      name: "Camisa Nike Dri-FIT Sport",
-      slug: "camisa-nike-dri-fit-sport",
-      description: "Camisa deportiva transpirable de alta durabilidad y tecnología Dri-FIT para máxima frescura.",
-      hasVariants: true,
-      basePrice: 1650.0,
-      compareAtPrice: 2100.0,
-      costPrice: 950.0,
-      customAttributes: [
-        { name: "Color", options: ["Negro", "Blanco"] },
-        { name: "Talla", options: ["S", "M", "L"] },
-      ],
-      isFeatured: true,
-      isNew: true,
-      status: ProductStatus.PUBLISHED,
-      seoTitle: "Camisa Nike Dri-FIT Sport - TiendaDelki",
-      seoDescription: "Camisa deportiva transpirable Nike disponible en tallas S, M y L en TiendaDelki.",
-      images: {
-        create: [
-          {
-            url: "https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=1200",
-            thumbnailUrl: "https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=400",
-            storageKey: "products/camisa-nike-1.webp",
-            altText: "Camisa Nike Dri-FIT Sport Negra Frontal",
-            isPrimary: true,
-            sortOrder: 1,
-          },
-        ],
+  // 9. Limpieza defensiva de productos de prueba antiguos si existieran
+  await prisma.inventoryMovement.deleteMany({
+    where: {
+      product: {
+        slug: { in: ["camisa-nike-dri-fit-sport", "lampara-mesa-nordica-madera"] },
       },
     },
   });
-
-  // Variantes para la camisa
-  const variantsData = [
-    { color: "Negro", talla: "S", sku: "NKE-SPO-BLK-S", stock: 3, price: 1650.0 },
-    { color: "Negro", talla: "M", sku: "NKE-SPO-BLK-M", stock: 5, price: 1650.0 },
-    { color: "Negro", talla: "L", sku: "NKE-SPO-BLK-L", stock: 2, price: 1650.0 },
-    { color: "Blanco", talla: "M", sku: "NKE-SPO-WHT-M", stock: 7, price: 1650.0 },
-  ];
-
-  for (const v of variantsData) {
-    const variant = await prisma.productVariant.upsert({
-      where: { sku: v.sku },
-      update: {},
-      create: {
-        productId: prodCamisa.id,
-        sku: v.sku,
-        title: `${v.color} / ${v.talla}`,
-        attributes: { color: v.color, talla: v.talla },
-        price: v.price,
-        stock: v.stock,
-        minStock: 2,
-        isActive: true,
-      },
-    });
-
-    // Registrar movimiento inicial de entrada
-    await prisma.inventoryMovement.create({
-      data: {
-        productId: prodCamisa.id,
-        variantId: variant.id,
-        movementType: MovementType.ENTRADA,
-        quantity: v.stock,
-        previousStock: 0,
-        newStock: v.stock,
-        referenceId: "LOTE-INICIAL-2026",
-        referenceType: "INITIAL_SEED",
-        notes: "Carga de inventario inicial para apertura",
-        createdBy: superAdmin.id,
-      },
-    });
-  }
-  console.log(`✅ Producto con variantes sembrado: ${prodCamisa.name}`);
-
-  // B) Producto Simple (Hogar / Lámpara Decorativa sin variantes de ropa)
-  const prodLampara = await prisma.product.upsert({
-    where: { slug: "lampara-mesa-nordica-madera" },
-    update: {},
-    create: {
-      storeId: store.id,
-      categoryId: catHogar.id,
-      name: "Lámpara de Mesa Nórdica en Madera y Lino",
-      slug: "lampara-mesa-nordica-madera",
-      description: "Elegante lámpara decorativa con base de madera maciza de roble y pantalla de lino natural.",
-      hasVariants: false,
-      basePrice: 2450.0,
-      compareAtPrice: 2900.0,
-      costPrice: 1400.0,
-      sku: "HOG-LAMP-001",
-      stock: 8,
-      minStock: 2,
-      isFeatured: true,
-      isNew: true,
-      status: ProductStatus.PUBLISHED,
-      seoTitle: "Lámpara Nórdica de Mesa - TiendaDelki Hogar",
-      seoDescription: "Lámpara decorativa para hogar en Santo Domingo. Base de madera y pantalla lino.",
-      images: {
-        create: [
-          {
-            url: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=1200",
-            thumbnailUrl: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=400",
-            storageKey: "products/lampara-nordica-1.webp",
-            altText: "Lámpara de mesa nórdica encendida",
-            isPrimary: true,
-            sortOrder: 1,
-          },
-        ],
-      },
+  await prisma.product.deleteMany({
+    where: {
+      slug: { in: ["camisa-nike-dri-fit-sport", "lampara-mesa-nordica-madera"] },
     },
   });
 
-  await prisma.inventoryMovement.create({
-    data: {
-      productId: prodLampara.id,
-      movementType: MovementType.ENTRADA,
-      quantity: 8,
-      previousStock: 0,
-      newStock: 8,
-      referenceId: "LOTE-HOGAR-01",
-      referenceType: "INITIAL_SEED",
-      notes: "Stock inicial de tienda para lámparas nórdicas",
-      createdBy: superAdmin.id,
-    },
-  });
-  console.log(`✅ Producto simple sembrado: ${prodLampara.name}`);
-
-  console.log("🎉 Sembrado completado exitosamente en PostgreSQL!");
+  console.log("🎉 Sembrado completado exitosamente en PostgreSQL (Catálogo limpio sin productos de prueba)!");
 }
 
 main()

@@ -34,8 +34,8 @@ export default function ClienteDireccionesPage() {
     recipientPhone: "",
     streetAddress: "",
     sectorOrNeighborhood: "",
-    city: "Santo Domingo",
-    provinceOrState: "Distrito Nacional",
+    city: "San Fernando de Monte Cristi",
+    provinceOrState: "Monte Cristi",
     postalCode: "",
     deliveryNotes: "",
     isDefault: false,
@@ -70,8 +70,8 @@ export default function ClienteDireccionesPage() {
       recipientPhone: "",
       streetAddress: "",
       sectorOrNeighborhood: "",
-      city: "Santo Domingo",
-      provinceOrState: "Distrito Nacional",
+      city: "San Fernando de Monte Cristi",
+      provinceOrState: "Monte Cristi",
       postalCode: "",
       deliveryNotes: "",
       isDefault: addresses.length === 0,
@@ -270,7 +270,7 @@ export default function ClienteDireccionesPage() {
                   required
                   value={formData.recipientPhone}
                   onChange={(e) => setFormData({ ...formData, recipientPhone: e.target.value })}
-                  placeholder="809-555-0100"
+                  placeholder="809-000-0000"
                   style={{ width: "100%", padding: "0.65rem", backgroundColor: "var(--bg-app)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-md)", color: "var(--text-primary)" }}
                 />
               </div>
@@ -315,7 +315,7 @@ export default function ClienteDireccionesPage() {
                   required
                   value={formData.city}
                   onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                  placeholder="Santo Domingo, Santiago..."
+                  placeholder="San Fernando de Monte Cristi, Castañuelas..."
                   style={{ width: "100%", padding: "0.65rem", backgroundColor: "var(--bg-app)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-md)", color: "var(--text-primary)" }}
                 />
               </div>
@@ -328,7 +328,7 @@ export default function ClienteDireccionesPage() {
                   required
                   value={formData.provinceOrState}
                   onChange={(e) => setFormData({ ...formData, provinceOrState: e.target.value })}
-                  placeholder="Distrito Nacional, Santiago..."
+                  placeholder="Monte Cristi, Dajabón..."
                   style={{ width: "100%", padding: "0.65rem", backgroundColor: "var(--bg-app)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-md)", color: "var(--text-primary)" }}
                 />
               </div>

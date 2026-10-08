@@ -41,6 +41,11 @@
   --color-primary-hover: #4338ca;
   --color-danger: #ef4444;
 
+  /* Aliases de superficies para formularios y modales */
+  --bg-base: #ffffff;
+  --bg-card: #ffffff;
+  --bg-main: #ffffff;
+
   /* ==========================================================================
      TEXTO Y JERARQUÍA TIPOGRÁFICA (Contraste Verificado WCAG 2.1 AAA)
      ========================================================================== */

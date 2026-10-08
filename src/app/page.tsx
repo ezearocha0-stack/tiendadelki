@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { getCategories, getFeaturedProducts, getNewProducts, getDealProducts } from "@/lib/server-api";
+import { getCategories, getFeaturedProducts, getNewProducts, getDealProducts, getPublicStoreSettings } from "@/lib/server-api";
+import { formatWhatsAppPhone } from "@/core/whatsapp/whatsapp-helper";
 import { StoreHeader } from "@/components/store/store-header";
 import { StoreFooter } from "@/components/store/store-footer";
 import { WhatsAppFloatingButton } from "@/components/store/whatsapp-floating-button";
@@ -9,11 +10,12 @@ export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   // Consultar datos de catálogo mediante capa desacoplada (compatible con Vercel Frontend -> Render Backend)
-  const [categories, featuredProducts, newProducts, dealProducts] = await Promise.all([
+  const [categories, featuredProducts, newProducts, dealProducts, settings] = await Promise.all([
     getCategories(6),
     getFeaturedProducts(8),
     getNewProducts(8),
     getDealProducts(8),
+    getPublicStoreSettings(),
   ]);
 
   function checkOutOfStock(p: any) {
@@ -27,33 +29,17 @@ export default async function HomePage() {
     "@context": "https://schema.org",
     "@type": "ClothingStore",
     "name": "TiendaDelki",
-    "description": "Tienda física y online en Santo Domingo, República Dominicana. Catálogo moderno de moda, calzado, accesorios y artículos seleccionados con envíos a todo el país.",
+    "description": "Tienda física en San Fernando de Montecristi, República Dominicana. Catálogo moderno de moda, calzado, accesorios y artículos seleccionados con venta y retiro local.",
     "url": "https://tiendadelki.com",
-    "telephone": "+1-809-555-0100",
-    "currenciesAccepted": "DOP, USD",
-    "paymentAccepted": "Cash, Bank Transfer, Deposit",
+    "currenciesAccepted": "DOP",
+    "paymentAccepted": "Cash, Bank Transfer",
     "priceRange": "$$",
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "Av. Principal #123, Ensanche Quisqueya",
-      "addressLocality": "Santo Domingo",
-      "addressRegion": "Distrito Nacional",
-      "postalCode": "10101",
+      "addressLocality": "San Fernando de Montecristi",
+      "addressRegion": "Monte Cristi",
       "addressCountry": "DO",
     },
-    "geo": {
-      "@type": "GeoCoordinates",
-      "latitude": "18.4861",
-      "longitude": "-69.9312",
-    },
-    "openingHoursSpecification": [
-      {
-        "@type": "OpeningHoursSpecification",
-        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-        "opens": "09:00",
-        "closes": "19:00",
-      },
-    ],
   };
 
   return (
@@ -99,7 +85,7 @@ export default async function HomePage() {
                 textTransform: "uppercase",
               }}
             >
-              <span>Tienda Física en Santo Domingo • Envíos a Todo el País</span>
+              <span>Tienda Física en Montecristi • Catálogo en Tiempo Real</span>
             </div>
 
             <h1
@@ -141,19 +127,21 @@ export default async function HomePage() {
                 Explorar Catálogo
               </Link>
 
-              <a
-                href="https://wa.me/18095550100?text=Hola%20TiendaDelki,%20quiero%20ver%20el%20catálogo%20disponible"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-whatsapp"
-                style={{
-                  padding: "0.85rem 2rem",
-                  fontSize: "1rem",
-                  minHeight: "48px",
-                }}
-              >
-                <span>Pedir por WhatsApp</span>
-              </a>
+              {settings?.whatsapp && (
+                <a
+                  href={`https://wa.me/${formatWhatsAppPhone(settings.whatsapp)}?text=${encodeURIComponent("Hola TiendaDelki, quiero ver el catálogo disponible")}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-whatsapp"
+                  style={{
+                    padding: "0.85rem 2rem",
+                    fontSize: "1rem",
+                    minHeight: "48px",
+                  }}
+                >
+                  <span>Pedir por WhatsApp</span>
+                </a>
+              )}
             </div>
           </div>
         </section>
@@ -197,8 +185,8 @@ export default async function HomePage() {
                 </svg>
               </div>
               <div>
-                <h4 style={{ fontWeight: "700", fontSize: "0.95rem", color: "var(--text-primary)", margin: 0 }}>Envíos a Todo el País</h4>
-                <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)", margin: "0.2rem 0 0" }}>24h en Santo Domingo e Interior</p>
+                <h4 style={{ fontWeight: "700", fontSize: "0.95rem", color: "var(--text-primary)", margin: 0 }}>Venta y Retiro Local</h4>
+                <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)", margin: "0.2rem 0 0" }}>Tienda física en Montecristi</p>
               </div>
             </div>
 
@@ -428,19 +416,21 @@ export default async function HomePage() {
               </p>
             </div>
 
-            <a
-              href="https://wa.me/18095550100?text=Hola%20TiendaDelki,%20quiero%20hacer%20una%20consulta%20o%20pedido"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn btn-whatsapp"
-              style={{
-                padding: "0.85rem 2rem",
-                fontSize: "1rem",
-                minHeight: "48px",
-              }}
-            >
-              <span>Hablar por WhatsApp</span>
-            </a>
+            {settings?.whatsapp && (
+              <a
+                href={`https://wa.me/${formatWhatsAppPhone(settings.whatsapp)}?text=${encodeURIComponent("Hola TiendaDelki, quiero hacer una consulta o pedido")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-whatsapp"
+                style={{
+                  padding: "0.85rem 2rem",
+                  fontSize: "1rem",
+                  minHeight: "48px",
+                }}
+              >
+                <span>Hablar por WhatsApp</span>
+              </a>
+            )}
           </div>
         </section>
 

@@ -85,7 +85,7 @@ export default function TrackingPage() {
   const [error, setError] = useState<string | null>(null);
   const [copiedTracking, setCopiedTracking] = useState(false);
 
-  const { openDirectWhatsApp } = useWhatsApp();
+  const { openDirectWhatsApp, phone } = useWhatsApp();
 
   async function handleSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -147,13 +147,13 @@ export default function TrackingPage() {
               marginBottom: "0.85rem",
             }}
           >
-            🚚 RASTREO EN VIVO
+            📦 ESTADO DEL PEDIDO
           </div>
           <h1 style={{ fontSize: "2.25rem", fontWeight: 800, margin: "0 0 0.75rem", color: "var(--color-text-main)" }}>
             Seguimiento de tu Pedido
           </h1>
           <p style={{ color: "var(--color-text-muted)", fontSize: "1.05rem", margin: 0, maxWidth: "600px", marginInline: "auto" }}>
-            Ingresa tu número de orden para consultar el estado en tiempo real, transportista asignado y número de guía.
+            Ingresa tu número de orden para consultar el estado en tiempo real y la disponibilidad para retiro de tu compra.
           </p>
         </div>
 
@@ -460,29 +460,31 @@ export default function TrackingPage() {
                     </a>
                   )}
 
-                  <button
-                    type="button"
-                    onClick={() =>
-                      openDirectWhatsApp(
-                        `Hola TiendaDelki, consulto sobre mi pedido #${order.orderNumber}. Transportista: ${order.carrierName || "N/A"}, Guía: ${order.trackingNumber || "N/A"}.`
-                      )
-                    }
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: "0.4rem",
-                      background: "#ffffff",
-                      color: "#166534",
-                      border: "1px solid #86efac",
-                      padding: "0.65rem 1.2rem",
-                      borderRadius: "8px",
-                      fontSize: "0.9rem",
-                      fontWeight: 600,
-                      cursor: "pointer",
-                    }}
-                  >
-                    💬 Consultar sobre el envío por WhatsApp
-                  </button>
+                  {phone && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        openDirectWhatsApp(
+                          `Hola TiendaDelki, consulto sobre mi pedido #${order.orderNumber}. Transportista: ${order.carrierName || "N/A"}, Guía: ${order.trackingNumber || "N/A"}.`
+                        )
+                      }
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "0.4rem",
+                        background: "#ffffff",
+                        color: "#166534",
+                        border: "1px solid #86efac",
+                        padding: "0.65rem 1.2rem",
+                        borderRadius: "8px",
+                        fontSize: "0.9rem",
+                        fontWeight: 600,
+                        cursor: "pointer",
+                      }}
+                    >
+                      💬 Consultar sobre el envío por WhatsApp
+                    </button>
+                  )}
                 </div>
               </div>
             )}

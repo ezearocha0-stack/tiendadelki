@@ -355,11 +355,12 @@ export default function AdminConfiguracionPage() {
             padding: "0.75rem 1.25rem",
             background: "none",
             border: "none",
-            borderBottom: activeTab === "IDENTIDAD" ? "3px solid var(--color-brand-accent, #2563eb)" : "3px solid transparent",
+            borderBottom: activeTab === "IDENTIDAD" ? "3px solid var(--color-brand-primary)" : "3px solid transparent",
             fontWeight: activeTab === "IDENTIDAD" ? 700 : 500,
-            color: activeTab === "IDENTIDAD" ? "var(--color-brand-accent, #2563eb)" : "var(--text-secondary)",
+            color: activeTab === "IDENTIDAD" ? "var(--color-brand-primary)" : "var(--text-secondary)",
             cursor: "pointer",
             fontSize: "0.95rem",
+            transition: "all 0.15s ease",
           }}
         >
           🏪 Identidad
@@ -372,11 +373,12 @@ export default function AdminConfiguracionPage() {
             padding: "0.75rem 1.25rem",
             background: "none",
             border: "none",
-            borderBottom: activeTab === "CONTACTO_UBICACION" ? "3px solid var(--color-brand-accent, #2563eb)" : "3px solid transparent",
+            borderBottom: activeTab === "CONTACTO_UBICACION" ? "3px solid var(--color-brand-primary)" : "3px solid transparent",
             fontWeight: activeTab === "CONTACTO_UBICACION" ? 700 : 500,
-            color: activeTab === "CONTACTO_UBICACION" ? "var(--color-brand-accent, #2563eb)" : "var(--text-secondary)",
+            color: activeTab === "CONTACTO_UBICACION" ? "var(--color-brand-primary)" : "var(--text-secondary)",
             cursor: "pointer",
             fontSize: "0.95rem",
+            transition: "all 0.15s ease",
           }}
         >
           📍 Contacto & Ubicación
@@ -389,11 +391,12 @@ export default function AdminConfiguracionPage() {
             padding: "0.75rem 1.25rem",
             background: "none",
             border: "none",
-            borderBottom: activeTab === "HORARIOS_REDES" ? "3px solid var(--color-brand-accent, #2563eb)" : "3px solid transparent",
+            borderBottom: activeTab === "HORARIOS_REDES" ? "3px solid var(--color-brand-primary)" : "3px solid transparent",
             fontWeight: activeTab === "HORARIOS_REDES" ? 700 : 500,
-            color: activeTab === "HORARIOS_REDES" ? "var(--color-brand-accent, #2563eb)" : "var(--text-secondary)",
+            color: activeTab === "HORARIOS_REDES" ? "var(--color-brand-primary)" : "var(--text-secondary)",
             cursor: "pointer",
             fontSize: "0.95rem",
+            transition: "all 0.15s ease",
           }}
         >
           ⏰ Horarios & Redes Sociales
@@ -406,11 +409,12 @@ export default function AdminConfiguracionPage() {
             padding: "0.75rem 1.25rem",
             background: "none",
             border: "none",
-            borderBottom: activeTab === "PAGOS" ? "3px solid var(--color-brand-accent, #2563eb)" : "3px solid transparent",
+            borderBottom: activeTab === "PAGOS" ? "3px solid var(--color-brand-primary)" : "3px solid transparent",
             fontWeight: activeTab === "PAGOS" ? 700 : 500,
-            color: activeTab === "PAGOS" ? "var(--color-brand-accent, #2563eb)" : "var(--text-secondary)",
+            color: activeTab === "PAGOS" ? "var(--color-brand-primary)" : "var(--text-secondary)",
             cursor: "pointer",
             fontSize: "0.95rem",
+            transition: "all 0.15s ease",
           }}
         >
           💳 Cuentas Bancarias de Depósito ({bankAccounts.length})
@@ -577,7 +581,7 @@ export default function AdminConfiguracionPage() {
                     type="text"
                     value={settings.phone}
                     onChange={(e) => setSettings({ ...settings, phone: e.target.value })}
-                    placeholder="(809) 555-0100"
+                    placeholder="Teléfono oficial de la tienda"
                     required
                     style={{
                       width: "100%",
@@ -598,7 +602,7 @@ export default function AdminConfiguracionPage() {
                     type="text"
                     value={settings.whatsapp}
                     onChange={(e) => setSettings({ ...settings, whatsapp: e.target.value })}
-                    placeholder="8296734710"
+                    placeholder="WhatsApp oficial de la tienda"
                     required
                     style={{
                       width: "100%",
@@ -643,7 +647,7 @@ export default function AdminConfiguracionPage() {
                     type="text"
                     value={settings.secondaryPhone}
                     onChange={(e) => setSettings({ ...settings, secondaryPhone: e.target.value })}
-                    placeholder="(809) 555-0101"
+                    placeholder="Teléfono secundario (opcional)"
                     style={{
                       width: "100%",
                       padding: "0.65rem 0.85rem",
@@ -1061,18 +1065,7 @@ export default function AdminConfiguracionPage() {
             <button
               type="button"
               onClick={openCreateBankModal}
-              style={{
-                backgroundColor: "var(--color-brand-accent, #2563eb)",
-                color: "#fff",
-                border: "none",
-                borderRadius: "6px",
-                padding: "0.65rem 1.25rem",
-                fontWeight: 600,
-                cursor: "pointer",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "0.5rem",
-              }}
+              className="btn btn-primary"
             >
               <span>+</span> Agregar Cuenta Bancaria
             </button>
@@ -1083,29 +1076,21 @@ export default function AdminConfiguracionPage() {
               style={{
                 backgroundColor: "var(--bg-card)",
                 border: "1px dashed var(--border-subtle)",
-                borderRadius: "12px",
-                padding: "3rem 1.5rem",
+                borderRadius: "var(--radius-xl)",
+                padding: "3.5rem 1.5rem",
                 textAlign: "center",
                 color: "var(--text-secondary)",
               }}
             >
-              <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>🏦</div>
-              <p style={{ fontWeight: 600, margin: "0 0 0.5rem 0" }}>No hay cuentas bancarias configuradas</p>
-              <p style={{ fontSize: "0.85rem", margin: "0 0 1.25rem 0" }}>
+              <div style={{ fontSize: "2.5rem", marginBottom: "0.75rem" }}>🏦</div>
+              <p style={{ fontWeight: 600, margin: "0 0 0.5rem 0", color: "var(--text-primary)", fontSize: "1.05rem" }}>No hay cuentas bancarias configuradas</p>
+              <p style={{ fontSize: "0.875rem", margin: "0 auto 1.5rem auto", maxWidth: "480px" }}>
                 Agrega al menos una cuenta para que tus clientes puedan pagar por transferencia bancaria en el checkout.
               </p>
               <button
                 type="button"
                 onClick={openCreateBankModal}
-                style={{
-                  backgroundColor: "var(--color-brand-accent, #2563eb)",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "6px",
-                  padding: "0.55rem 1.15rem",
-                  fontWeight: 600,
-                  cursor: "pointer",
-                }}
+                className="btn btn-primary"
               >
                 Agregar Primera Cuenta
               </button>
@@ -1117,23 +1102,23 @@ export default function AdminConfiguracionPage() {
                   key={acc.id}
                   style={{
                     backgroundColor: "var(--bg-card)",
-                    border: acc.isActive ? "2px solid #059669" : "1px solid var(--border-subtle)",
-                    borderRadius: "12px",
+                    border: acc.isActive ? "1.5px solid #10b981" : "1px solid var(--border-subtle)",
+                    borderRadius: "var(--radius-xl)",
                     padding: "1.25rem",
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "space-between",
                     gap: "1rem",
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+                    boxShadow: "var(--shadow-sm)",
                   }}
                 >
                   <div>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.75rem" }}>
                       <div>
-                        <span style={{ fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--text-secondary)" }}>
+                        <span style={{ fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--text-secondary)", fontWeight: 600 }}>
                           {acc.accountType}
                         </span>
-                        <h3 style={{ margin: "0.15rem 0 0 0", fontSize: "1.15rem", fontWeight: 700 }}>
+                        <h3 style={{ margin: "0.2rem 0 0 0", fontSize: "1.15rem", fontWeight: 700, color: "var(--text-primary)" }}>
                           {acc.bankName}
                         </h3>
                       </div>
@@ -1141,53 +1126,50 @@ export default function AdminConfiguracionPage() {
                         style={{
                           fontSize: "0.75rem",
                           fontWeight: 700,
-                          padding: "0.2rem 0.5rem",
-                          borderRadius: "4px",
-                          backgroundColor: acc.isActive ? "#d1fae5" : "#f3f4f6",
-                          color: acc.isActive ? "#065f46" : "#6b7280",
+                          padding: "0.25rem 0.6rem",
+                          borderRadius: "9999px",
+                          backgroundColor: acc.isActive ? "#ecfdf5" : "#f1f5f9",
+                          color: acc.isActive ? "#059669" : "#64748b",
+                          border: `1px solid ${acc.isActive ? "#a7f3d0" : "#e2e8f0"}`,
                         }}
                       >
                         {acc.isActive ? "ACTIVA EN CHECKOUT" : "INACTIVA"}
                       </span>
                     </div>
 
-                    <div style={{ fontSize: "0.9rem", display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+                    <div style={{ fontSize: "0.9rem", display: "flex", flexDirection: "column", gap: "0.4rem" }}>
                       <div>
                         <span style={{ color: "var(--text-secondary)" }}>Número: </span>
-                        <strong style={{ letterSpacing: "0.05em" }}>{acc.accountNumber}</strong>
+                        <strong style={{ letterSpacing: "0.05em", color: "var(--text-primary)" }}>{acc.accountNumber}</strong>
                       </div>
                       <div>
                         <span style={{ color: "var(--text-secondary)" }}>Titular: </span>
-                        <span>{acc.holderName}</span>
+                        <span style={{ color: "var(--text-primary)", fontWeight: 500 }}>{acc.holderName}</span>
                       </div>
                       {acc.holderId && (
                         <div>
                           <span style={{ color: "var(--text-secondary)" }}>Cédula / RNC: </span>
-                          <span>{acc.holderId}</span>
+                          <span style={{ color: "var(--text-primary)" }}>{acc.holderId}</span>
                         </div>
                       )}
                       {acc.instructions && (
-                        <div style={{ marginTop: "0.5rem", padding: "0.5rem", backgroundColor: "var(--bg-main)", borderRadius: "6px", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
+                        <div style={{ marginTop: "0.5rem", padding: "0.6rem 0.75rem", backgroundColor: "var(--bg-app)", borderRadius: "var(--radius-md)", fontSize: "0.8rem", color: "var(--text-secondary)", border: "1px solid var(--border-subtle)" }}>
                           <em>{acc.instructions}</em>
                         </div>
                       )}
                     </div>
                   </div>
 
-                  <div style={{ display: "flex", gap: "0.5rem", borderTop: "1px solid var(--border-subtle)", paddingTop: "0.75rem" }}>
+                  <div style={{ display: "flex", gap: "0.5rem", borderTop: "1px solid var(--border-subtle)", paddingTop: "0.85rem" }}>
                     <button
                       type="button"
                       onClick={() => handleToggleBankActive(acc)}
+                      className="btn btn-sm btn-secondary"
                       style={{
                         flex: 1,
-                        padding: "0.45rem",
-                        fontSize: "0.8rem",
-                        fontWeight: 600,
-                        borderRadius: "6px",
-                        border: "1px solid var(--border-subtle)",
-                        backgroundColor: acc.isActive ? "#fef2f2" : "#f0fdf4",
-                        color: acc.isActive ? "#dc2626" : "#16a34a",
-                        cursor: "pointer",
+                        color: acc.isActive ? "#dc2626" : "#059669",
+                        backgroundColor: acc.isActive ? "#fef2f2" : "#ecfdf5",
+                        borderColor: acc.isActive ? "#fecaca" : "#a7f3d0",
                       }}
                     >
                       {acc.isActive ? "Desactivar" : "Activar"}
@@ -1195,32 +1177,14 @@ export default function AdminConfiguracionPage() {
                     <button
                       type="button"
                       onClick={() => openEditBankModal(acc)}
-                      style={{
-                        padding: "0.45rem 0.75rem",
-                        fontSize: "0.8rem",
-                        fontWeight: 600,
-                        borderRadius: "6px",
-                        border: "1px solid var(--border-subtle)",
-                        backgroundColor: "var(--bg-main)",
-                        color: "inherit",
-                        cursor: "pointer",
-                      }}
+                      className="btn btn-sm btn-secondary"
                     >
                       Editar
                     </button>
                     <button
                       type="button"
                       onClick={() => handleDeleteBank(acc)}
-                      style={{
-                        padding: "0.45rem 0.75rem",
-                        fontSize: "0.8rem",
-                        fontWeight: 600,
-                        borderRadius: "6px",
-                        border: "1px solid #fecaca",
-                        backgroundColor: "#fff",
-                        color: "#dc2626",
-                        cursor: "pointer",
-                      }}
+                      className="btn btn-sm btn-danger"
                     >
                       Eliminar
                     </button>
@@ -1234,44 +1198,31 @@ export default function AdminConfiguracionPage() {
 
       {/* Modal Cuentas Bancarias */}
       {bankModalOpen && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "1rem",
-            zIndex: 9999,
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: "var(--bg-card)",
-              borderRadius: "12px",
-              padding: "2rem",
-              width: "100%",
-              maxWidth: "520px",
-              boxShadow: "0 20px 40px rgba(0,0,0,0.2)",
-            }}
-          >
-            <h3 style={{ margin: "0 0 1rem 0", fontSize: "1.25rem", fontWeight: 700 }}>
-              {editingBank ? "Editar Cuenta Bancaria" : "Nueva Cuenta Bancaria para Depósito"}
-            </h3>
+        <div className="modal-backdrop">
+          <div className="modal-dialog" style={{ maxWidth: "540px" }}>
+            <div className="modal-header">
+              <h3 className="modal-title">
+                {editingBank ? "Editar Cuenta Bancaria" : "Nueva Cuenta Bancaria"}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setBankModalOpen(false)}
+                className="modal-close-btn"
+                aria-label="Cerrar modal"
+              >
+                ✕
+              </button>
+            </div>
 
             {bankFormError && (
-              <div style={{ padding: "0.75rem", backgroundColor: "#fee2e2", color: "#b91c1c", borderRadius: "6px", marginBottom: "1rem", fontSize: "0.85rem" }}>
+              <div style={{ padding: "0.75rem 1rem", backgroundColor: "#fef2f2", color: "#b91c1c", borderRadius: "var(--radius-md)", marginBottom: "1rem", fontSize: "0.875rem", border: "1px solid #fecaca" }}>
                 {bankFormError}
               </div>
             )}
 
             <form onSubmit={handleSaveBank} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
               <div>
-                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.3rem" }}>
+                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.35rem", color: "var(--text-primary)" }}>
                   Banco *
                 </label>
                 <input
@@ -1280,19 +1231,11 @@ export default function AdminConfiguracionPage() {
                   value={bankFormData.bankName}
                   onChange={(e) => setBankFormData({ ...bankFormData, bankName: e.target.value })}
                   required
-                  style={{
-                    width: "100%",
-                    padding: "0.6rem 0.8rem",
-                    borderRadius: "6px",
-                    border: "1px solid var(--border-subtle)",
-                    backgroundColor: "var(--bg-main)",
-                    color: "inherit",
-                  }}
                 />
               </div>
 
               <div>
-                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.3rem" }}>
+                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.35rem", color: "var(--text-primary)" }}>
                   Titular de la Cuenta *
                 </label>
                 <input
@@ -1301,19 +1244,11 @@ export default function AdminConfiguracionPage() {
                   value={bankFormData.holderName}
                   onChange={(e) => setBankFormData({ ...bankFormData, holderName: e.target.value })}
                   required
-                  style={{
-                    width: "100%",
-                    padding: "0.6rem 0.8rem",
-                    borderRadius: "6px",
-                    border: "1px solid var(--border-subtle)",
-                    backgroundColor: "var(--bg-main)",
-                    color: "inherit",
-                  }}
                 />
               </div>
 
               <div>
-                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.3rem" }}>
+                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.35rem", color: "var(--text-primary)" }}>
                   Cédula o RNC del Titular
                 </label>
                 <input
@@ -1321,19 +1256,11 @@ export default function AdminConfiguracionPage() {
                   placeholder="Ej. 132-XXXXX-X o 402-XXXXXXX-X"
                   value={bankFormData.holderId}
                   onChange={(e) => setBankFormData({ ...bankFormData, holderId: e.target.value })}
-                  style={{
-                    width: "100%",
-                    padding: "0.6rem 0.8rem",
-                    borderRadius: "6px",
-                    border: "1px solid var(--border-subtle)",
-                    backgroundColor: "var(--bg-main)",
-                    color: "inherit",
-                  }}
                 />
               </div>
 
               <div>
-                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.3rem" }}>
+                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.35rem", color: "var(--text-primary)" }}>
                   Tipo de Cuenta *
                 </label>
                 <input
@@ -1342,19 +1269,11 @@ export default function AdminConfiguracionPage() {
                   value={bankFormData.accountType}
                   onChange={(e) => setBankFormData({ ...bankFormData, accountType: e.target.value })}
                   required
-                  style={{
-                    width: "100%",
-                    padding: "0.6rem 0.8rem",
-                    borderRadius: "6px",
-                    border: "1px solid var(--border-subtle)",
-                    backgroundColor: "var(--bg-main)",
-                    color: "inherit",
-                  }}
                 />
               </div>
 
               <div>
-                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.3rem" }}>
+                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.35rem", color: "var(--text-primary)" }}>
                   Número de Cuenta *
                 </label>
                 <input
@@ -1363,19 +1282,11 @@ export default function AdminConfiguracionPage() {
                   value={bankFormData.accountNumber}
                   onChange={(e) => setBankFormData({ ...bankFormData, accountNumber: e.target.value })}
                   required
-                  style={{
-                    width: "100%",
-                    padding: "0.6rem 0.8rem",
-                    borderRadius: "6px",
-                    border: "1px solid var(--border-subtle)",
-                    backgroundColor: "var(--bg-main)",
-                    color: "inherit",
-                  }}
                 />
               </div>
 
               <div>
-                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.3rem" }}>
+                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.35rem", color: "var(--text-primary)" }}>
                   Instrucciones para el Cliente (Opcional)
                 </label>
                 <input
@@ -1383,57 +1294,34 @@ export default function AdminConfiguracionPage() {
                   placeholder="Ej. Colocar el número de pedido en la descripción"
                   value={bankFormData.instructions}
                   onChange={(e) => setBankFormData({ ...bankFormData, instructions: e.target.value })}
-                  style={{
-                    width: "100%",
-                    padding: "0.6rem 0.8rem",
-                    borderRadius: "6px",
-                    border: "1px solid var(--border-subtle)",
-                    backgroundColor: "var(--bg-main)",
-                    color: "inherit",
-                  }}
                 />
               </div>
 
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", padding: "0.5rem 0" }}>
                 <input
                   type="checkbox"
                   id="bankIsActive"
                   checked={bankFormData.isActive}
                   onChange={(e) => setBankFormData({ ...bankFormData, isActive: e.target.checked })}
-                  style={{ width: "18px", height: "18px" }}
+                  style={{ width: "18px", height: "18px", cursor: "pointer" }}
                 />
-                <label htmlFor="bankIsActive" style={{ fontSize: "0.9rem", fontWeight: 600, cursor: "pointer" }}>
+                <label htmlFor="bankIsActive" style={{ fontSize: "0.9rem", fontWeight: 600, cursor: "pointer", color: "var(--text-primary)" }}>
                   Cuenta activa (mostrar en checkout para transferencias)
                 </label>
               </div>
 
-              <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem", marginTop: "1rem" }}>
+              <div className="modal-footer" style={{ marginTop: "0.5rem" }}>
                 <button
                   type="button"
                   onClick={() => setBankModalOpen(false)}
-                  style={{
-                    padding: "0.65rem 1.25rem",
-                    backgroundColor: "transparent",
-                    color: "var(--text-secondary)",
-                    border: "1px solid var(--border-subtle)",
-                    borderRadius: "6px",
-                    cursor: "pointer",
-                  }}
+                  className="btn btn-secondary"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={savingBank}
-                  style={{
-                    padding: "0.65rem 1.5rem",
-                    backgroundColor: "var(--color-brand-accent, #2563eb)",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "6px",
-                    fontWeight: 700,
-                    cursor: "pointer",
-                  }}
+                  className="btn btn-primary"
                 >
                   {savingBank ? "Guardando..." : "Guardar Cuenta"}
                 </button>

@@ -255,7 +255,7 @@ async function runStoreSettingsAndBankTests() {
       shortDescription: "Tienda Física & Online – República Dominicana",
       description: "Tu tienda de confianza con inventario verificado y envíos a todas las provincias de República Dominicana.",
       logoUrl: "",
-      phone: "(809) 555-0100",
+      phone: "",
       secondaryPhone: "",
       whatsapp: "8296734710",
       email: "contacto@tiendadelki.com",

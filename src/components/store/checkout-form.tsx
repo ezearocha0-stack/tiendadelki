@@ -47,8 +47,8 @@ export function CheckoutForm({ shippingMethods, bankAccounts }: CheckoutFormProp
     guestEmail: "",
     streetAddress: "",
     sectorOrNeighborhood: "",
-    city: "Santo Domingo",
-    provinceOrState: "Distrito Nacional",
+    city: "San Fernando de Monte Cristi",
+    provinceOrState: "Monte Cristi",
     deliveryNotes: "",
     customerNotes: "",
   });
@@ -616,8 +616,8 @@ export function CheckoutForm({ shippingMethods, bankAccounts }: CheckoutFormProp
                         ...prev,
                         streetAddress: found.streetAddress || "",
                         sectorOrNeighborhood: found.sectorOrNeighborhood || "",
-                        city: found.city || "Santo Domingo",
-                        provinceOrState: found.provinceOrState || "Distrito Nacional",
+                        city: found.city || "San Fernando de Monte Cristi",
+                        provinceOrState: found.provinceOrState || "Monte Cristi",
                         deliveryNotes: found.deliveryNotes || "",
                       }));
                     }
@@ -651,7 +651,7 @@ export function CheckoutForm({ shippingMethods, bankAccounts }: CheckoutFormProp
                   type="text"
                   name="streetAddress"
                   required
-                  placeholder="Ej. Av. Winston Churchill #105, Torre Blue, Apto 4B"
+                  placeholder="Ej. Calle Principal #12 o dirección de referencia"
                   value={formData.streetAddress}
                   onChange={handleInputChange}
                   style={{
@@ -676,7 +676,7 @@ export function CheckoutForm({ shippingMethods, bankAccounts }: CheckoutFormProp
                     type="text"
                     name="sectorOrNeighborhood"
                     required
-                    placeholder="Ej. Piantini, Bella Vista, Alma Rosa..."
+                    placeholder="Ej. Barrio El Albinal, Las Flores..."
                     value={formData.sectorOrNeighborhood}
                     onChange={handleInputChange}
                     style={{
@@ -700,7 +700,7 @@ export function CheckoutForm({ shippingMethods, bankAccounts }: CheckoutFormProp
                     type="text"
                     name="city"
                     required
-                    placeholder="Ej. Santo Domingo, Santiago, La Vega..."
+                    placeholder="Ej. San Fernando de Monte Cristi, Castañuelas, Guayubín..."
                     value={formData.city}
                     onChange={handleInputChange}
                     style={{
@@ -737,11 +737,15 @@ export function CheckoutForm({ shippingMethods, bankAccounts }: CheckoutFormProp
                       boxSizing: "border-box",
                     }}
                   >
-                    <option value="Distrito Nacional">Distrito Nacional</option>
-                    <option value="Santo Domingo">Santo Domingo (Este/Norte/Oeste)</option>
-                    <option value="Santiago">Santiago</option>
-                    <option value="La Vega">La Vega</option>
+                    <option value="Monte Cristi">Monte Cristi</option>
+                    <option value="Dajabón">Dajabón</option>
+                    <option value="Santiago Rodríguez">Santiago Rodríguez</option>
+                    <option value="Valverde (Mao)">Valverde (Mao)</option>
                     <option value="Puerto Plata">Puerto Plata</option>
+                    <option value="Santiago">Santiago</option>
+                    <option value="Distrito Nacional">Distrito Nacional</option>
+                    <option value="Santo Domingo">Santo Domingo</option>
+                    <option value="La Vega">La Vega</option>
                     <option value="San Cristóbal">San Cristóbal</option>
                     <option value="La Romana">La Romana</option>
                     <option value="San Pedro de Macorís">San Pedro de Macorís</option>

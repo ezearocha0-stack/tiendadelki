@@ -6,7 +6,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Términos, Condiciones y Políticas - TiendaDelki",
-  description: "Políticas de envío, pagos por transferencia, cambios y privacidad de TiendaDelki República Dominicana.",
+  description: "Políticas de compra local, retiro en tienda, pagos y privacidad de TiendaDelki en Montecristi, República Dominicana.",
 };
 
 export default function PoliticasPage() {
@@ -28,13 +28,13 @@ export default function PoliticasPage() {
             Políticas de la Tienda y Términos de Servicio
           </h1>
           <p style={{ color: "var(--color-text-muted)", fontSize: "1rem" }}>
-            Última actualización: Septiembre 2026 • TiendaDelki SRL, Santo Domingo, República Dominicana.
+            TiendaDelki • San Fernando de Montecristi, República Dominicana.
           </p>
         </div>
 
         {/* Content Sections */}
         <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
-          {/* 1. Politica de Envios */}
+          {/* 1. Modalidad de Operacion y Retiro */}
           <section
             style={{
               background: "var(--color-surface)",
@@ -45,22 +45,22 @@ export default function PoliticasPage() {
             }}
           >
             <h2 style={{ fontSize: "1.4rem", fontWeight: 700, margin: "0 0 1rem", color: "var(--color-text-main)" }}>
-              1. Política de Envíos y Tiempos de Entrega
+              1. Modalidad de Operación, Ventas y Retiro de Pedidos
             </h2>
             <div style={{ fontSize: "0.95rem", lineHeight: 1.7, color: "var(--color-text-muted)" }}>
               <p style={{ margin: "0 0 1rem" }}>
-                En <strong>TiendaDelki</strong> realizamos envíos a todo el territorio de la República Dominicana bajo dos modalidades principales:
+                En <strong>TiendaDelki</strong> operamos localmente en <strong>San Fernando de Montecristi, República Dominicana</strong>, atendiendo a nuestros clientes mediante ventas presenciales y catálogo digital con inventario en tiempo real:
               </p>
               <ul style={{ paddingLeft: "1.25rem", margin: "0 0 1rem" }}>
                 <li style={{ marginBottom: "0.5rem" }}>
-                  <strong>Gran Santo Domingo (Distrito Nacional, Santo Domingo Este, Norte y Oeste):</strong> Entregas locales realizadas por mensajería propia o servicios motorizados de confianza en un plazo de 24 horas laborables.
+                  <strong>Ventas Locales y Retiro en Tienda:</strong> Los pedidos realizados a través de nuestra plataforma web o por WhatsApp quedan reservados para ser retirados directamente por el cliente en nuestra tienda física en Montecristi.
                 </li>
                 <li style={{ marginBottom: "0.5rem" }}>
-                  <strong>Provincias e Interior del País:</strong> Envíos despachados a través de empresas de transporte expreso certificadas (Metro Pac, Caribe Tours, BM Cargo, Vimenpaq) con un tiempo estimado de 24 a 48 horas laborables.
+                  <strong>Entregas a Domicilio y Envíos:</strong> Actualmente <strong>NO disponemos de servicio de entrega a domicilio ni envíos a otras ciudades</strong>. No se cobran tarifas de delivery ni se realizan envíos interurbanos por el momento.
                 </li>
               </ul>
               <p style={{ margin: 0 }}>
-                El costo del envío se calcula de forma transparente al momento del checkout. Si tu compra cumple el monto mínimo de la promoción de <strong>Envío Gratis</strong> (RD$ 3,000 en Santo Domingo o RD$ 5,000 en el interior), el envío se aplicará sin costo de forma automática.
+                Al confirmar tu orden, te informaremos sobre el estado de preparación de tu compra para que puedas pasar a retirarla cómodamente por nuestro local.
               </p>
             </div>
           </section>
@@ -76,27 +76,27 @@ export default function PoliticasPage() {
             }}
           >
             <h2 style={{ fontSize: "1.4rem", fontWeight: 700, margin: "0 0 1rem", color: "var(--color-text-main)" }}>
-              2. Modalidad de Pago: Transferencias y Depósitos
+              2. Métodos de Pago
             </h2>
             <div style={{ fontSize: "0.95rem", lineHeight: 1.7, color: "var(--color-text-muted)" }}>
               <p style={{ margin: "0 0 1rem" }}>
-                Para brindar la máxima seguridad a nuestros clientes, las compras online se procesan mediante <strong>depósito o transferencia bancaria directa</strong> en nuestras cuentas comerciales autorizadas:
+                Para mayor comodidad y transparencia, aceptamos las siguientes formas de pago:
               </p>
               <ul style={{ paddingLeft: "1.25rem", margin: "0 0 1rem" }}>
-                <li style={{ marginBottom: "0.35rem" }}>Banco Popular Dominicano</li>
-                <li style={{ marginBottom: "0.35rem" }}>Banco BHD</li>
-                <li style={{ marginBottom: "0.35rem" }}>Banco de Reservas (Banreservas)</li>
+                <li style={{ marginBottom: "0.35rem" }}>
+                  <strong>Transferencia o Depósito Bancario:</strong> A las cuentas bancarias oficiales autorizadas mostradas al momento de confirmar tu pedido.
+                </li>
+                <li style={{ marginBottom: "0.35rem" }}>
+                  <strong>Pago Presencial:</strong> Pago directo en nuestra tienda física al momento de retirar tu pedido.
+                </li>
               </ul>
-              <p style={{ margin: "0 0 1rem" }}>
-                Al finalizar tu pedido en la plataforma web, los productos quedarán <strong>reservados provisionalmente durante 24 horas</strong>. Para completar la orden, debes enviar el comprobante de la transferencia por WhatsApp con tu número de pedido (#TK-...). Una vez confirmado por nuestro departamento contable, el pedido pasa inmediatamente a preparación y despacho.
-              </p>
               <p style={{ margin: 0 }}>
-                En nuestra tienda física de Santo Domingo, aceptamos además pagos en efectivo y tarjetas de débito/crédito en el punto de venta.
+                Si seleccionas pago por transferencia, deberás enviar el comprobante por WhatsApp junto a tu número de pedido para validar tu reserva antes del retiro.
               </p>
             </div>
           </section>
 
-          {/* 3. Cambios y Devoluciones */}
+          {/* 3. Cambios y Garantia */}
           <section
             style={{
               background: "var(--color-surface)",
@@ -107,19 +107,19 @@ export default function PoliticasPage() {
             }}
           >
             <h2 style={{ fontSize: "1.4rem", fontWeight: 700, margin: "0 0 1rem", color: "var(--color-text-main)" }}>
-              3. Política de Cambios y Garantía
+              3. Cambios y Garantía
             </h2>
             <div style={{ fontSize: "0.95rem", lineHeight: 1.7, color: "var(--color-text-muted)" }}>
               <p style={{ margin: "0 0 1rem" }}>
-                Tu satisfacción es nuestra prioridad. Cuentas con un plazo de <strong>7 días calendario</strong> tras recibir tu pedido para solicitar un cambio de producto o talla bajo las siguientes condiciones:
+                Tu satisfacción con cada compra es fundamental. Puedes solicitar el cambio de un producto o talla en nuestra tienda física bajo las siguientes pautas:
               </p>
               <ul style={{ paddingLeft: "1.25rem", margin: "0 0 1rem" }}>
-                <li style={{ marginBottom: "0.35rem" }}>El producto debe estar sin uso, con sus etiquetas adheridas y en su empaque original.</li>
-                <li style={{ marginBottom: "0.35rem" }}>Presentar el número de pedido o la factura física emitida.</li>
-                <li style={{ marginBottom: "0.35rem" }}>Los cambios por defectos de fabricación son cubiertos en su totalidad por TiendaDelki, incluyendo los costos de reenvío.</li>
+                <li style={{ marginBottom: "0.35rem" }}>El producto debe encontrarse sin uso, con sus etiquetas adheridas y en su empaque original.</li>
+                <li style={{ marginBottom: "0.35rem" }}>Presentar el número de pedido o constancia de compra.</li>
+                <li style={{ marginBottom: "0.35rem" }}>Los cambios se gestionan presencialmente en nuestro local en Montecristi.</li>
               </ul>
               <p style={{ margin: 0 }}>
-                Para iniciar un cambio o solicitar garantía, contáctanos directamente a nuestro canal de WhatsApp de atención posventa.
+                Para consultar disponibilidad de tallas antes de pasar por la tienda, contáctanos directamente a nuestro WhatsApp de atención al cliente.
               </p>
             </div>
           </section>
@@ -139,10 +139,10 @@ export default function PoliticasPage() {
             </h2>
             <div style={{ fontSize: "0.95rem", lineHeight: 1.7, color: "var(--color-text-muted)" }}>
               <p style={{ margin: "0 0 1rem" }}>
-                En <strong>TiendaDelki</strong> respetamos estrictamente tu privacidad. Los datos personales recolectados en el formulario de compra (nombre, teléfono, WhatsApp, dirección física y notas) son utilizados con el propósito exclusivo de gestionar tu pedido, coordinar la entrega y mantenerte informado sobre el estatus de tu paquete.
+                En <strong>TiendaDelki</strong> respetamos y protegemos la privacidad de nuestros clientes. Los datos proporcionados en los formularios de la tienda (nombre, teléfono, WhatsApp y notas) se utilizan exclusivamente para procesar tu orden, coordinar el retiro en tienda y brindarte asesoría personalizada.
               </p>
               <p style={{ margin: 0 }}>
-                Nunca vendemos, alquilamos ni compartimos tus datos personales con terceros para fines comerciales o de publicidad ajena a TiendaDelki.
+                No compartimos, vendemos ni cedemos tus datos personales a terceros bajo ninguna circunstancia.
               </p>
             </div>
           </section>

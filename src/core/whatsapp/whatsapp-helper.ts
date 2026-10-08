@@ -24,8 +24,9 @@ export interface ProductInquiryData {
  * Elimina caracteres no numéricos y antepone el código de país '1' si se suministran 10 dígitos locales.
  */
 export function formatWhatsAppPhone(rawPhone: string): string {
-  if (!rawPhone) return "18296734710"; // Fallback seguro
+  if (!rawPhone || !rawPhone.trim()) return "";
   const digits = rawPhone.replace(/\D/g, "");
+  if (!digits) return "";
 
   // Si tiene 10 dígitos (ej: 8296734710), es número local dominicano/norteamericano sin código de país
   if (digits.length === 10) {
@@ -42,7 +43,7 @@ export function formatWhatsAppPhone(rawPhone: string): string {
     return digits;
   }
 
-  return "18296734710";
+  return "";
 }
 
 /**
@@ -157,6 +158,7 @@ export function buildProductInquiryMessage(product: ProductInquiryData): string 
  */
 export function generateWhatsAppUrl(phone: string, message: string): string {
   const cleanPhone = formatWhatsAppPhone(phone);
+  if (!cleanPhone) return "";
   const encodedText = encodeURIComponent(message);
   return `https://wa.me/${cleanPhone}?text=${encodedText}`;
 }

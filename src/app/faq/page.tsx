@@ -5,6 +5,8 @@ import Link from "next/link";
 import { StoreHeader } from "@/components/store/store-header";
 import { StoreFooter } from "@/components/store/store-footer";
 import { WhatsAppFloatingButton } from "@/components/store/whatsapp-floating-button";
+import { useStoreSettings } from "@/hooks/use-store-settings";
+import { formatWhatsAppPhone } from "@/core/whatsapp/whatsapp-helper";
 
 interface FaqItem {
   question: string;
@@ -21,7 +23,7 @@ const FAQS: FaqItem[] = [
   {
     category: "Compras y Pedidos",
     question: "¿Tienen tienda física donde pueda ver los productos antes de comprar?",
-    answer: "¡Sí! Contamos con un showroom físico en la Av. Winston Churchill #105, Santo Domingo, donde puedes ver los productos, probarlos y pagar directamente en tienda en horario de Lunes a Sábado de 9:00 AM a 7:00 PM y Domingos de 10:00 AM a 3:00 PM.",
+    answer: "¡Sí! Operamos físicamente en San Fernando de Montecristi, República Dominicana, donde puedes ver nuestros productos disponibles, comprobar su calidad y realizar tus compras directamente en nuestra tienda.",
   },
   {
     category: "Compras y Pedidos",
@@ -36,17 +38,17 @@ const FAQS: FaqItem[] = [
   {
     category: "Pagos y Facturación",
     question: "¿Cómo envío el comprobante de pago?",
-    answer: "Una vez realizada la transferencia o depósito, puedes presionar el botón 'Enviar Comprobante por WhatsApp' en la pantalla de confirmación de tu pedido, o enviarlo directamente a nuestro WhatsApp oficial (809) 555-0199 indicando tu número de orden (ej. #TK-2609-0001).",
+    answer: "Una vez realizada la transferencia o depósito, puedes presionar el botón 'Enviar Comprobante por WhatsApp' en la pantalla de confirmación de tu pedido, o enviarlo directamente a nuestro WhatsApp oficial indicando tu número de orden (ej. #TK-2609-0001).",
   },
   {
-    category: "Envíos y Entregas",
-    question: "¿Cuánto tarda en llegar mi pedido?",
-    answer: "Para el Gran Santo Domingo (Distrito Nacional, Este, Norte y Oeste), las entregas se realizan el mismo día o en 24 horas laborables. Para el interior del país (Santiago, La Vega, Puerto Plata, La Romana, etc.), los envíos se procesan vía transporte expreso certificado y tardan entre 24 y 48 horas.",
+    category: "Entregas y Retiro",
+    question: "¿Ofrecen servicio de entrega a domicilio o envíos a otras ciudades?",
+    answer: "Actualmente TiendaDelki opera de forma exclusivamente local con ventas presenciales y retiro directo en nuestra tienda física en San Fernando de Montecristi. Por el momento no disponemos de entregas a domicilio ni envíos a otras provincias; cualquier actualización futura de cobertura se informará oportunamente en nuestra plataforma.",
   },
   {
-    category: "Envíos y Entregas",
-    question: "¿Cómo funciona el Envío Gratis?",
-    answer: "Ofrecemos envío gratuito en el Gran Santo Domingo para compras a partir de RD$ 3,000, y para el interior del país a partir de RD$ 5,000. El descuento se aplica automáticamente en tu pantalla de checkout.",
+    category: "Entregas y Retiro",
+    question: "¿Cómo funciona el retiro de pedidos realizados en la web?",
+    answer: "Puedes realizar tu orden a través de nuestra página web o coordinarla vía WhatsApp y pasar a retirarla directamente por nuestra tienda física en Montecristi sin ningún costo adicional una vez confirmada la disponibilidad o el comprobante de pago.",
   },
   {
     category: "Garantías y Devoluciones",
@@ -61,10 +63,11 @@ const FAQS: FaqItem[] = [
 ];
 
 export default function FaqPage() {
+  const { settings } = useStoreSettings();
   const [openIndex, setOpenIndex] = useState<number | null>(0);
   const [selectedCategory, setSelectedCategory] = useState<string>("Todas");
 
-  const categories = ["Todas", "Compras y Pedidos", "Pagos y Facturación", "Envíos y Entregas", "Garantías y Devoluciones"];
+  const categories = ["Todas", "Compras y Pedidos", "Pagos y Facturación", "Entregas y Retiro", "Garantías y Devoluciones"];
 
   const filteredFaqs = selectedCategory === "Todas"
     ? FAQS
@@ -92,7 +95,7 @@ export default function FaqPage() {
             Preguntas Frecuentes (FAQ)
           </h1>
           <p style={{ color: "var(--color-text-muted)", fontSize: "1.05rem", maxWidth: "600px", margin: "0 auto" }}>
-            Encuentra respuestas rápidas y claras a las consultas más habituales sobre compras, pagos por transferencia y envíos en toda República Dominicana.
+            Encuentra respuestas rápidas y claras a las consultas más habituales sobre compras, pagos por transferencia y retiro en tienda en San Fernando de Montecristi.
           </p>
         </div>
 
@@ -209,43 +212,45 @@ export default function FaqPage() {
         </div>
 
         {/* Bottom Support CTA */}
-        <div
-          style={{
-            marginTop: "3.5rem",
-            padding: "2rem",
-            borderRadius: "var(--radius-lg, 16px)",
-            background: "var(--color-surface)",
-            border: "1px solid var(--color-border)",
-            textAlign: "center",
-          }}
-        >
-          <h2 style={{ fontSize: "1.25rem", fontWeight: 700, margin: "0 0 0.5rem" }}>
-            ¿No encontraste lo que buscabas?
-          </h2>
-          <p style={{ color: "var(--color-text-muted)", fontSize: "0.95rem", margin: "0 0 1.25rem" }}>
-            Escríbenos directamente por WhatsApp y nuestro equipo te responderá de inmediato.
-          </p>
-          <a
-            href="https://wa.me/18095550199?text=Hola%20TiendaDelki,%20tengo%20una%20pregunta"
-            target="_blank"
-            rel="noreferrer"
+        {settings.whatsapp && (
+          <div
             style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "0.5rem",
-              backgroundColor: "#25D366",
-              color: "#ffffff",
-              padding: "0.75rem 1.75rem",
-              borderRadius: "9999px",
-              fontWeight: 700,
-              fontSize: "0.95rem",
-              textDecoration: "none",
-              boxShadow: "0 4px 12px rgba(37, 211, 102, 0.3)",
+              marginTop: "3.5rem",
+              padding: "2rem",
+              borderRadius: "var(--radius-lg, 16px)",
+              background: "var(--color-surface)",
+              border: "1px solid var(--color-border)",
+              textAlign: "center",
             }}
           >
-            Chatear con Soporte por WhatsApp
-          </a>
-        </div>
+            <h2 style={{ fontSize: "1.25rem", fontWeight: 700, margin: "0 0 0.5rem" }}>
+              ¿No encontraste lo que buscabas?
+            </h2>
+            <p style={{ color: "var(--color-text-muted)", fontSize: "0.95rem", margin: "0 0 1.25rem" }}>
+              Escríbenos directamente por WhatsApp y nuestro equipo te responderá de inmediato.
+            </p>
+            <a
+              href={`https://wa.me/${formatWhatsAppPhone(settings.whatsapp)}?text=${encodeURIComponent("Hola " + settings.storeName + ", tengo una consulta sobre sus productos.")}`}
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                backgroundColor: "#25D366",
+                color: "#ffffff",
+                padding: "0.75rem 1.75rem",
+                borderRadius: "9999px",
+                fontWeight: 700,
+                fontSize: "0.95rem",
+                textDecoration: "none",
+                boxShadow: "0 4px 12px rgba(37, 211, 102, 0.3)",
+              }}
+            >
+              Chatear con Soporte por WhatsApp
+            </a>
+          </div>
+        )}
       </main>
 
       <StoreFooter />

@@ -28,7 +28,7 @@ export default function AdminOrderDetailPage({ params }: OrderDetailProps) {
   const [modalInput, setModalInput] = useState({
     notes: "",
     rejectionReason: "",
-    carrierName: "Metro Pac",
+    carrierName: "Entrega / Retiro Local",
     trackingNumber: "",
     trackingUrl: "",
   });
@@ -816,45 +816,40 @@ export default function AdminOrderDetailPage({ params }: OrderDetailProps) {
 
       {/* 1. Modal Confirmar Pago */}
       {modalType === "CONFIRM_PAYMENT" && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: "rgba(0,0,0,0.6)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 9999,
-            padding: "1rem",
-          }}
-        >
-          <div style={{ background: "var(--bg-surface)", borderRadius: "var(--radius-lg)", maxWidth: "480px", width: "100%", padding: "1.75rem" }}>
-            <h3 style={{ fontSize: "1.25rem", fontWeight: 700, margin: "0 0 0.5rem" }}>
-              Confirmar y Aprobar Pago
-            </h3>
-            <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginBottom: "1rem" }}>
-              ¿Has verificado que el depósito de <strong>{formatCurrency(Number(order.total))}</strong> está reflejado en la cuenta bancaria de la empresa?
-            </p>
-
-            <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.35rem" }}>
-              Nota interna de aprobación (Opcional)
-            </label>
-            <input
-              type="text"
-              placeholder="Ej. Verificado en Banco Popular, referencia #12345"
-              value={modalInput.notes}
-              onChange={(e) => setModalInput({ ...modalInput, notes: e.target.value })}
-              style={{ width: "100%", padding: "0.65rem", borderRadius: "6px", border: "1px solid var(--border-subtle)", marginBottom: "1.5rem", boxSizing: "border-box" }}
-            />
-
-            <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem" }}>
+        <div className="modal-backdrop">
+          <div className="modal-dialog" style={{ maxWidth: "480px" }}>
+            <div className="modal-header">
+              <h3 className="modal-title">Confirmar y Aprobar Pago</h3>
               <button
                 type="button"
                 onClick={() => setModalType(null)}
-                style={{ padding: "0.6rem 1rem", borderRadius: "6px", border: "1px solid var(--border-subtle)", background: "transparent" }}
+                className="modal-close-btn"
+                aria-label="Cerrar modal"
+              >
+                ✕
+              </button>
+            </div>
+            <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", margin: "0 0 1.25rem 0", lineHeight: 1.5 }}>
+              ¿Has verificado que el depósito de <strong style={{ color: "var(--text-primary)" }}>{formatCurrency(Number(order.total))}</strong> está reflejado en la cuenta bancaria de la empresa?
+            </p>
+
+            <div style={{ marginBottom: "1.5rem" }}>
+              <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.35rem", color: "var(--text-primary)" }}>
+                Nota interna de aprobación (Opcional)
+              </label>
+              <input
+                type="text"
+                placeholder="Ej. Verificado en Banco Popular, referencia #12345"
+                value={modalInput.notes}
+                onChange={(e) => setModalInput({ ...modalInput, notes: e.target.value })}
+              />
+            </div>
+
+            <div className="modal-footer">
+              <button
+                type="button"
+                onClick={() => setModalType(null)}
+                className="btn btn-secondary"
               >
                 Cancelar
               </button>
@@ -862,7 +857,7 @@ export default function AdminOrderDetailPage({ params }: OrderDetailProps) {
                 type="button"
                 disabled={actionLoading}
                 onClick={() => handleStatusUpdate("PAGADO", { notes: modalInput.notes })}
-                style={{ padding: "0.6rem 1.25rem", borderRadius: "6px", border: "none", background: "#16a34a", color: "#fff", fontWeight: 700 }}
+                className="btn btn-success"
               >
                 {actionLoading ? "Confirmando..." : "Aprobar Pago"}
               </button>
@@ -873,46 +868,41 @@ export default function AdminOrderDetailPage({ params }: OrderDetailProps) {
 
       {/* 2. Modal Rechazar Comprobante */}
       {modalType === "REJECT_PAYMENT" && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: "rgba(0,0,0,0.6)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 9999,
-            padding: "1rem",
-          }}
-        >
-          <div style={{ background: "var(--bg-surface)", borderRadius: "var(--radius-lg)", maxWidth: "480px", width: "100%", padding: "1.75rem" }}>
-            <h3 style={{ fontSize: "1.25rem", fontWeight: 700, margin: "0 0 0.5rem", color: "#dc2626" }}>
-              Rechazar Comprobante de Pago
-            </h3>
-            <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginBottom: "1rem" }}>
-              El pedido regresará al estado <strong>PENDIENTE DE PAGO</strong> para que el cliente envíe un comprobante válido.
-            </p>
-
-            <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.35rem" }}>
-              Motivo del rechazo *
-            </label>
-            <textarea
-              required
-              rows={3}
-              placeholder="Ej. El monto no coincide con la orden / Foto ilegible / Transferencia no reflejada en cuenta..."
-              value={modalInput.rejectionReason}
-              onChange={(e) => setModalInput({ ...modalInput, rejectionReason: e.target.value })}
-              style={{ width: "100%", padding: "0.65rem", borderRadius: "6px", border: "1px solid var(--border-subtle)", marginBottom: "1.5rem", boxSizing: "border-box" }}
-            />
-
-            <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem" }}>
+        <div className="modal-backdrop">
+          <div className="modal-dialog" style={{ maxWidth: "480px" }}>
+            <div className="modal-header">
+              <h3 className="modal-title" style={{ color: "#dc2626" }}>Rechazar Comprobante de Pago</h3>
               <button
                 type="button"
                 onClick={() => setModalType(null)}
-                style={{ padding: "0.6rem 1rem", borderRadius: "6px", border: "1px solid var(--border-subtle)", background: "transparent" }}
+                className="modal-close-btn"
+                aria-label="Cerrar modal"
+              >
+                ✕
+              </button>
+            </div>
+            <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", margin: "0 0 1.25rem 0", lineHeight: 1.5 }}>
+              El pedido regresará al estado <strong style={{ color: "var(--text-primary)" }}>PENDIENTE DE PAGO</strong> para que el cliente envíe un comprobante válido.
+            </p>
+
+            <div style={{ marginBottom: "1.5rem" }}>
+              <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.35rem", color: "var(--text-primary)" }}>
+                Motivo del rechazo *
+              </label>
+              <textarea
+                required
+                rows={3}
+                placeholder="Ej. El monto no coincide con la orden / Foto ilegible / Transferencia no reflejada en cuenta..."
+                value={modalInput.rejectionReason}
+                onChange={(e) => setModalInput({ ...modalInput, rejectionReason: e.target.value })}
+              />
+            </div>
+
+            <div className="modal-footer">
+              <button
+                type="button"
+                onClick={() => setModalType(null)}
+                className="btn btn-secondary"
               >
                 Volver
               </button>
@@ -920,7 +910,7 @@ export default function AdminOrderDetailPage({ params }: OrderDetailProps) {
                 type="button"
                 disabled={actionLoading || !modalInput.rejectionReason.trim()}
                 onClick={() => handleStatusUpdate("PENDIENTE_DE_PAGO", { rejectionReason: modalInput.rejectionReason })}
-                style={{ padding: "0.6rem 1.25rem", borderRadius: "6px", border: "none", background: "#dc2626", color: "#fff", fontWeight: 700 }}
+                className="btn btn-danger"
               >
                 {actionLoading ? "Rechazando..." : "Confirmar Rechazo"}
               </button>
@@ -931,50 +921,43 @@ export default function AdminOrderDetailPage({ params }: OrderDetailProps) {
 
       {/* 3. Modal Despachar / Enviar Pedido */}
       {modalType === "SET_SHIPPING" && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: "rgba(0,0,0,0.6)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 9999,
-            padding: "1rem",
-          }}
-        >
-          <div style={{ background: "var(--bg-surface)", borderRadius: "var(--radius-lg)", maxWidth: "500px", width: "100%", padding: "1.75rem" }}>
-            <h3 style={{ fontSize: "1.25rem", fontWeight: 700, margin: "0 0 0.5rem" }}>
-              Despachar Pedido y Registrar Guía
-            </h3>
-            <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginBottom: "1.25rem" }}>
+        <div className="modal-backdrop">
+          <div className="modal-dialog" style={{ maxWidth: "500px" }}>
+            <div className="modal-header">
+              <h3 className="modal-title">Despachar Pedido y Registrar Guía</h3>
+              <button
+                type="button"
+                onClick={() => setModalType(null)}
+                className="modal-close-btn"
+                aria-label="Cerrar modal"
+              >
+                ✕
+              </button>
+            </div>
+            <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", margin: "0 0 1.25rem 0", lineHeight: 1.5 }}>
               Ingresa los datos de envío para que el cliente pueda rastrear su paquete.
             </p>
 
             <div style={{ display: "flex", flexDirection: "column", gap: "1rem", marginBottom: "1.5rem" }}>
               <div>
-                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.35rem" }}>
+                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.35rem", color: "var(--text-primary)" }}>
                   Empresa de Transporte / Mensajería *
                 </label>
                 <select
                   value={modalInput.carrierName}
                   onChange={(e) => setModalInput({ ...modalInput, carrierName: e.target.value })}
-                  style={{ width: "100%", padding: "0.65rem", borderRadius: "6px", border: "1px solid var(--border-subtle)", background: "var(--bg-app)" }}
                 >
+                  <option value="Entrega / Retiro Local">Entrega / Retiro Local</option>
                   <option value="Metro Pac">Metro Pac</option>
                   <option value="Caribe Tours">Caribe Tours</option>
                   <option value="BM Cargo">BM Cargo</option>
                   <option value="Vimenpaq">Vimenpaq</option>
-                  <option value="Mensajería Privada Santo Domingo">Mensajería Privada Santo Domingo</option>
                   <option value="Otro">Otro Transportista</option>
                 </select>
               </div>
 
               <div>
-                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.35rem" }}>
+                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.35rem", color: "var(--text-primary)" }}>
                   Número de Guía / Tracking *
                 </label>
                 <input
@@ -983,12 +966,11 @@ export default function AdminOrderDetailPage({ params }: OrderDetailProps) {
                   placeholder="Ej. MP-8492041"
                   value={modalInput.trackingNumber}
                   onChange={(e) => setModalInput({ ...modalInput, trackingNumber: e.target.value })}
-                  style={{ width: "100%", padding: "0.65rem", borderRadius: "6px", border: "1px solid var(--border-subtle)", boxSizing: "border-box" }}
                 />
               </div>
 
               <div>
-                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.35rem" }}>
+                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.35rem", color: "var(--text-primary)" }}>
                   Enlace de Rastreo Web (Opcional)
                 </label>
                 <input
@@ -996,16 +978,15 @@ export default function AdminOrderDetailPage({ params }: OrderDetailProps) {
                   placeholder="https://metropac.com.do/tracking?id=..."
                   value={modalInput.trackingUrl}
                   onChange={(e) => setModalInput({ ...modalInput, trackingUrl: e.target.value })}
-                  style={{ width: "100%", padding: "0.65rem", borderRadius: "6px", border: "1px solid var(--border-subtle)", boxSizing: "border-box" }}
                 />
               </div>
             </div>
 
-            <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem" }}>
+            <div className="modal-footer">
               <button
                 type="button"
                 onClick={() => setModalType(null)}
-                style={{ padding: "0.6rem 1rem", borderRadius: "6px", border: "1px solid var(--border-subtle)", background: "transparent" }}
+                className="btn btn-secondary"
               >
                 Cancelar
               </button>
@@ -1019,7 +1000,7 @@ export default function AdminOrderDetailPage({ params }: OrderDetailProps) {
                     trackingUrl: modalInput.trackingUrl || null,
                   })
                 }
-                style={{ padding: "0.6rem 1.25rem", borderRadius: "6px", border: "none", background: "#0284c7", color: "#fff", fontWeight: 700 }}
+                className="btn btn-primary"
               >
                 {actionLoading ? "Registrando..." : "Guardar y Marcar Enviado"}
               </button>
@@ -1030,46 +1011,41 @@ export default function AdminOrderDetailPage({ params }: OrderDetailProps) {
 
       {/* 4. Modal Cancelar */}
       {modalType === "CANCEL" && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: "rgba(0,0,0,0.6)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 9999,
-            padding: "1rem",
-          }}
-        >
-          <div style={{ background: "var(--bg-surface)", borderRadius: "var(--radius-lg)", maxWidth: "480px", width: "100%", padding: "1.75rem" }}>
-            <h3 style={{ fontSize: "1.25rem", fontWeight: 700, margin: "0 0 0.5rem", color: "#dc2626" }}>
-              Confirmar Cancelación del Pedido
-            </h3>
-            <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginBottom: "1rem" }}>
-              Esta acción marcará el pedido como <strong>CANCELADO</strong>. Esta acción queda registrada en la bitácora.
-            </p>
-
-            <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.35rem" }}>
-              Motivo de la cancelación *
-            </label>
-            <input
-              type="text"
-              required
-              placeholder="Ej. Solicitado por el cliente / Falta de pago / etc."
-              value={modalInput.notes}
-              onChange={(e) => setModalInput({ ...modalInput, notes: e.target.value })}
-              style={{ width: "100%", padding: "0.65rem", borderRadius: "6px", border: "1px solid var(--border-subtle)", marginBottom: "1.5rem", boxSizing: "border-box" }}
-            />
-
-            <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem" }}>
+        <div className="modal-backdrop">
+          <div className="modal-dialog" style={{ maxWidth: "480px" }}>
+            <div className="modal-header">
+              <h3 className="modal-title" style={{ color: "#dc2626" }}>Confirmar Cancelación del Pedido</h3>
               <button
                 type="button"
                 onClick={() => setModalType(null)}
-                style={{ padding: "0.6rem 1rem", borderRadius: "6px", border: "1px solid var(--border-subtle)", background: "transparent" }}
+                className="modal-close-btn"
+                aria-label="Cerrar modal"
+              >
+                ✕
+              </button>
+            </div>
+            <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", margin: "0 0 1.25rem 0", lineHeight: 1.5 }}>
+              Esta acción marcará el pedido como <strong style={{ color: "var(--text-primary)" }}>CANCELADO</strong>. Esta acción queda registrada en la bitácora.
+            </p>
+
+            <div style={{ marginBottom: "1.5rem" }}>
+              <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.35rem", color: "var(--text-primary)" }}>
+                Motivo de la cancelación *
+              </label>
+              <input
+                type="text"
+                required
+                placeholder="Ej. Solicitado por el cliente / Falta de pago / etc."
+                value={modalInput.notes}
+                onChange={(e) => setModalInput({ ...modalInput, notes: e.target.value })}
+              />
+            </div>
+
+            <div className="modal-footer">
+              <button
+                type="button"
+                onClick={() => setModalType(null)}
+                className="btn btn-secondary"
               >
                 Volver
               </button>
@@ -1077,7 +1053,7 @@ export default function AdminOrderDetailPage({ params }: OrderDetailProps) {
                 type="button"
                 disabled={actionLoading || !modalInput.notes.trim()}
                 onClick={() => handleStatusUpdate("CANCELADO", { notes: modalInput.notes })}
-                style={{ padding: "0.6rem 1.25rem", borderRadius: "6px", border: "none", background: "#dc2626", color: "#fff", fontWeight: 700 }}
+                className="btn btn-danger"
               >
                 {actionLoading ? "Cancelando..." : "Confirmar Cancelación"}
               </button>

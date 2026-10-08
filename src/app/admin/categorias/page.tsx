@@ -175,13 +175,13 @@ export default function AdminCategoriesPage() {
       </div>
 
       {error && (
-        <div style={{ padding: "1rem", backgroundColor: "rgba(239, 68, 68, 0.15)", border: "1px solid rgba(239, 68, 68, 0.3)", borderRadius: "var(--radius-md)", color: "#f87171", marginBottom: "1.5rem" }}>
+        <div style={{ padding: "0.85rem 1.25rem", backgroundColor: "#fef2f2", border: "1px solid #fecaca", borderRadius: "var(--radius-md)", color: "#b91c1c", marginBottom: "1.5rem", fontSize: "0.9rem", fontWeight: 500 }}>
           ⚠️ {error}
         </div>
       )}
 
       {successMsg && (
-        <div style={{ padding: "1rem", backgroundColor: "rgba(16, 185, 129, 0.15)", border: "1px solid rgba(16, 185, 129, 0.3)", borderRadius: "var(--radius-md)", color: "#34d399", marginBottom: "1.5rem" }}>
+        <div style={{ padding: "0.85rem 1.25rem", backgroundColor: "#ecfdf5", border: "1px solid #a7f3d0", borderRadius: "var(--radius-md)", color: "#065f46", marginBottom: "1.5rem", fontSize: "0.9rem", fontWeight: 500 }}>
           ✅ {successMsg}
         </div>
       )}
@@ -189,13 +189,13 @@ export default function AdminCategoriesPage() {
       <div className="grid grid-cols-2" style={{ alignItems: "start", gap: "2rem" }}>
         {/* FORMULARIO DE CREAR / EDITAR */}
         <div className="card">
-          <h2 style={{ fontSize: "1.2rem", fontWeight: "700", marginBottom: "1.25rem" }}>
+          <h2 style={{ fontSize: "1.2rem", fontWeight: "700", marginBottom: "1.25rem", color: "var(--text-primary)" }}>
             {isEditing ? `Editar: ${name}` : "Nueva Categoría"}
           </h2>
 
           <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
             <div>
-              <label style={{ display: "block", fontSize: "0.85rem", fontWeight: "600", marginBottom: "0.4rem" }}>
+              <label style={{ display: "block", fontSize: "0.85rem", fontWeight: "600", marginBottom: "0.4rem", color: "var(--text-primary)" }}>
                 Nombre de la Categoría *
               </label>
               <input
@@ -204,20 +204,11 @@ export default function AdminCategoriesPage() {
                 value={name}
                 onChange={(e) => handleNameChange(e.target.value)}
                 placeholder="Ej. Ropa Deportiva"
-                style={{
-                  width: "100%",
-                  padding: "0.75rem",
-                  backgroundColor: "var(--bg-app)",
-                  border: "1px solid var(--border-strong)",
-                  borderRadius: "var(--radius-md)",
-                  color: "var(--text-primary)",
-                  fontSize: "0.95rem",
-                }}
               />
             </div>
 
             <div>
-              <label style={{ display: "block", fontSize: "0.85rem", fontWeight: "600", marginBottom: "0.4rem" }}>
+              <label style={{ display: "block", fontSize: "0.85rem", fontWeight: "600", marginBottom: "0.4rem", color: "var(--text-primary)" }}>
                 Slug (URL amigable) *
               </label>
               <input
@@ -226,34 +217,16 @@ export default function AdminCategoriesPage() {
                 value={slug}
                 onChange={(e) => setSlug(e.target.value)}
                 placeholder="ropa-deportiva"
-                style={{
-                  width: "100%",
-                  padding: "0.75rem",
-                  backgroundColor: "var(--bg-app)",
-                  border: "1px solid var(--border-strong)",
-                  borderRadius: "var(--radius-md)",
-                  color: "var(--text-primary)",
-                  fontSize: "0.9rem",
-                }}
               />
             </div>
 
             <div>
-              <label style={{ display: "block", fontSize: "0.85rem", fontWeight: "600", marginBottom: "0.4rem" }}>
+              <label style={{ display: "block", fontSize: "0.85rem", fontWeight: "600", marginBottom: "0.4rem", color: "var(--text-primary)" }}>
                 Categoría Padre (Opcional)
               </label>
               <select
                 value={parentId}
                 onChange={(e) => setParentId(e.target.value)}
-                style={{
-                  width: "100%",
-                  padding: "0.75rem",
-                  backgroundColor: "var(--bg-app)",
-                  border: "1px solid var(--border-strong)",
-                  borderRadius: "var(--radius-md)",
-                  color: "var(--text-primary)",
-                  fontSize: "0.9rem",
-                }}
               >
                 <option value="">(Ninguna - Es Categoría Principal)</option>
                 {categories
@@ -268,31 +241,23 @@ export default function AdminCategoriesPage() {
 
             <div style={{ display: "flex", gap: "1rem" }}>
               <div style={{ flex: 1 }}>
-                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: "600", marginBottom: "0.4rem" }}>
+                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: "600", marginBottom: "0.4rem", color: "var(--text-primary)" }}>
                   Orden de Visualización
                 </label>
                 <input
                   type="number"
                   value={sortOrder}
                   onChange={(e) => setSortOrder(parseInt(e.target.value) || 0)}
-                  style={{
-                    width: "100%",
-                    padding: "0.75rem",
-                    backgroundColor: "var(--bg-app)",
-                    border: "1px solid var(--border-strong)",
-                    borderRadius: "var(--radius-md)",
-                    color: "var(--text-primary)",
-                    fontSize: "0.9rem",
-                  }}
                 />
               </div>
 
               <div style={{ flex: 1, display: "flex", alignItems: "center", paddingTop: "1.25rem" }}>
-                <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}>
+                <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer", fontSize: "0.9rem", fontWeight: 600, color: "var(--text-primary)" }}>
                   <input
                     type="checkbox"
                     checked={isActive}
                     onChange={(e) => setIsActive(e.target.checked)}
+                    style={{ width: "18px", height: "18px", cursor: "pointer" }}
                   />
                   <span>Activa en Tienda</span>
                 </label>
@@ -300,7 +265,7 @@ export default function AdminCategoriesPage() {
             </div>
 
             <div>
-              <label style={{ display: "block", fontSize: "0.85rem", fontWeight: "600", marginBottom: "0.4rem" }}>
+              <label style={{ display: "block", fontSize: "0.85rem", fontWeight: "600", marginBottom: "0.4rem", color: "var(--text-primary)" }}>
                 Descripción (Opcional)
               </label>
               <textarea
@@ -308,15 +273,6 @@ export default function AdminCategoriesPage() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Breve reseña para la sección del catálogo..."
-                style={{
-                  width: "100%",
-                  padding: "0.75rem",
-                  backgroundColor: "var(--bg-app)",
-                  border: "1px solid var(--border-strong)",
-                  borderRadius: "var(--radius-md)",
-                  color: "var(--text-primary)",
-                  fontSize: "0.9rem",
-                }}
               />
             </div>
 
@@ -325,12 +281,7 @@ export default function AdminCategoriesPage() {
                 <button
                   type="button"
                   onClick={cancelEdit}
-                  style={{
-                    padding: "0.75rem 1.25rem",
-                    backgroundColor: "var(--bg-surface-elevated)",
-                    color: "var(--text-secondary)",
-                    borderRadius: "var(--radius-md)",
-                  }}
+                  className="btn btn-secondary"
                 >
                   Cancelar
                 </button>
@@ -338,14 +289,7 @@ export default function AdminCategoriesPage() {
               <button
                 type="submit"
                 disabled={saving}
-                style={{
-                  padding: "0.75rem 1.5rem",
-                  backgroundColor: "var(--color-brand-accent)",
-                  color: "#fff",
-                  borderRadius: "var(--radius-md)",
-                  fontWeight: "700",
-                  opacity: saving ? 0.6 : 1,
-                }}
+                className="btn btn-primary"
               >
                 {saving ? "Guardando..." : isEditing ? "Actualizar" : "Crear Categoría"}
               </button>
@@ -355,9 +299,9 @@ export default function AdminCategoriesPage() {
 
         {/* LISTADO JERÁRQUICO */}
         <div className="card" style={{ padding: 0, overflow: "hidden" }}>
-          <div style={{ padding: "1.25rem", borderBottom: "1px solid var(--border-subtle)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <h2 style={{ fontSize: "1.1rem", fontWeight: "700" }}>Árbol de Categorías</h2>
-            <span className="badge" style={{ backgroundColor: "var(--bg-surface-elevated)", color: "var(--text-secondary)" }}>
+          <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid var(--border-subtle)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <h2 style={{ fontSize: "1.1rem", fontWeight: "700", color: "var(--text-primary)", margin: 0 }}>Árbol de Categorías</h2>
+            <span className="badge badge-neutral">
               {categories.length} registradas
             </span>
           </div>
@@ -368,71 +312,53 @@ export default function AdminCategoriesPage() {
             </div>
           ) : (
             <div style={{ maxHeight: "600px", overflowY: "auto" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.9rem" }}>
+              <table className="table-saas" style={{ width: "100%" }}>
                 <thead>
-                  <tr style={{ borderBottom: "1px solid var(--border-subtle)", color: "var(--text-muted)", backgroundColor: "rgba(255, 255, 255, 0.02)" }}>
-                    <th style={{ padding: "0.85rem 1.25rem" }}>Nombre / Slug</th>
-                    <th style={{ padding: "0.85rem" }}>Productos</th>
-                    <th style={{ padding: "0.85rem" }}>Estado</th>
-                    <th style={{ padding: "0.85rem 1.25rem", textAlign: "right" }}>Acciones</th>
+                  <tr>
+                    <th>Nombre / Slug</th>
+                    <th>Productos</th>
+                    <th>Estado</th>
+                    <th style={{ textAlign: "right" }}>Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
                   {categories.map((cat) => (
-                    <tr key={cat.id} style={{ borderBottom: "1px solid var(--border-subtle)" }}>
-                      <td style={{ padding: "0.85rem 1.25rem" }}>
-                        <div style={{ fontWeight: "600", display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                    <tr key={cat.id}>
+                      <td>
+                        <div style={{ fontWeight: "600", display: "flex", alignItems: "center", gap: "0.4rem", color: "var(--text-primary)" }}>
                           {cat.parentId && <span style={{ color: "var(--text-muted)" }}>↳</span>}
                           <span>{cat.name}</span>
                         </div>
-                        <div style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>
+                        <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>
                           /{cat.slug} {cat.parent && `(Padre: ${cat.parent.name})`}
                         </div>
                       </td>
 
-                      <td style={{ padding: "0.85rem" }}>
-                        <span className="badge" style={{ backgroundColor: "var(--bg-app)", color: "var(--text-secondary)" }}>
+                      <td>
+                        <span className="badge badge-neutral">
                           {cat._count?.products ?? 0} ítems
                         </span>
                       </td>
 
-                      <td style={{ padding: "0.85rem" }}>
-                        <span
-                          className="badge"
-                          style={{
-                            backgroundColor: cat.isActive ? "rgba(16, 185, 129, 0.15)" : "rgba(239, 68, 68, 0.15)",
-                            color: cat.isActive ? "#34d399" : "#f87171",
-                          }}
-                        >
+                      <td>
+                        <span className={cat.isActive ? "badge badge-success" : "badge badge-neutral"}>
                           {cat.isActive ? "Activa" : "Inactiva"}
                         </span>
                       </td>
 
-                      <td style={{ padding: "0.85rem 1.25rem", textAlign: "right" }}>
+                      <td style={{ textAlign: "right" }}>
                         <div style={{ display: "inline-flex", gap: "0.4rem" }}>
                           <button
                             type="button"
                             onClick={() => startEdit(cat)}
-                            style={{
-                              padding: "0.35rem 0.65rem",
-                              backgroundColor: "var(--bg-surface-elevated)",
-                              color: "#60a5fa",
-                              borderRadius: "4px",
-                              fontSize: "0.8rem",
-                            }}
+                            className="btn btn-sm btn-secondary"
                           >
                             Editar
                           </button>
                           <button
                             type="button"
                             onClick={() => requestDelete(cat)}
-                            style={{
-                              padding: "0.35rem 0.65rem",
-                              backgroundColor: "rgba(239, 68, 68, 0.1)",
-                              color: "#f87171",
-                              borderRadius: "4px",
-                              fontSize: "0.8rem",
-                            }}
+                            className="btn btn-sm btn-danger"
                           >
                             Eliminar
                           </button>

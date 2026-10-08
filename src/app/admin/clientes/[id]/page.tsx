@@ -51,14 +51,14 @@ interface CustomerDetail {
 }
 
 const STATUS_LABELS: Record<string, { label: string; color: string; bg: string }> = {
-  PENDIENTE_DE_PAGO: { label: "Pendiente de Pago", color: "#fbbf24", bg: "rgba(245, 158, 11, 0.15)" },
-  PAGO_EN_REVISION: { label: "Pago en Revisión", color: "#a78bfa", bg: "rgba(139, 92, 246, 0.15)" },
-  PAGADO: { label: "Pagado", color: "#34d399", bg: "rgba(16, 185, 129, 0.15)" },
-  PREPARANDO: { label: "En Preparación", color: "#60a5fa", bg: "rgba(59, 130, 246, 0.15)" },
-  ENVIADO: { label: "Enviado", color: "#22d3ee", bg: "rgba(6, 182, 212, 0.15)" },
-  ENTREGADO: { label: "Entregado", color: "#2dd4bf", bg: "rgba(20, 184, 166, 0.15)" },
-  COMPLETADO: { label: "Completado", color: "#10b981", bg: "rgba(5, 150, 105, 0.15)" },
-  CANCELADO: { label: "Cancelado", color: "#f87171", bg: "rgba(239, 68, 68, 0.15)" },
+  PENDIENTE_DE_PAGO: { label: "Pendiente de Pago", color: "#d97706", bg: "#fef3c7" },
+  PAGO_EN_REVISION: { label: "Pago en Revisión", color: "#6b21a8", bg: "#f3e8ff" },
+  PAGADO: { label: "Pagado", color: "#059669", bg: "#ecfdf5" },
+  PREPARANDO: { label: "En Preparación", color: "#2563eb", bg: "#eff6ff" },
+  ENVIADO: { label: "Enviado", color: "#0284c7", bg: "#e0f2fe" },
+  ENTREGADO: { label: "Entregado", color: "#0d9488", bg: "#ccfbf1" },
+  COMPLETADO: { label: "Completado", color: "#059669", bg: "#ecfdf5" },
+  CANCELADO: { label: "Cancelado", color: "#dc2626", bg: "#fee2e2" },
 };
 
 export default function AdminClienteDetailPage({
@@ -206,29 +206,29 @@ export default function AdminClienteDetailPage({
         }}
       >
         <div className="card" style={{ padding: "1.25rem" }}>
-          <span style={{ fontSize: "0.8rem", color: "var(--text-muted)", textTransform: "uppercase" }}>Total Gastado</span>
-          <div style={{ fontSize: "1.75rem", fontWeight: "800", color: "#34d399", marginTop: "0.35rem" }}>
+          <span style={{ fontSize: "0.8rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 600 }}>Total Gastado</span>
+          <div style={{ fontSize: "1.75rem", fontWeight: "800", color: "var(--text-primary)", marginTop: "0.35rem" }}>
             {formatCurrency(customer.totalSpent)}
           </div>
-          <span style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>En pedidos confirmados</span>
+          <span style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>En pedidos confirmados</span>
         </div>
 
         <div className="card" style={{ padding: "1.25rem" }}>
-          <span style={{ fontSize: "0.8rem", color: "var(--text-muted)", textTransform: "uppercase" }}>Pedidos Realizados</span>
-          <div style={{ fontSize: "1.75rem", fontWeight: "800", color: "#60a5fa", marginTop: "0.35rem" }}>
+          <span style={{ fontSize: "0.8rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 600 }}>Pedidos Realizados</span>
+          <div style={{ fontSize: "1.75rem", fontWeight: "800", color: "var(--text-primary)", marginTop: "0.35rem" }}>
             {customer.totalOrders}
           </div>
-          <span style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>{customer.completedOrders} completados</span>
+          <span style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>{customer.completedOrders} completados</span>
         </div>
 
         <div className="card" style={{ padding: "1.25rem" }}>
-          <span style={{ fontSize: "0.8rem", color: "var(--text-muted)", textTransform: "uppercase" }}>Ticket Promedio</span>
-          <div style={{ fontSize: "1.75rem", fontWeight: "800", color: "#fbbf24", marginTop: "0.35rem" }}>
+          <span style={{ fontSize: "0.8rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 600 }}>Ticket Promedio</span>
+          <div style={{ fontSize: "1.75rem", fontWeight: "800", color: "var(--text-primary)", marginTop: "0.35rem" }}>
             {customer.totalOrders > 0
               ? formatCurrency(customer.totalSpent / customer.totalOrders)
               : "RD$ 0.00"}
           </div>
-          <span style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>Por cada orden</span>
+          <span style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>Por cada orden</span>
         </div>
       </div>
 
@@ -255,14 +255,14 @@ export default function AdminClienteDetailPage({
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.35rem" }}>
                   <span style={{ fontWeight: "700", fontSize: "0.85rem" }}>{a.label}</span>
                   {a.isDefault && (
-                    <span style={{ fontSize: "0.7rem", color: "#60a5fa", fontWeight: "700" }}>● Predeterminada</span>
+                    <span style={{ fontSize: "0.75rem", color: "var(--color-brand-primary)", fontWeight: "700" }}>● Predeterminada</span>
                   )}
                 </div>
-                <p style={{ fontSize: "0.85rem", color: "var(--text-primary)", fontWeight: "600" }}>{a.recipientName}</p>
-                <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>{a.streetAddress}</p>
-                <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>{a.sectorOrNeighborhood}, {a.city}</p>
-                <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>{a.provinceOrState}</p>
-                <p style={{ fontSize: "0.8rem", color: "var(--text-muted)", marginTop: "0.25rem" }}>📞 {a.recipientPhone}</p>
+                <p style={{ fontSize: "0.85rem", color: "var(--text-primary)", fontWeight: "600", margin: "0 0 0.2rem 0" }}>{a.recipientName}</p>
+                <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)", margin: 0 }}>{a.streetAddress}</p>
+                <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)", margin: 0 }}>{a.sectorOrNeighborhood}, {a.city}</p>
+                <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)", margin: 0 }}>{a.provinceOrState}</p>
+                <p style={{ fontSize: "0.8rem", color: "var(--text-muted)", marginTop: "0.35rem", marginBottom: 0 }}>📞 {a.recipientPhone}</p>
               </div>
             ))}
           </div>
@@ -279,15 +279,15 @@ export default function AdminClienteDetailPage({
           <p style={{ color: "var(--text-muted)", fontSize: "0.9rem" }}>Este cliente aún no ha generado pedidos.</p>
         ) : (
           <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "0.85rem" }}>
+            <table className="table-saas" style={{ width: "100%", textAlign: "left" }}>
               <thead>
-                <tr style={{ backgroundColor: "var(--bg-surface-elevated)", borderBottom: "1px solid var(--border-subtle)" }}>
-                  <th style={{ padding: "0.75rem 1rem", color: "var(--text-muted)" }}>Pedido</th>
-                  <th style={{ padding: "0.75rem 1rem", color: "var(--text-muted)" }}>Fecha</th>
-                  <th style={{ padding: "0.75rem 1rem", color: "var(--text-muted)" }}>Artículos</th>
-                  <th style={{ padding: "0.75rem 1rem", color: "var(--text-muted)" }}>Estado</th>
-                  <th style={{ padding: "0.75rem 1rem", color: "var(--text-muted)", textAlign: "right" }}>Total</th>
-                  <th style={{ padding: "0.75rem 1rem", color: "var(--text-muted)", textAlign: "right" }}>Acción</th>
+                <tr>
+                  <th>Pedido</th>
+                  <th>Fecha</th>
+                  <th>Artículos</th>
+                  <th>Estado</th>
+                  <th style={{ textAlign: "right" }}>Total</th>
+                  <th style={{ textAlign: "right" }}>Acción</th>
                 </tr>
               </thead>
               <tbody>
@@ -296,50 +296,42 @@ export default function AdminClienteDetailPage({
                   const totalUnits = o.items.reduce((sum, it) => sum + it.quantity, 0);
 
                   return (
-                    <tr key={o.id} style={{ borderBottom: "1px solid var(--border-subtle)" }}>
-                      <td style={{ padding: "0.85rem 1rem", fontWeight: "700", color: "var(--text-primary)" }}>
+                    <tr key={o.id}>
+                      <td style={{ fontWeight: "700", color: "var(--text-primary)", fontFamily: "var(--font-family-mono)" }}>
                         #{o.orderNumber}
                       </td>
-                      <td style={{ padding: "0.85rem 1rem", color: "var(--text-secondary)" }}>
+                      <td style={{ color: "var(--text-secondary)" }}>
                         {new Date(o.createdAt).toLocaleDateString("es-DO", {
                           year: "numeric",
                           month: "short",
                           day: "numeric",
                         })}
                       </td>
-                      <td style={{ padding: "0.85rem 1rem", color: "var(--text-secondary)" }}>
+                      <td style={{ color: "var(--text-secondary)" }}>
                         {totalUnits} {totalUnits === 1 ? "artículo" : "artículos"} ({o.items.length} productos)
                       </td>
-                      <td style={{ padding: "0.85rem 1rem" }}>
+                      <td>
                         <span
                           style={{
-                            padding: "0.2rem 0.55rem",
+                            padding: "0.25rem 0.65rem",
                             borderRadius: "var(--radius-full)",
                             fontSize: "0.75rem",
                             fontWeight: "700",
                             backgroundColor: st.bg,
                             color: st.color,
+                            display: "inline-block",
                           }}
                         >
                           ● {st.label}
                         </span>
                       </td>
-                      <td style={{ padding: "0.85rem 1rem", textAlign: "right", fontWeight: "800", color: "#34d399" }}>
+                      <td style={{ textAlign: "right", fontWeight: "800", color: "var(--text-primary)" }}>
                         {formatCurrency(o.total)}
                       </td>
-                      <td style={{ padding: "0.85rem 1rem", textAlign: "right" }}>
+                      <td style={{ textAlign: "right" }}>
                         <Link
                           href={`/admin/pedidos/${o.id}`}
-                          style={{
-                            padding: "0.35rem 0.75rem",
-                            backgroundColor: "var(--bg-surface-elevated)",
-                            color: "#60a5fa",
-                            border: "1px solid var(--border-strong)",
-                            borderRadius: "var(--radius-sm)",
-                            fontSize: "0.75rem",
-                            fontWeight: "700",
-                            textDecoration: "none",
-                          }}
+                          className="btn btn-sm btn-secondary"
                         >
                           Ver Pedido ↗
                         </Link>

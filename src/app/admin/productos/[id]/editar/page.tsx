@@ -399,8 +399,8 @@ export default function AdminEditProductPage({ params }: { params: Promise<{ id:
                 style={{
                   width: "100%",
                   padding: "0.75rem",
-                  backgroundColor: "var(--bg-app)",
-                  border: "1px solid var(--border-strong)",
+                  backgroundColor: "var(--bg-surface)",
+                  border: "1px solid var(--border-subtle)",
                   borderRadius: "var(--radius-md)",
                   color: "var(--text-primary)",
                   fontSize: "1rem",
@@ -421,8 +421,8 @@ export default function AdminEditProductPage({ params }: { params: Promise<{ id:
                   style={{
                     width: "100%",
                     padding: "0.75rem",
-                    backgroundColor: "var(--bg-app)",
-                    border: "1px solid var(--border-strong)",
+                    backgroundColor: "var(--bg-surface)",
+                    border: "1px solid var(--border-subtle)",
                     borderRadius: "var(--radius-md)",
                     color: "var(--text-primary)",
                     fontSize: "0.9rem",
@@ -441,8 +441,8 @@ export default function AdminEditProductPage({ params }: { params: Promise<{ id:
                   style={{
                     width: "100%",
                     padding: "0.75rem",
-                    backgroundColor: "var(--bg-app)",
-                    border: "1px solid var(--border-strong)",
+                    backgroundColor: "var(--bg-surface)",
+                    border: "1px solid var(--border-subtle)",
                     borderRadius: "var(--radius-md)",
                     color: "var(--text-primary)",
                     fontSize: "0.9rem",
@@ -469,8 +469,8 @@ export default function AdminEditProductPage({ params }: { params: Promise<{ id:
                 style={{
                   width: "100%",
                   padding: "0.75rem",
-                  backgroundColor: "var(--bg-app)",
-                  border: "1px solid var(--border-strong)",
+                  backgroundColor: "var(--bg-surface)",
+                  border: "1px solid var(--border-subtle)",
                   borderRadius: "var(--radius-md)",
                   color: "var(--text-primary)",
                   fontSize: "0.9rem",
@@ -489,8 +489,8 @@ export default function AdminEditProductPage({ params }: { params: Promise<{ id:
                 style={{
                   width: "100%",
                   padding: "0.75rem",
-                  backgroundColor: "var(--bg-app)",
-                  border: "1px solid var(--border-strong)",
+                  backgroundColor: "var(--bg-surface)",
+                  border: "1px solid var(--border-subtle)",
                   borderRadius: "var(--radius-md)",
                   color: "var(--text-primary)",
                   fontSize: "0.9rem",
@@ -519,8 +519,8 @@ export default function AdminEditProductPage({ params }: { params: Promise<{ id:
                 style={{
                   width: "100%",
                   padding: "0.75rem",
-                  backgroundColor: "var(--bg-app)",
-                  border: "1px solid var(--border-strong)",
+                  backgroundColor: "var(--bg-surface)",
+                  border: "1px solid var(--border-subtle)",
                   borderRadius: "var(--radius-md)",
                   color: "var(--text-primary)",
                   fontSize: "1rem",
@@ -541,8 +541,8 @@ export default function AdminEditProductPage({ params }: { params: Promise<{ id:
                 style={{
                   width: "100%",
                   padding: "0.75rem",
-                  backgroundColor: "var(--bg-app)",
-                  border: "1px solid var(--border-strong)",
+                  backgroundColor: "var(--bg-surface)",
+                  border: "1px solid var(--border-subtle)",
                   borderRadius: "var(--radius-md)",
                   color: "var(--text-muted)",
                   fontSize: "1rem",
@@ -618,15 +618,7 @@ export default function AdminEditProductPage({ params }: { params: Promise<{ id:
           <button
             type="button"
             onClick={() => setShowAddVariantModal(true)}
-            style={{
-              padding: "0.5rem 1rem",
-              backgroundColor: "var(--bg-surface-elevated)",
-              color: "#60a5fa",
-              borderRadius: "var(--radius-md)",
-              fontWeight: "600",
-              fontSize: "0.85rem",
-              border: "1px solid rgba(37, 99, 235, 0.3)",
-            }}
+            className="btn btn-sm btn-secondary"
           >
             ＋ Agregar Variante
           </button>
@@ -640,14 +632,14 @@ export default function AdminEditProductPage({ params }: { params: Promise<{ id:
               backgroundColor: "var(--bg-app)",
               borderRadius: "var(--radius-md)",
               marginBottom: "1.5rem",
-              border: "1px solid var(--border-strong)",
+              border: "1px solid var(--border-subtle)",
             }}
           >
-            <h4 style={{ fontSize: "1rem", marginBottom: "1rem" }}>Nueva Variante Flexible</h4>
+            <h4 style={{ fontSize: "1rem", marginBottom: "1rem", fontWeight: 700, color: "var(--text-primary)" }}>Nueva Variante Flexible</h4>
             <form onSubmit={handleAddVariant} style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
               <div className="grid grid-cols-2" style={{ gap: "0.75rem" }}>
                 <div>
-                  <label style={{ display: "block", fontSize: "0.8rem", color: "var(--text-muted)", marginBottom: "0.25rem" }}>
+                  <label style={{ display: "block", fontSize: "0.8rem", color: "var(--text-secondary)", marginBottom: "0.25rem", fontWeight: 600 }}>
                     Título de la variante (ej. Azul Marino / L)
                   </label>
                   <input
@@ -656,11 +648,11 @@ export default function AdminEditProductPage({ params }: { params: Promise<{ id:
                     placeholder="Azul / L"
                     value={newVarTitle}
                     onChange={(e) => setNewVarTitle(e.target.value)}
-                    style={{ width: "100%", padding: "0.5rem", backgroundColor: "var(--bg-surface)", border: "1px solid var(--border-subtle)", borderRadius: "4px", color: "var(--text-primary)" }}
+                    style={{ width: "100%", padding: "0.55rem 0.75rem", backgroundColor: "var(--bg-surface)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-md)", color: "var(--text-primary)" }}
                   />
                 </div>
                 <div>
-                  <label style={{ display: "block", fontSize: "0.8rem", color: "var(--text-muted)", marginBottom: "0.25rem" }}>
+                  <label style={{ display: "block", fontSize: "0.8rem", color: "var(--text-secondary)", marginBottom: "0.25rem", fontWeight: 600 }}>
                     SKU Único
                   </label>
                   <input
@@ -669,7 +661,7 @@ export default function AdminEditProductPage({ params }: { params: Promise<{ id:
                     placeholder="CAM-AZUL-L"
                     value={newVarSku}
                     onChange={(e) => setNewVarSku(e.target.value.toUpperCase())}
-                    style={{ width: "100%", padding: "0.5rem", backgroundColor: "var(--bg-surface)", border: "1px solid var(--border-subtle)", borderRadius: "4px", color: "var(--text-primary)" }}
+                    style={{ width: "100%", padding: "0.55rem 0.75rem", backgroundColor: "var(--bg-surface)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-md)", color: "var(--text-primary)" }}
                   />
                 </div>
               </div>
@@ -677,47 +669,47 @@ export default function AdminEditProductPage({ params }: { params: Promise<{ id:
               <div className="grid grid-cols-2" style={{ gap: "0.75rem" }}>
                 <div style={{ display: "flex", gap: "0.5rem" }}>
                   <div style={{ width: "40%" }}>
-                    <label style={{ display: "block", fontSize: "0.8rem", color: "var(--text-muted)", marginBottom: "0.25rem" }}>Atributo</label>
+                    <label style={{ display: "block", fontSize: "0.8rem", color: "var(--text-secondary)", marginBottom: "0.25rem", fontWeight: 600 }}>Atributo</label>
                     <input
                       type="text"
                       value={newVarAttrKey}
                       onChange={(e) => setNewVarAttrKey(e.target.value)}
                       placeholder="Color o Talla"
-                      style={{ width: "100%", padding: "0.5rem", backgroundColor: "var(--bg-surface)", border: "1px solid var(--border-subtle)", borderRadius: "4px", color: "var(--text-primary)" }}
+                      style={{ width: "100%", padding: "0.55rem 0.75rem", backgroundColor: "var(--bg-surface)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-md)", color: "var(--text-primary)" }}
                     />
                   </div>
                   <div style={{ width: "60%" }}>
-                    <label style={{ display: "block", fontSize: "0.8rem", color: "var(--text-muted)", marginBottom: "0.25rem" }}>Valor</label>
+                    <label style={{ display: "block", fontSize: "0.8rem", color: "var(--text-secondary)", marginBottom: "0.25rem", fontWeight: 600 }}>Valor</label>
                     <input
                       type="text"
                       value={newVarAttrVal}
                       onChange={(e) => setNewVarAttrVal(e.target.value)}
                       placeholder="Azul"
-                      style={{ width: "100%", padding: "0.5rem", backgroundColor: "var(--bg-surface)", border: "1px solid var(--border-subtle)", borderRadius: "4px", color: "var(--text-primary)" }}
+                      style={{ width: "100%", padding: "0.55rem 0.75rem", backgroundColor: "var(--bg-surface)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-md)", color: "var(--text-primary)" }}
                     />
                   </div>
                 </div>
 
                 <div style={{ display: "flex", gap: "0.5rem" }}>
                   <div style={{ flex: 1 }}>
-                    <label style={{ display: "block", fontSize: "0.8rem", color: "var(--text-muted)", marginBottom: "0.25rem" }}>Stock</label>
+                    <label style={{ display: "block", fontSize: "0.8rem", color: "var(--text-secondary)", marginBottom: "0.25rem", fontWeight: 600 }}>Stock</label>
                     <input
                       type="number"
                       min="0"
                       value={newVarStock}
                       onChange={(e) => setNewVarStock(parseInt(e.target.value) || 0)}
-                      style={{ width: "100%", padding: "0.5rem", backgroundColor: "var(--bg-surface)", border: "1px solid var(--border-subtle)", borderRadius: "4px", color: "var(--text-primary)" }}
+                      style={{ width: "100%", padding: "0.55rem 0.75rem", backgroundColor: "var(--bg-surface)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-md)", color: "var(--text-primary)" }}
                     />
                   </div>
                   <div style={{ flex: 1 }}>
-                    <label style={{ display: "block", fontSize: "0.8rem", color: "var(--text-muted)", marginBottom: "0.25rem" }}>Precio (RD$)</label>
+                    <label style={{ display: "block", fontSize: "0.8rem", color: "var(--text-secondary)", marginBottom: "0.25rem", fontWeight: 600 }}>Precio (RD$)</label>
                     <input
                       type="number"
                       step="0.01"
                       placeholder="Heredar base"
                       value={newVarPrice}
                       onChange={(e) => setNewVarPrice(e.target.value === "" ? "" : parseFloat(e.target.value))}
-                      style={{ width: "100%", padding: "0.5rem", backgroundColor: "var(--bg-surface)", border: "1px solid var(--border-subtle)", borderRadius: "4px", color: "var(--text-primary)" }}
+                      style={{ width: "100%", padding: "0.55rem 0.75rem", backgroundColor: "var(--bg-surface)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-md)", color: "var(--text-primary)" }}
                     />
                   </div>
                 </div>
@@ -727,13 +719,13 @@ export default function AdminEditProductPage({ params }: { params: Promise<{ id:
                 <button
                   type="button"
                   onClick={() => setShowAddVariantModal(false)}
-                  style={{ padding: "0.45rem 1rem", backgroundColor: "var(--bg-surface-elevated)", color: "var(--text-secondary)", borderRadius: "4px" }}
+                  className="btn btn-sm btn-secondary"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  style={{ padding: "0.45rem 1.25rem", backgroundColor: "var(--color-brand-accent)", color: "#fff", borderRadius: "4px", fontWeight: "600" }}
+                  className="btn btn-sm btn-primary"
                 >
                   Guardar Variante
                 </button>
@@ -745,32 +737,32 @@ export default function AdminEditProductPage({ params }: { params: Promise<{ id:
         {/* Tabla de Variantes Existentes */}
         {variants.length > 0 && (
           <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.9rem" }}>
+            <table className="table-saas" style={{ width: "100%" }}>
               <thead>
-                <tr style={{ borderBottom: "1px solid var(--border-subtle)", color: "var(--text-muted)" }}>
-                  <th style={{ padding: "0.75rem" }}>Título</th>
-                  <th style={{ padding: "0.75rem" }}>SKU</th>
-                  <th style={{ padding: "0.75rem" }}>Precio</th>
-                  <th style={{ padding: "0.75rem" }}>Stock Disponible</th>
-                  <th style={{ padding: "0.75rem", textAlign: "right" }}>Acción</th>
+                <tr>
+                  <th>Título</th>
+                  <th>SKU</th>
+                  <th>Precio</th>
+                  <th>Stock Disponible</th>
+                  <th style={{ textAlign: "right" }}>Acción</th>
                 </tr>
               </thead>
               <tbody>
                 {variants.map((v) => (
-                  <tr key={v.id} style={{ borderBottom: "1px solid var(--border-subtle)" }}>
-                    <td style={{ padding: "0.75rem", fontWeight: "600" }}>{v.title}</td>
-                    <td style={{ padding: "0.75rem", color: "var(--text-muted)" }}>{v.sku}</td>
-                    <td style={{ padding: "0.75rem" }}>{formatCurrency(v.price)}</td>
-                    <td style={{ padding: "0.75rem" }}>
-                      <span className="badge" style={{ backgroundColor: v.stock > 0 ? "rgba(16, 185, 129, 0.15)" : "rgba(239, 68, 68, 0.15)", color: v.stock > 0 ? "#34d399" : "#f87171" }}>
+                  <tr key={v.id}>
+                    <td style={{ fontWeight: "600" }}>{v.title}</td>
+                    <td style={{ color: "var(--text-secondary)", fontFamily: "var(--font-family-mono)" }}>{v.sku}</td>
+                    <td>{formatCurrency(v.price)}</td>
+                    <td>
+                      <span className={v.stock > 0 ? "badge badge-success" : "badge badge-danger"}>
                         {v.stock} unidades
                       </span>
                     </td>
-                    <td style={{ padding: "0.75rem", textAlign: "right" }}>
+                    <td style={{ textAlign: "right" }}>
                       <button
                         type="button"
                         onClick={() => requestDeleteVariant(v.id)}
-                        style={{ padding: "0.3rem 0.6rem", backgroundColor: "rgba(239, 68, 68, 0.1)", color: "#f87171", borderRadius: "4px", fontSize: "0.8rem" }}
+                        className="btn btn-sm btn-danger"
                       >
                         Eliminar
                       </button>

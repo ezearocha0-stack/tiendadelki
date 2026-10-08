@@ -79,8 +79,8 @@ async function runFinalSecurityAudit() {
         storeId: store.id,
         customerId: userB.id,
         guestName: "Cliente B Test",
-        guestPhone: "8095550199",
-        guestWhatsapp: "8095550199",
+        guestPhone: "8090000000",
+        guestWhatsapp: "8090000000",
         guestEmail: userB.email,
         shippingAddress: {
           street: "Av. Winston Churchill 100",

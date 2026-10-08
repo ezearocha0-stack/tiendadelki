@@ -3,7 +3,9 @@
 import { useWhatsApp } from "@/hooks/use-whatsapp";
 
 export function WhatsAppFloatingButton() {
-  const { openDirectWhatsApp } = useWhatsApp();
+  const { openDirectWhatsApp, phone } = useWhatsApp();
+
+  if (!phone) return null;
 
   return (
     <button

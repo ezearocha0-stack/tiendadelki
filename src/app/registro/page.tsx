@@ -195,7 +195,7 @@ function RegisterForm() {
               required
               value={formData.phone}
               onChange={handleChange}
-              placeholder="809-555-0100"
+              placeholder="809-000-0000"
               style={{
                 width: "100%",
                 padding: "0.7rem 0.9rem",
@@ -217,7 +217,7 @@ function RegisterForm() {
               name="whatsapp"
               value={formData.whatsapp}
               onChange={handleChange}
-              placeholder="829-555-0100"
+              placeholder="829-000-0000"
               style={{
                 width: "100%",
                 padding: "0.7rem 0.9rem",

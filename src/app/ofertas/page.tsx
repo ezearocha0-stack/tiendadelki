@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Ofertas y Descuentos Exclusivos | TiendaDelki",
-    description: "Descuentos de temporada con entrega rápida en todo el país.",
+    description: "Descuentos de temporada y artículos seleccionados en San Fernando de Montecristi.",
     url: "https://tiendadelki.com/ofertas",
   },
 };

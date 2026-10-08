@@ -73,10 +73,10 @@ export default async function NuestraTiendaPage() {
             {settings.storeName} nació con un objetivo claro: ofrecer a las familias y profesionales dominicanos productos de primera calidad, garantizados y con precios justos. Desde nuestro punto de venta en {locationLabel}, atendemos diariamente a clientes que buscan atención personalizada y asesoría experta.
           </p>
           <p style={{ margin: "0 0 1.25rem", color: "var(--color-text-muted)" }}>
-            Nuestra plataforma online responde a la necesidad de nuestros clientes en todo el territorio nacional: poder consultar el catálogo con <strong>inventario real en tiempo real</strong>, realizar pedidos de forma rápida y recibir sus compras directamente en la puerta de su casa u oficina en cualquier provincia del país.
+            Nuestra plataforma web responde a la necesidad de nuestros clientes de poder consultar nuestro catálogo con <strong>inventario real en tiempo real</strong>, verificar la disponibilidad de artículos antes de visitarnos y gestionar sus pedidos o compras para retiro directo en nuestra tienda física en Montecristi.
           </p>
           <p style={{ margin: 0, color: "var(--color-text-muted)" }}>
-            No somos un intermediario anónimo. Detrás de cada paquete enviado y de cada mensaje de WhatsApp hay un equipo humano comprometido con tu satisfacción y tranquilidad.
+            No somos un intermediario anónimo. Detrás de cada atención en mostrador y de cada mensaje de WhatsApp hay un equipo humano comprometido con tu satisfacción y tranquilidad.
           </p>
         </div>
 
@@ -141,12 +141,12 @@ export default async function NuestraTiendaPage() {
               boxShadow: "var(--shadow-sm)",
             }}
           >
-            <div style={{ fontSize: "2rem", marginBottom: "0.75rem" }}>🚚</div>
+            <div style={{ fontSize: "2rem", marginBottom: "0.75rem" }}>🏪</div>
             <h3 style={{ fontSize: "1.1rem", fontWeight: 700, margin: "0 0 0.5rem" }}>
-              Cobertura Nacional
+              Venta y Retiro Local
             </h3>
             <p style={{ fontSize: "0.875rem", color: "var(--color-text-muted)", margin: 0 }}>
-              {settings.deliveryMessage}
+              Atención presencial y retiro directo en nuestra tienda física en San Fernando de Montecristi.
             </p>
           </div>
 

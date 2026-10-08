@@ -50,21 +50,23 @@ export function StoreHeader() {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <span>🚚 Envíos a todo el país (Santo Domingo e Interior)</span>
+          <span>📍 Tienda física en San Fernando de Montecristi</span>
           <span style={{ opacity: 0.4 }}>•</span>
-          <span>🏪 Recogida disponible en tienda física</span>
+          <span>🏪 Ventas locales y retiro en tienda</span>
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-          <a
-            href={`https://wa.me/${formattedPhone}?text=Hola%20TiendaDelki,%20tengo%20una%20consulta`}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: "#4ade80", fontWeight: "600", display: "flex", alignItems: "center", gap: "0.35rem" }}
-          >
-            <span>WhatsApp: {phone}</span>
-          </a>
-        </div>
+        {phone && (
+          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+            <a
+              href={`https://wa.me/${formattedPhone}?text=Hola%20TiendaDelki,%20tengo%20una%20consulta`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: "#4ade80", fontWeight: "600", display: "flex", alignItems: "center", gap: "0.35rem" }}
+            >
+              <span>WhatsApp: {phone}</span>
+            </a>
+          </div>
+        )}
       </div>
 
       {/* 2. Barra Principal de Navegación */}
@@ -175,28 +177,30 @@ export function StoreHeader() {
           {/* Enlaces y Acciones a la Derecha */}
           <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
             {/* WhatsApp Directo */}
-            <a
-              href={`https://wa.me/${formattedPhone}?text=Hola%20TiendaDelki,%20quiero%20hacer%20un%20pedido`}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.4rem",
-                padding: "0.45rem 0.85rem",
-                backgroundColor: "#ecfdf5",
-                color: "#065f46",
-                border: "1px solid #a7f3d0",
-                borderRadius: "var(--radius-md)",
-                fontSize: "0.825rem",
-                fontWeight: "600",
-                textDecoration: "none",
-                minHeight: "38px",
-              }}
-              className="desktop-nav-link"
-            >
-              <span>WhatsApp</span>
-            </a>
+            {phone && (
+              <a
+                href={`https://wa.me/${formattedPhone}?text=Hola%20TiendaDelki,%20quiero%20hacer%20un%20pedido`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.4rem",
+                  padding: "0.45rem 0.85rem",
+                  backgroundColor: "#ecfdf5",
+                  color: "#065f46",
+                  border: "1px solid #a7f3d0",
+                  borderRadius: "var(--radius-md)",
+                  fontSize: "0.825rem",
+                  fontWeight: "600",
+                  textDecoration: "none",
+                  minHeight: "38px",
+                }}
+                className="desktop-nav-link"
+              >
+                <span>WhatsApp</span>
+              </a>
+            )}
 
             {/* Botón de Favoritos */}
             <Link
@@ -521,30 +525,32 @@ export function StoreHeader() {
 
             {/* Acciones inferiores del menú móvil */}
             <div style={{ paddingTop: "1.25rem", borderTop: "1px solid var(--border-subtle)" }}>
-              <a
-                href={`https://wa.me/${formattedPhone}?text=Hola%20TiendaDelki,%20quiero%20hacer%20un%20pedido`}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "0.5rem",
-                  padding: "0.75rem",
-                  backgroundColor: "var(--color-brand-whatsapp)",
-                  color: "#ffffff",
-                  borderRadius: "var(--radius-md)",
-                  fontWeight: "600",
-                  fontSize: "0.9rem",
-                  textDecoration: "none",
-                  minHeight: "44px",
-                }}
-              >
-                <span>Pedir por WhatsApp</span>
-              </a>
+              {phone && (
+                <a
+                  href={`https://wa.me/${formattedPhone}?text=Hola%20TiendaDelki,%20quiero%20hacer%20un%20pedido`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "0.5rem",
+                    padding: "0.75rem",
+                    backgroundColor: "var(--color-brand-whatsapp)",
+                    color: "#ffffff",
+                    borderRadius: "var(--radius-md)",
+                    fontWeight: "600",
+                    fontSize: "0.9rem",
+                    textDecoration: "none",
+                    minHeight: "44px",
+                  }}
+                >
+                  <span>Pedir por WhatsApp</span>
+                </a>
+              )}
 
               <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", textAlign: "center", marginTop: "0.75rem" }}>
-                Santo Domingo, República Dominicana
+                San Fernando de Montecristi, República Dominicana
               </div>
             </div>
           </div>

@@ -44,10 +44,14 @@ export function StoreFooter() {
             {settings.description}
           </p>
           <div style={{ fontSize: "0.825rem", display: "flex", flexDirection: "column", gap: "0.4rem", color: "#cbd5e1" }}>
-            <div><strong>Ubicación:</strong> {fullAddress}</div>
-            <div><strong>Teléfono:</strong> {settings.phone} {settings.secondaryPhone ? `/ ${settings.secondaryPhone}` : ""}</div>
-            <div><strong>Email:</strong> {settings.email}</div>
-            <div><strong>Horario:</strong> {scheduleSummary}</div>
+            {fullAddress && <div><strong>Ubicación:</strong> {fullAddress}</div>}
+            {(settings.phone || settings.secondaryPhone) && (
+              <div>
+                <strong>Teléfono:</strong> {[settings.phone, settings.secondaryPhone].filter(Boolean).join(" / ")}
+              </div>
+            )}
+            {settings.email && <div><strong>Email:</strong> {settings.email}</div>}
+            {scheduleSummary && <div><strong>Horario:</strong> {scheduleSummary}</div>}
           </div>
         </div>
 
@@ -79,7 +83,7 @@ export function StoreFooter() {
               <Link href="/faq" style={{ color: "#cbd5e1" }}>Preguntas Frecuentes</Link>
             </li>
             <li>
-              <Link href="/politicas" style={{ color: "#cbd5e1" }}>Términos y Envíos</Link>
+              <Link href="/politicas" style={{ color: "#cbd5e1" }}>Términos y Condiciones</Link>
             </li>
           </ul>
         </div>
@@ -133,34 +137,36 @@ export function StoreFooter() {
         {/* Columna 4: Cobertura de Envíos y WhatsApp */}
         <div>
           <h3 style={{ fontSize: "0.95rem", fontWeight: "700", color: "#ffffff", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "1rem" }}>
-            Envíos y Contacto
+            Modalidad de Venta y Retiro
           </h3>
           <p style={{ fontSize: "0.825rem", color: "#cbd5e1", lineHeight: 1.5, marginBottom: "1rem" }}>
             {settings.deliveryMessage}
           </p>
 
-          <div style={{ marginTop: "1rem" }}>
-            <a
-              href={`https://wa.me/${formattedWhatsApp}?text=${encodeURIComponent(settings.contactMessage)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-cta-whatsapp"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "0.5rem",
-                padding: "0.6rem 1.15rem",
-                borderRadius: "var(--radius-md, 8px)",
-                fontWeight: "600",
-                fontSize: "0.85rem",
-                textDecoration: "none",
-                backgroundColor: "#22c55e",
-                color: "#ffffff",
-              }}
-            >
-              <span>Atención por WhatsApp</span>
-            </a>
-          </div>
+          {settings.whatsapp && (
+            <div style={{ marginTop: "1rem" }}>
+              <a
+                href={`https://wa.me/${formattedWhatsApp}?text=${encodeURIComponent(settings.contactMessage)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-cta-whatsapp"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                  padding: "0.6rem 1.15rem",
+                  borderRadius: "var(--radius-md, 8px)",
+                  fontWeight: "600",
+                  fontSize: "0.85rem",
+                  textDecoration: "none",
+                  backgroundColor: "#22c55e",
+                  color: "#ffffff",
+                }}
+              >
+                <span>Atención por WhatsApp</span>
+              </a>
+            </div>
+          )}
         </div>
       </div>
 
@@ -186,7 +192,7 @@ export function StoreFooter() {
 
         <div style={{ display: "flex", gap: "1.25rem" }}>
           <Link href="/politicas" style={{ color: "#94a3b8" }}>Privacidad</Link>
-          <Link href="/politicas" style={{ color: "#94a3b8" }}>Términos y Envíos</Link>
+          <Link href="/politicas" style={{ color: "#94a3b8" }}>Términos y Condiciones</Link>
           <Link href="/faq" style={{ color: "#94a3b8" }}>Ayuda</Link>
           <Link href="/admin/login" style={{ color: "#64748b" }}>Admin</Link>
         </div>
