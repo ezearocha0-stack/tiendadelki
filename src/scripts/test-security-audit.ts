@@ -1,3 +1,5 @@
+import fs from "fs";
+import path from "path";
 import { prisma } from "../lib/db";
 import { Role, OrderStatus, MovementType } from "@prisma/client";
 import { signJwt } from "../core/auth/jwt";
@@ -12,6 +14,8 @@ async function runSecurityAuditVerification() {
   let adminToken = "";
   let customerUserId = "";
   let adminUserId = "";
+  let ephemeralCategoryId = "";
+  let ephemeralShippingMethodId = "";
   let testProductId = "";
   let testVariantId = "";
   let testOrderId = "";
@@ -21,8 +25,20 @@ async function runSecurityAuditVerification() {
   try {
     // 0. Preparar usuarios de prueba (Admin y Cliente regular)
     const store = await prisma.store.findFirstOrThrow({ where: { isDefault: true } });
-    const category = await prisma.category.findFirstOrThrow({ where: { isActive: true } });
-    const shippingMethod = await prisma.shippingMethod.findFirstOrThrow({ where: { isActive: true } });
+    let category = await prisma.category.findFirst({ where: { isActive: true } });
+    if (!category) {
+      category = await prisma.category.create({
+        data: { name: "Cat Test Sec Audit", slug: `cat-test-sec-${Date.now()}`, isActive: true },
+      });
+      ephemeralCategoryId = category.id;
+    }
+    let shippingMethod = await prisma.shippingMethod.findFirst({ where: { isActive: true } });
+    if (!shippingMethod) {
+      shippingMethod = await prisma.shippingMethod.create({
+        data: { name: "Envío Audit Test", price: 120, isActive: true },
+      });
+      ephemeralShippingMethodId = shippingMethod.id;
+    }
     testShippingMethodId = shippingMethod.id;
 
     const customerUser = await prisma.user.create({
@@ -487,6 +503,20 @@ async function runSecurityAuditVerification() {
     }
     if (customerUserId) {
       await prisma.user.deleteMany({ where: { id: { in: [customerUserId, adminUserId] } } });
+    }
+    if (ephemeralCategoryId) {
+      await prisma.category.deleteMany({ where: { id: ephemeralCategoryId } }).catch(() => {});
+    }
+    if (ephemeralShippingMethodId) {
+      await prisma.shippingMethod.deleteMany({ where: { id: ephemeralShippingMethodId } }).catch(() => {});
+    }
+    const receiptsDir = path.join(process.cwd(), "storage/private/receipts");
+    if (fs.existsSync(receiptsDir)) {
+      fs.readdirSync(receiptsDir).forEach((f) => {
+        if (f !== ".gitkeep") {
+          try { fs.unlinkSync(path.join(receiptsDir, f)); } catch (e) {}
+        }
+      });
     }
     await prisma.$disconnect();
   }

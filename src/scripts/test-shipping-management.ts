@@ -10,6 +10,7 @@ async function runShippingTests() {
 
   let testMethodId = "";
   let linkedMethodId = "";
+  let ephemeralBankAccountId = "";
   let testOrderId = "";
   let testOrderNumber = "";
 
@@ -118,7 +119,20 @@ async function runShippingTests() {
 
     // 4. ELIMINACIÓN SEGURA: BLOQUEAR BORRADO SI TIENE PEDIDOS ASOCIADOS
     const store = await prisma.store.findFirstOrThrow({ where: { isDefault: true } });
-    const bankAccount = await prisma.bankAccount.findFirstOrThrow({ where: { isActive: true } });
+    let bankAccount = await prisma.bankAccount.findFirst({ where: { isActive: true } });
+    if (!bankAccount) {
+      bankAccount = await prisma.bankAccount.create({
+        data: {
+          bankName: "Banco Test Temporal",
+          accountNumber: "9999999999",
+          accountType: "Ahorros",
+          holderName: "Titular Test",
+          holderId: "001-0000000-0",
+          isActive: true,
+        },
+      });
+      ephemeralBankAccountId = bankAccount.id;
+    }
 
     // Crear un método específico para vincularlo a una orden
     const linkedMethod = await prisma.shippingMethod.create({
@@ -309,6 +323,9 @@ async function runShippingTests() {
     if (testOrderId) {
       await prisma.orderStatusHistory.deleteMany({ where: { orderId: testOrderId } }).catch(() => {});
       await prisma.order.delete({ where: { id: testOrderId } }).catch(() => {});
+    }
+    if (ephemeralBankAccountId) {
+      await prisma.bankAccount.deleteMany({ where: { id: ephemeralBankAccountId } }).catch(() => {});
     }
     if (linkedMethodId) {
       await prisma.shippingMethod.delete({ where: { id: linkedMethodId } }).catch(() => {});

@@ -384,3 +384,16 @@ export async function getOrderByNumber(orderNumber: string, token?: string): Pro
     headers: authHeaders,
   });
 }
+
+/**
+ * Obtiene la configuraci?n comercial oficial y centralizada de la tienda.
+ */
+export async function getPublicStoreSettings() {
+  if (isDirectDbMode()) {
+    const { getStoreSettings } = await import("@/core/settings/settings-service");
+    return getStoreSettings();
+  }
+
+  const res = await fetchFromBackend<any>("/api/settings");
+  return res?.storeSettings || res || {};
+}

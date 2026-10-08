@@ -918,56 +918,91 @@ export function CheckoutForm({ shippingMethods, bankAccounts }: CheckoutFormProp
             </div>
 
             <p style={{ fontSize: "0.875rem", color: "var(--color-text-muted)", marginBottom: "1rem" }}>
-              Al completar el pedido, este quedará registrado como <strong>PENDIENTE DE PAGO</strong>. Podrás transferir el monto total a cualquiera de nuestras cuentas oficiales y enviar el comprobante por WhatsApp:
+              Realiza el depósito o transferencia a esta cuenta y luego sube tu comprobante de pago:
             </p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "0.75rem" }}>
-              {bankAccounts.map((acc) => (
-                <div
-                  key={acc.id}
-                  style={{
-                    background: "var(--color-bg)",
-                    border: "1px solid var(--color-border)",
-                    borderRadius: "var(--radius-sm, 8px)",
-                    padding: "0.85rem 1rem",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <div>
-                    <div style={{ fontWeight: 700, fontSize: "0.95rem", color: "var(--color-text-main)" }}>
-                      {acc.bankName}
-                    </div>
-                    <div style={{ fontSize: "0.85rem", color: "var(--color-text-muted)" }}>
-                      {acc.accountType} • {acc.accountNumber}
-                    </div>
-                    <div style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>
-                      Titular: {acc.holderName} (RNC: {acc.holderId})
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => handleCopy(acc.accountNumber, acc.id)}
+            {bankAccounts.length === 0 ? (
+              <div
+                style={{
+                  padding: "1rem 1.25rem",
+                  backgroundColor: "rgba(234, 179, 8, 0.08)",
+                  border: "1px solid rgba(234, 179, 8, 0.25)",
+                  borderRadius: "var(--radius-sm, 8px)",
+                  color: "#ca8a04",
+                  fontSize: "0.9rem",
+                  lineHeight: 1.5,
+                  marginBottom: "1rem",
+                }}
+              >
+                Actualmente no hay una cuenta bancaria activa configurada. Puedes completar tu pedido y nos comunicaremos contigo vía WhatsApp para coordinar el pago y la entrega.
+              </div>
+            ) : (
+              <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "0.75rem", marginBottom: "1rem" }}>
+                {bankAccounts.map((acc) => (
+                  <div
+                    key={acc.id}
                     style={{
+                      background: "var(--color-bg)",
                       border: "1px solid var(--color-border)",
-                      background: "var(--color-surface)",
-                      borderRadius: "var(--radius-sm, 6px)",
-                      padding: "0.35rem 0.65rem",
-                      fontSize: "0.75rem",
-                      cursor: "pointer",
+                      borderRadius: "var(--radius-sm, 8px)",
+                      padding: "1rem",
                       display: "flex",
-                      alignItems: "center",
-                      gap: "0.35rem",
-                      fontWeight: 600,
+                      justifyContent: "space-between",
+                      alignItems: "flex-start",
+                      gap: "1rem",
                     }}
                   >
-                    {copiedAccount === acc.id ? "¡Copiado!" : "Copiar"}
-                  </button>
-                </div>
-              ))}
-            </div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "0.3rem" }}>
+                      <div style={{ fontWeight: 700, fontSize: "1rem", color: "var(--color-text-main)" }}>
+                        {acc.bankName}
+                      </div>
+                      <div style={{ fontSize: "0.85rem", color: "var(--color-text-muted)" }}>
+                        <span>Tipo de Cuenta: </span>
+                        <strong>{acc.accountType}</strong>
+                      </div>
+                      <div style={{ fontSize: "0.9rem", color: "var(--color-text-main)" }}>
+                        <span>Número de Cuenta: </span>
+                        <strong style={{ letterSpacing: "0.05em" }}>{acc.accountNumber}</strong>
+                      </div>
+                      <div style={{ fontSize: "0.85rem", color: "var(--color-text-muted)" }}>
+                        <span>Titular: </span>
+                        <strong>{acc.holderName}</strong>
+                        {acc.holderId ? ` (RNC/Cédula: ${acc.holderId})` : ""}
+                      </div>
+                      <div style={{ fontSize: "0.8rem", color: "var(--color-text-muted)" }}>
+                        <span>Moneda: </span>
+                        <strong>DOP (Pesos Dominicanos)</strong>
+                      </div>
+                      {acc.instructions && (
+                        <div style={{ fontSize: "0.8rem", color: "var(--color-primary, #2563eb)", marginTop: "0.25rem", fontStyle: "italic" }}>
+                          • {acc.instructions}
+                        </div>
+                      )}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleCopy(acc.accountNumber, acc.id)}
+                      style={{
+                        border: "1px solid var(--color-border)",
+                        background: "var(--color-surface)",
+                        borderRadius: "var(--radius-sm, 6px)",
+                        padding: "0.45rem 0.85rem",
+                        fontSize: "0.8rem",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.35rem",
+                        fontWeight: 600,
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {copiedAccount === acc.id ? "¡Copiado!" : "Copiar Número"}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
 
             {/* Subir Comprobante (Opcional) */}
             <div

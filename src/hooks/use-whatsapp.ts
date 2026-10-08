@@ -24,9 +24,10 @@ export function useWhatsApp(initialPhone?: string) {
       try {
         const res = await fetch("/api/settings");
         const json = await res.json();
-        if (json.success && json.data?.WHATSAPP_STORE_NUMBER) {
+        const storePhone = json.storeSettings?.whatsapp || json.data?.WHATSAPP_STORE_NUMBER;
+        if (json.success && storePhone) {
           if (isMounted) {
-            setPhone(json.data.WHATSAPP_STORE_NUMBER);
+            setPhone(storePhone);
           }
         }
       } catch (err) {

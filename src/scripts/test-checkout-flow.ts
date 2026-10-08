@@ -1,3 +1,5 @@
+import fs from "fs";
+import path from "path";
 import { prisma } from "../lib/db";
 import { OrderStatus } from "@prisma/client";
 import { NextRequest } from "next/server";
@@ -7,17 +9,32 @@ async function runCheckoutTests() {
   console.log("🛒 INICIANDO SUITE DE PRUEBAS: CARRITO, CHECKOUT Y PAGOS");
   console.log("🛒 ========================================================\n");
 
+  let ephemeralCategoryId = "";
+  let ephemeralShippingMethodId = "";
   let testProductId = "";
   let testVariantId = "";
   let testShippingMethodId = "";
   let createdOrderNumber = "";
   let createdOrderToken = "";
+  let uploadedProofFilename = "";
 
   try {
     // 1. Preparar datos de prueba
-    const category = await prisma.category.findFirstOrThrow({ where: { isActive: true } });
+    let category = await prisma.category.findFirst({ where: { isActive: true } });
+    if (!category) {
+      category = await prisma.category.create({
+        data: { name: "Cat Temporal Checkout", slug: `cat-temp-checkout-${Date.now()}`, isActive: true },
+      });
+      ephemeralCategoryId = category.id;
+    }
     const store = await prisma.store.findFirstOrThrow({ where: { isDefault: true } });
-    const shippingMethod = await prisma.shippingMethod.findFirstOrThrow({ where: { isActive: true } });
+    let shippingMethod = await prisma.shippingMethod.findFirst({ where: { isActive: true } });
+    if (!shippingMethod) {
+      shippingMethod = await prisma.shippingMethod.create({
+        data: { name: "Envío Estándar Test", price: 150, isActive: true },
+      });
+      ephemeralShippingMethodId = shippingMethod.id;
+    }
     testShippingMethodId = shippingMethod.id;
 
     // Crear producto con variante para la prueba
@@ -228,6 +245,7 @@ async function runCheckoutTests() {
       throw new Error(`Estado esperado PAGO_EN_REVISION, recibido: ${updatedOrder.status}`);
     }
 
+    uploadedProofFilename = path.basename(updatedOrder.proofOfPaymentUrl || "");
     if (!updatedOrder.proofOfPaymentUrl || !updatedOrder.proofUploadedAt) {
       throw new Error(`No se guardó el URL o la fecha de carga del comprobante.`);
     }
@@ -347,6 +365,12 @@ async function runCheckoutTests() {
     process.exit(1);
   } finally {
     // Limpieza de datos de prueba
+    if (uploadedProofFilename) {
+      const receiptFilePath = path.join(process.cwd(), "storage/private/receipts", uploadedProofFilename);
+      if (fs.existsSync(receiptFilePath)) {
+        fs.unlinkSync(receiptFilePath);
+      }
+    }
     if (createdOrderNumber) {
       await prisma.orderItem.deleteMany({ where: { order: { orderNumber: createdOrderNumber } } });
       await prisma.orderStatusHistory.deleteMany({ where: { order: { orderNumber: createdOrderNumber } } });
@@ -357,7 +381,21 @@ async function runCheckoutTests() {
       await prisma.productVariant.deleteMany({ where: { productId: testProductId } });
       await prisma.product.deleteMany({ where: { id: testProductId } });
     }
+    if (ephemeralCategoryId) {
+      await prisma.category.deleteMany({ where: { id: ephemeralCategoryId } }).catch(() => {});
+    }
+    if (ephemeralShippingMethodId) {
+      await prisma.shippingMethod.deleteMany({ where: { id: ephemeralShippingMethodId } }).catch(() => {});
+    }
 
+    const receiptsDir = path.join(process.cwd(), "storage/private/receipts");
+    if (fs.existsSync(receiptsDir)) {
+      fs.readdirSync(receiptsDir).forEach((f) => {
+        if (f !== ".gitkeep") {
+          try { fs.unlinkSync(path.join(receiptsDir, f)); } catch (e) {}
+        }
+      });
+    }
     await prisma.$disconnect();
   }
 }

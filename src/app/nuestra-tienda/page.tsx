@@ -2,14 +2,18 @@ import Link from "next/link";
 import { StoreHeader } from "@/components/store/store-header";
 import { StoreFooter } from "@/components/store/store-footer";
 import { WhatsAppFloatingButton } from "@/components/store/whatsapp-floating-button";
+import { getPublicStoreSettings } from "@/lib/server-api";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Nuestra Tienda Física y Filosofía - TiendaDelki",
-  description: "Conoce más sobre TiendaDelki, nuestra historia, tienda física en Santo Domingo y nuestro compromiso con el servicio y la calidad.",
+  description: "Conoce más sobre TiendaDelki, nuestra historia, tienda física en República Dominicana y nuestro compromiso con el servicio y la calidad.",
 };
 
-export default function NuestraTiendaPage() {
+export default async function NuestraTiendaPage() {
+  const settings = await getPublicStoreSettings();
+  const locationLabel = `${settings.city}, ${settings.province}`;
+
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "var(--color-bg)" }}>
       <StoreHeader />
@@ -44,7 +48,7 @@ export default function NuestraTiendaPage() {
             De la Tienda Física a la Experiencia Digital
           </h1>
           <p style={{ color: "var(--color-text-muted)", fontSize: "1.15rem", maxWidth: "700px", margin: "0 auto", lineHeight: 1.6 }}>
-            En TiendaDelki fusionamos la cercanía, calidez y confianza del comercio físico tradicional con la eficiencia y rapidez de una moderna plataforma de comercio electrónico.
+            En {settings.storeName} fusionamos la cercanía, calidez y confianza del comercio físico tradicional con la eficiencia y rapidez de una moderna plataforma de comercio electrónico.
           </p>
         </div>
 
@@ -66,7 +70,7 @@ export default function NuestraTiendaPage() {
             ¿Quiénes Somos?
           </h2>
           <p style={{ margin: "0 0 1.25rem", color: "var(--color-text-muted)" }}>
-            TiendaDelki nació con un objetivo claro: ofrecer a las familias y profesionales dominicanos productos de primera calidad, garantizados y con precios justos. Desde nuestro showroom en Santo Domingo, atendemos diariamente a clientes que buscan atención personalizada y asesoría experta.
+            {settings.storeName} nació con un objetivo claro: ofrecer a las familias y profesionales dominicanos productos de primera calidad, garantizados y con precios justos. Desde nuestro punto de venta en {locationLabel}, atendemos diariamente a clientes que buscan atención personalizada y asesoría experta.
           </p>
           <p style={{ margin: "0 0 1.25rem", color: "var(--color-text-muted)" }}>
             Nuestra plataforma online responde a la necesidad de nuestros clientes en todo el territorio nacional: poder consultar el catálogo con <strong>inventario real en tiempo real</strong>, realizar pedidos de forma rápida y recibir sus compras directamente en la puerta de su casa u oficina en cualquier provincia del país.
@@ -104,7 +108,7 @@ export default function NuestraTiendaPage() {
               Inventario Real
             </h3>
             <p style={{ fontSize: "0.875rem", color: "var(--color-text-muted)", margin: 0 }}>
-              Lo que ves disponible en la tienda está físicamente en nuestro almacén listo para despacho inmediato.
+              Lo que ves en la web está disponible y reservado en nuestro stock físico inmediatamente.
             </p>
           </div>
 
@@ -142,7 +146,7 @@ export default function NuestraTiendaPage() {
               Cobertura Nacional
             </h3>
             <p style={{ fontSize: "0.875rem", color: "var(--color-text-muted)", margin: 0 }}>
-              Entregas el mismo día en Santo Domingo y envíos expresos en 24-48 horas a todas las provincias.
+              {settings.deliveryMessage}
             </p>
           </div>
 
@@ -181,10 +185,10 @@ export default function NuestraTiendaPage() {
           }}
         >
           <h2 style={{ fontSize: "1.5rem", fontWeight: 700, margin: "0 0 0.75rem" }}>
-            Visita Nuestro Showroom en Santo Domingo
+            Visita Nuestra Tienda Física en {locationLabel}
           </h2>
           <p style={{ color: "var(--color-text-muted)", fontSize: "1rem", maxWidth: "600px", margin: "0 0 1.5rem" }}>
-            Ven a conocernos, prueba los productos en persona y retira tus pedidos realizados por la web sin costo de envío adicional.
+            Ven a conocernos en {settings.address ? `${settings.address}, ` : ""}{settings.sector ? `${settings.sector}, ` : ""}{locationLabel}. Prueba los productos en persona y retira tus pedidos realizados por la web.
           </p>
           <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", justifyContent: "center" }}>
             <Link

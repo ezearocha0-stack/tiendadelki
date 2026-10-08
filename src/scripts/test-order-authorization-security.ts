@@ -18,11 +18,25 @@ async function runOrderAuthorizationSecurityTests() {
   let orderANumber = "";
   let orderBNumber = "";
   let integrationOrderNumber = "";
+  let ephemeralCategoryId = "";
+  let ephemeralShippingMethodId = "";
 
   try {
     const store = await prisma.store.findFirstOrThrow({ where: { isDefault: true } });
-    const category = await prisma.category.findFirstOrThrow({ where: { isActive: true } });
-    const shippingMethod = await prisma.shippingMethod.findFirstOrThrow({ where: { isActive: true } });
+    let category = await prisma.category.findFirst({ where: { isActive: true } });
+    if (!category) {
+      category = await prisma.category.create({
+        data: { name: "Cat Test Auth", slug: `cat-test-auth-${Date.now()}`, isActive: true },
+      });
+      ephemeralCategoryId = category.id;
+    }
+    let shippingMethod = await prisma.shippingMethod.findFirst({ where: { isActive: true } });
+    if (!shippingMethod) {
+      shippingMethod = await prisma.shippingMethod.create({
+        data: { name: "Envío Auth Test", price: 100, isActive: true },
+      });
+      ephemeralShippingMethodId = shippingMethod.id;
+    }
 
     // 1. Crear producto de prueba
     const timestamp = Date.now();
@@ -654,6 +668,12 @@ async function runOrderAuthorizationSecurityTests() {
       await prisma.inventoryMovement.deleteMany({ where: { productId: testProductId } }).catch(() => {});
       await prisma.productVariant.deleteMany({ where: { productId: testProductId } }).catch(() => {});
       await prisma.product.delete({ where: { id: testProductId } }).catch(() => {});
+    }
+    if (ephemeralCategoryId) {
+      await prisma.category.deleteMany({ where: { id: ephemeralCategoryId } }).catch(() => {});
+    }
+    if (ephemeralShippingMethodId) {
+      await prisma.shippingMethod.deleteMany({ where: { id: ephemeralShippingMethodId } }).catch(() => {});
     }
     await prisma.$disconnect();
   }

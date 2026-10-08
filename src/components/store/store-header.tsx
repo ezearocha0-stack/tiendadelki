@@ -176,7 +176,7 @@ export function StoreHeader() {
           <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
             {/* WhatsApp Directo */}
             <a
-              href="https://wa.me/18095550100?text=Hola%20TiendaDelki,%20quiero%20hacer%20un%20pedido"
+              href={`https://wa.me/${formattedPhone}?text=Hola%20TiendaDelki,%20quiero%20hacer%20un%20pedido`}
               target="_blank"
               rel="noopener noreferrer"
               style={{
@@ -522,7 +522,7 @@ export function StoreHeader() {
             {/* Acciones inferiores del menú móvil */}
             <div style={{ paddingTop: "1.25rem", borderTop: "1px solid var(--border-subtle)" }}>
               <a
-                href="https://wa.me/18095550100?text=Hola%20TiendaDelki,%20quiero%20hacer%20un%20pedido"
+                href={`https://wa.me/${formattedPhone}?text=Hola%20TiendaDelki,%20quiero%20hacer%20un%20pedido`}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{

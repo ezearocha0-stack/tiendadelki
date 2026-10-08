@@ -4,6 +4,7 @@
 .env.production
 .env.staging
 .env.test
+.render_url
 
 # Dependencias
 node_modules/
@@ -25,6 +26,7 @@ pnpm-debug.log*
 *.log
 
 # Almacenamiento local de archivos y backups
+backups/
 storage/backups/*
 !storage/backups/.gitkeep
 public/uploads/*
@@ -35,6 +37,7 @@ storage/private/*
 # Backups y volcados de base de datos
 *.dump
 *.dump.sha256
+*.sha256
 *.zip
 *.tar.gz
 *.sql
@@ -52,3 +55,7 @@ Thumbs.db
 .vscode/
 *.swp
 *.swo
+
+# Archivos temporales y scratch
+scratch/
+*.scratch

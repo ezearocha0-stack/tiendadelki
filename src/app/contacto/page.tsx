@@ -5,8 +5,11 @@ import Link from "next/link";
 import { StoreHeader } from "@/components/store/store-header";
 import { StoreFooter } from "@/components/store/store-footer";
 import { WhatsAppFloatingButton } from "@/components/store/whatsapp-floating-button";
+import { useStoreSettings } from "@/hooks/use-store-settings";
+import { formatWhatsAppPhone } from "@/core/whatsapp/whatsapp-helper";
 
 export default function ContactoPage() {
+  const { settings, fullAddress, scheduleSummary } = useStoreSettings();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -27,11 +30,11 @@ export default function ContactoPage() {
   }
 
   function handleDirectWhatsApp() {
-    const storePhone = "18095550199";
+    const formatted = formatWhatsAppPhone(settings.whatsapp);
     const text = encodeURIComponent(
-      `👋 *¡Hola TiendaDelki!* Me gustaría comunicarme con atención al cliente sobre: ${formData.subject || "una consulta"}.`
+      `👋 *¡Hola ${settings.storeName}!* Me gustaría comunicarme con atención al cliente sobre: ${formData.subject || "una consulta"}.`
     );
-    window.open(`https://wa.me/${storePhone}?text=${text}`, "_blank");
+    window.open(`https://wa.me/${formatted}?text=${text}`, "_blank");
   }
 
   return (
@@ -77,7 +80,7 @@ export default function ContactoPage() {
               }}
             >
               <h2 style={{ fontSize: "1.35rem", fontWeight: 700, margin: "0 0 1.5rem" }}>
-                Canales de Atención
+                Canales de Atención Oficial
               </h2>
 
               <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
@@ -100,9 +103,9 @@ export default function ContactoPage() {
                     </svg>
                   </div>
                   <div>
-                    <div style={{ fontWeight: 700, fontSize: "1rem" }}>WhatsApp Inmediato</div>
+                    <div style={{ fontWeight: 700, fontSize: "1rem" }}>WhatsApp Oficial</div>
                     <p style={{ color: "var(--color-text-muted)", fontSize: "0.875rem", margin: "0.2rem 0 0.5rem" }}>
-                      Respuesta en menos de 10 minutos en horario comercial.
+                      Atención directa para consultas y seguimiento de pedidos.
                     </p>
                     <button
                       onClick={handleDirectWhatsApp}
@@ -117,7 +120,7 @@ export default function ContactoPage() {
                         textDecoration: "underline",
                       }}
                     >
-                      Escríbenos al (809) 555-0199 →
+                      Escríbenos al {settings.whatsapp} →
                     </button>
                   </div>
                 </div>
@@ -144,8 +147,13 @@ export default function ContactoPage() {
                   <div>
                     <div style={{ fontWeight: 700, fontSize: "1rem" }}>Ubicación de Tienda Física</div>
                     <p style={{ color: "var(--color-text-muted)", fontSize: "0.875rem", margin: "0.2rem 0 0" }}>
-                      Av. Winston Churchill #105, Plaza Comercial Galerías, Nivel 1, Local 14.<br />
-                      Santo Domingo, Distrito Nacional, República Dominicana.
+                      {fullAddress}
+                    </p>
+                    <p style={{ color: "var(--color-text-muted)", fontSize: "0.85rem", margin: "0.25rem 0 0" }}>
+                      <strong>Teléfono:</strong> {settings.phone} {settings.secondaryPhone ? `/ ${settings.secondaryPhone}` : ""}
+                    </p>
+                    <p style={{ color: "var(--color-text-muted)", fontSize: "0.85rem", margin: "0.25rem 0 0" }}>
+                      <strong>Email:</strong> {settings.email}
                     </p>
                   </div>
                 </div>
@@ -171,289 +179,36 @@ export default function ContactoPage() {
                   <div>
                     <div style={{ fontWeight: 700, fontSize: "1rem" }}>Horario de Atención</div>
                     <p style={{ color: "var(--color-text-muted)", fontSize: "0.875rem", margin: "0.2rem 0 0" }}>
-                      <strong>Lunes a Sábado:</strong> 9:00 AM – 7:00 PM<br />
-                      <strong>Domingos y Feriados:</strong> 10:00 AM – 3:00 PM
+                      <strong>{settings.scheduleDays}:</strong> {settings.scheduleOpen} – {settings.scheduleClose}<br />
+                      {settings.scheduleText && <span><strong>Nota:</strong> {settings.scheduleText}</span>}
                     </p>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Store Map Representation */}
+            {/* Mensaje de Envíos */}
             <div
               style={{
                 background: "var(--color-surface)",
                 borderRadius: "var(--radius-lg, 16px)",
                 border: "1px solid var(--color-border)",
                 padding: "1.5rem",
-                boxShadow: "var(--shadow-sm)",
-                textAlign: "center",
               }}
             >
-              <div
-                style={{
-                  height: "180px",
-                  borderRadius: "var(--radius-md, 8px)",
-                  background: "linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%)",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "0.5rem",
-                  color: "#475569",
-                  position: "relative",
-                  overflow: "hidden",
-                }}
-              >
-                <svg width="40" height="40" fill="currentColor" viewBox="0 0 24 24" style={{ color: "#ef4444" }}>
-                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                </svg>
-                <div style={{ fontWeight: 700, fontSize: "1rem" }}>TiendaDelki Santo Domingo</div>
-                <div style={{ fontSize: "0.8125rem" }}>Av. Winston Churchill #105</div>
-              </div>
-              <a
-                href="https://maps.google.com/?q=Santo+Domingo+Distrito+Nacional"
-                target="_blank"
-                rel="noreferrer"
-                style={{
-                  display: "inline-block",
-                  marginTop: "1rem",
-                  fontSize: "0.875rem",
-                  color: "var(--color-primary, #2563eb)",
-                  fontWeight: 600,
-                  textDecoration: "none",
-                }}
-              >
-                Abrir en Google Maps →
-              </a>
+              <h3 style={{ fontSize: "1.1rem", fontWeight: 700, margin: "0 0 0.5rem" }}>
+                Envíos y Entregas
+              </h3>
+              <p style={{ color: "var(--color-text-muted)", fontSize: "0.9rem", margin: 0 }}>
+                {settings.deliveryMessage}
+              </p>
             </div>
-          </div>
-
-          {/* Contact Message Form */}
-          <div
-            style={{
-              background: "var(--color-surface)",
-              borderRadius: "var(--radius-lg, 16px)",
-              border: "1px solid var(--color-border)",
-              padding: "2rem",
-              boxShadow: "var(--shadow-sm)",
-            }}
-          >
-            <h2 style={{ fontSize: "1.35rem", fontWeight: 700, margin: "0 0 0.5rem" }}>
-              Envíanos un Mensaje
-            </h2>
-            <p style={{ color: "var(--color-text-muted)", fontSize: "0.9rem", margin: "0 0 1.5rem" }}>
-              Llena el siguiente formulario y nos pondremos en contacto contigo a la brevedad.
-            </p>
-
-            {submitted ? (
-              <div
-                style={{
-                  padding: "2.5rem 1.5rem",
-                  textAlign: "center",
-                  background: "rgba(16, 185, 129, 0.08)",
-                  borderRadius: "var(--radius-md, 8px)",
-                  border: "1px solid #10b981",
-                }}
-              >
-                <div
-                  style={{
-                    width: "56px",
-                    height: "56px",
-                    borderRadius: "50%",
-                    background: "#10b981",
-                    color: "#fff",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    margin: "0 auto 1rem",
-                  }}
-                >
-                  <svg width="32" height="32" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-                <h3 style={{ fontSize: "1.25rem", fontWeight: 700, margin: "0 0 0.5rem" }}>
-                  ¡Mensaje Enviado con Éxito!
-                </h3>
-                <p style={{ fontSize: "0.95rem", color: "var(--color-text-muted)", marginBottom: "1.5rem" }}>
-                  Gracias por comunicarte con TiendaDelki. Nuestro equipo te responderá a tu correo o WhatsApp muy pronto.
-                </p>
-                <button
-                  onClick={() => setSubmitted(false)}
-                  style={{
-                    background: "var(--color-primary, #2563eb)",
-                    color: "#fff",
-                    border: "none",
-                    padding: "0.75rem 1.5rem",
-                    borderRadius: "var(--radius-sm, 6px)",
-                    fontWeight: 600,
-                    cursor: "pointer",
-                  }}
-                >
-                  Enviar otro mensaje
-                </button>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.2rem" }}>
-                <div>
-                  <label style={{ display: "block", fontSize: "0.875rem", fontWeight: 600, marginBottom: "0.35rem" }}>
-                    Nombre Completo *
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    required
-                    placeholder="Tu nombre"
-                    value={formData.name}
-                    onChange={handleChange}
-                    style={{
-                      width: "100%",
-                      padding: "0.75rem 1rem",
-                      borderRadius: "var(--radius-sm, 6px)",
-                      border: "1px solid var(--color-border)",
-                      fontSize: "0.95rem",
-                      background: "var(--color-bg)",
-                      boxSizing: "border-box",
-                    }}
-                  />
-                </div>
-
-                <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "1rem" }} className="form-row-2">
-                  <div>
-                    <label style={{ display: "block", fontSize: "0.875rem", fontWeight: 600, marginBottom: "0.35rem" }}>
-                      Correo Electrónico *
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      required
-                      placeholder="tu@correo.com"
-                      value={formData.email}
-                      onChange={handleChange}
-                      style={{
-                        width: "100%",
-                        padding: "0.75rem 1rem",
-                        borderRadius: "var(--radius-sm, 6px)",
-                        border: "1px solid var(--color-border)",
-                        fontSize: "0.95rem",
-                        background: "var(--color-bg)",
-                        boxSizing: "border-box",
-                      }}
-                    />
-                  </div>
-
-                  <div>
-                    <label style={{ display: "block", fontSize: "0.875rem", fontWeight: 600, marginBottom: "0.35rem" }}>
-                      Teléfono / WhatsApp *
-                    </label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      required
-                      placeholder="809-000-0000"
-                      value={formData.phone}
-                      onChange={handleChange}
-                      style={{
-                        width: "100%",
-                        padding: "0.75rem 1rem",
-                        borderRadius: "var(--radius-sm, 6px)",
-                        border: "1px solid var(--color-border)",
-                        fontSize: "0.95rem",
-                        background: "var(--color-bg)",
-                        boxSizing: "border-box",
-                      }}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label style={{ display: "block", fontSize: "0.875rem", fontWeight: 600, marginBottom: "0.35rem" }}>
-                    Asunto
-                  </label>
-                  <select
-                    name="subject"
-                    value={formData.subject}
-                    onChange={handleChange}
-                    style={{
-                      width: "100%",
-                      padding: "0.75rem 1rem",
-                      borderRadius: "var(--radius-sm, 6px)",
-                      border: "1px solid var(--color-border)",
-                      fontSize: "0.95rem",
-                      background: "var(--color-bg)",
-                      boxSizing: "border-box",
-                    }}
-                  >
-                    <option value="Consulta general">Consulta general de productos</option>
-                    <option value="Estado de un pedido">Estado de mi pedido online</option>
-                    <option value="Cotización o ventas al por mayor">Cotización o venta corporativa</option>
-                    <option value="Garantías y devoluciones">Garantías y devoluciones</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label style={{ display: "block", fontSize: "0.875rem", fontWeight: 600, marginBottom: "0.35rem" }}>
-                    Mensaje *
-                  </label>
-                  <textarea
-                    name="message"
-                    required
-                    rows={4}
-                    placeholder="Escribe aquí tu consulta..."
-                    value={formData.message}
-                    onChange={handleChange}
-                    style={{
-                      width: "100%",
-                      padding: "0.75rem 1rem",
-                      borderRadius: "var(--radius-sm, 6px)",
-                      border: "1px solid var(--color-border)",
-                      fontSize: "0.95rem",
-                      background: "var(--color-bg)",
-                      boxSizing: "border-box",
-                      resize: "vertical",
-                    }}
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  style={{
-                    backgroundColor: "var(--color-primary, #2563eb)",
-                    color: "#ffffff",
-                    padding: "0.9rem 1.5rem",
-                    borderRadius: "var(--radius-md, 8px)",
-                    fontWeight: 700,
-                    fontSize: "1rem",
-                    border: "none",
-                    cursor: "pointer",
-                    boxShadow: "0 4px 12px rgba(37, 99, 235, 0.25)",
-                    transition: "all 0.2s ease",
-                  }}
-                >
-                  Enviar Mensaje
-                </button>
-              </form>
-            )}
           </div>
         </div>
       </main>
 
       <StoreFooter />
       <WhatsAppFloatingButton />
-
-      <style jsx>{`
-        @media (min-width: 768px) {
-          .form-row-2 {
-            grid-template-columns: 1fr 1fr !important;
-          }
-        }
-        @media (min-width: 900px) {
-          .contact-grid {
-            grid-template-columns: 420px 1fr !important;
-          }
-        }
-      `}</style>
     </div>
   );
 }

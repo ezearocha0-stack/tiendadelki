@@ -1,8 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { useStoreSettings } from "@/hooks/use-store-settings";
+import { formatWhatsAppPhone } from "@/core/whatsapp/whatsapp-helper";
 
 export function StoreFooter() {
+  const { settings, fullAddress, scheduleSummary } = useStoreSettings();
+  const formattedWhatsApp = formatWhatsAppPhone(settings.whatsapp);
+
   return (
     <footer
       style={{
@@ -29,19 +34,20 @@ export function StoreFooter() {
         <div>
           <div style={{ marginBottom: "1rem" }}>
             <div style={{ fontSize: "1.35rem", fontWeight: "800", color: "#ffffff", letterSpacing: "-0.02em" }}>
-              Tienda<span style={{ color: "#38bdf8" }}>Delki</span>
+              {settings.storeName}
             </div>
             <div style={{ fontSize: "0.72rem", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.06em", fontWeight: "600" }}>
-              Tienda Física & Online • República Dominicana
+              {settings.shortDescription}
             </div>
           </div>
           <p style={{ fontSize: "0.875rem", lineHeight: 1.6, color: "#94a3b8", marginBottom: "1.25rem" }}>
-            Tu tienda de confianza en Santo Domingo. Moda, calzado y accesorios seleccionados con inventario verificado y envíos a todas las provincias.
+            {settings.description}
           </p>
           <div style={{ fontSize: "0.825rem", display: "flex", flexDirection: "column", gap: "0.4rem", color: "#cbd5e1" }}>
-            <div><strong>Ubicación:</strong> Santo Domingo, Distrito Nacional, R.D.</div>
-            <div><strong>Teléfono:</strong> (809) 555-0100</div>
-            <div><strong>Horario:</strong> Lun - Sáb: 9:00 AM - 7:00 PM</div>
+            <div><strong>Ubicación:</strong> {fullAddress}</div>
+            <div><strong>Teléfono:</strong> {settings.phone} {settings.secondaryPhone ? `/ ${settings.secondaryPhone}` : ""}</div>
+            <div><strong>Email:</strong> {settings.email}</div>
+            <div><strong>Horario:</strong> {scheduleSummary}</div>
           </div>
         </div>
 
@@ -50,7 +56,7 @@ export function StoreFooter() {
           <h3 style={{ fontSize: "0.95rem", fontWeight: "700", color: "#ffffff", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "1rem" }}>
             Comprar & Explorar
           </h3>
-          <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.6rem", fontSize: "0.875rem" }}>
+          <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.6rem", fontSize: "0.875rem", padding: 0 }}>
             <li>
               <Link href="/tienda" style={{ color: "#cbd5e1" }}>Catálogo Completo</Link>
             </li>
@@ -67,6 +73,9 @@ export function StoreFooter() {
               <Link href="/nuestra-tienda" style={{ color: "#cbd5e1" }}>Nuestra Tienda Física</Link>
             </li>
             <li>
+              <Link href="/contacto" style={{ color: "#cbd5e1" }}>Contacto y Ubicación</Link>
+            </li>
+            <li>
               <Link href="/faq" style={{ color: "#cbd5e1" }}>Preguntas Frecuentes</Link>
             </li>
             <li>
@@ -75,27 +84,49 @@ export function StoreFooter() {
           </ul>
         </div>
 
-        {/* Columna 3: Información Bancaria Oficial */}
+        {/* Columna 3: Información Bancaria Oficial y Redes */}
         <div>
           <h3 style={{ fontSize: "0.95rem", fontWeight: "700", color: "#ffffff", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "1rem" }}>
-            Pagos Oficiales
+            Pagos y Transferencias
           </h3>
           <p style={{ fontSize: "0.825rem", color: "#94a3b8", marginBottom: "0.85rem" }}>
-            Aceptamos transferencias y depósitos bancarios autorizados con confirmación rápida:
+            Aceptamos transferencias y depósitos bancarios autorizados con confirmación rápida y verificación segura en checkout.
           </p>
           <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", fontSize: "0.825rem" }}>
-            <div style={{ padding: "0.6rem 0.85rem", backgroundColor: "#1e293b", borderRadius: "var(--radius-sm)", border: "1px solid rgba(255,255,255,0.08)" }}>
-              <strong style={{ color: "#60a5fa" }}>Banco Popular Dominicano</strong>
-              <div style={{ color: "#94a3b8", fontSize: "0.75rem" }}>Cta. Corriente Empresarial</div>
+            <div style={{ padding: "0.6rem 0.85rem", backgroundColor: "#1e293b", borderRadius: "var(--radius-sm, 6px)", border: "1px solid rgba(255,255,255,0.08)" }}>
+              <strong style={{ color: "#60a5fa" }}>Transferencia / Depósito</strong>
+              <div style={{ color: "#94a3b8", fontSize: "0.75rem" }}>Cuentas oficiales verificadas en el checkout</div>
             </div>
-            <div style={{ padding: "0.6rem 0.85rem", backgroundColor: "#1e293b", borderRadius: "var(--radius-sm)", border: "1px solid rgba(255,255,255,0.08)" }}>
-              <strong style={{ color: "#34d399" }}>Banreservas</strong>
-              <div style={{ color: "#94a3b8", fontSize: "0.75rem" }}>Cta. de Ahorros Empresarial</div>
-            </div>
-            <div style={{ padding: "0.6rem 0.85rem", backgroundColor: "#1e293b", borderRadius: "var(--radius-sm)", border: "1px solid rgba(255,255,255,0.08)" }}>
-              <strong style={{ color: "#fbbf24" }}>Banco BHD</strong>
-              <div style={{ color: "#94a3b8", fontSize: "0.75rem" }}>Cta. de Ahorros</div>
-            </div>
+            {settings.instagram && (
+              <a
+                href={settings.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "#e2e8f0", textDecoration: "none", fontSize: "0.85rem", display: "flex", alignItems: "center", gap: "0.5rem", marginTop: "0.5rem" }}
+              >
+                <span>📸 Instagram: @tiendadelki</span>
+              </a>
+            )}
+            {settings.facebook && (
+              <a
+                href={settings.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "#e2e8f0", textDecoration: "none", fontSize: "0.85rem", display: "flex", alignItems: "center", gap: "0.5rem" }}
+              >
+                <span>🌐 Facebook: TiendaDelki</span>
+              </a>
+            )}
+            {settings.tiktok && (
+              <a
+                href={settings.tiktok}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "#e2e8f0", textDecoration: "none", fontSize: "0.85rem", display: "flex", alignItems: "center", gap: "0.5rem" }}
+              >
+                <span>🎵 TikTok: @tiendadelki</span>
+              </a>
+            )}
           </div>
         </div>
 
@@ -104,15 +135,13 @@ export function StoreFooter() {
           <h3 style={{ fontSize: "0.95rem", fontWeight: "700", color: "#ffffff", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "1rem" }}>
             Envíos y Contacto
           </h3>
-          <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.6rem", fontSize: "0.825rem", color: "#cbd5e1" }}>
-            <li><strong>Gran Santo Domingo:</strong> Entrega rápida en 24h.</li>
-            <li><strong>Interior del País:</strong> Vía Caribe Tours, Metro Pac y BM Cargo.</li>
-            <li><strong>Recogida en Tienda:</strong> Disponible sin costo adicional.</li>
-          </ul>
+          <p style={{ fontSize: "0.825rem", color: "#cbd5e1", lineHeight: 1.5, marginBottom: "1rem" }}>
+            {settings.deliveryMessage}
+          </p>
 
-          <div style={{ marginTop: "1.25rem" }}>
+          <div style={{ marginTop: "1rem" }}>
             <a
-              href="https://wa.me/18095550100?text=Hola%20TiendaDelki,%20quiero%20hacer%20un%20pedido"
+              href={`https://wa.me/${formattedWhatsApp}?text=${encodeURIComponent(settings.contactMessage)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="btn-cta-whatsapp"
@@ -121,10 +150,12 @@ export function StoreFooter() {
                 alignItems: "center",
                 gap: "0.5rem",
                 padding: "0.6rem 1.15rem",
-                borderRadius: "var(--radius-md)",
+                borderRadius: "var(--radius-md, 8px)",
                 fontWeight: "600",
                 fontSize: "0.85rem",
                 textDecoration: "none",
+                backgroundColor: "#22c55e",
+                color: "#ffffff",
               }}
             >
               <span>Atención por WhatsApp</span>
@@ -150,7 +181,7 @@ export function StoreFooter() {
         }}
       >
         <div>
-          © {new Date().getFullYear()} TiendaDelki. Todos los derechos reservados.
+          © {new Date().getFullYear()} {settings.storeName}. Todos los derechos reservados.
         </div>
 
         <div style={{ display: "flex", gap: "1.25rem" }}>
