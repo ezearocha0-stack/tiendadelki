@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { StoreHeader } from "@/components/store/store-header";
 import { StoreFooter } from "@/components/store/store-footer";
@@ -87,16 +87,15 @@ export default function TrackingPage() {
 
   const { openDirectWhatsApp, phone } = useWhatsApp();
 
-  async function handleSearch(e: React.FormEvent) {
-    e.preventDefault();
-    if (!query.trim()) return;
+  async function searchOrder(codeToSearch: string) {
+    const clean = codeToSearch.trim().toUpperCase().replace(/^#/, "");
+    if (!clean) return;
 
     setLoading(true);
     setError(null);
     setOrder(null);
 
     try {
-      const clean = query.trim().toUpperCase().replace(/^#/, "");
       const res = await fetch(`/api/orders/${clean}`);
       const json = await res.json();
 
@@ -105,12 +104,55 @@ export default function TrackingPage() {
       }
 
       setOrder(json.data);
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem("tiendadelki_last_order", clean);
+        } catch {
+          // ignore
+        }
+      }
     } catch (err: any) {
       setError(err.message || "Error al buscar el pedido.");
     } finally {
       setLoading(false);
     }
   }
+
+  async function handleSearch(e: React.FormEvent) {
+    e.preventDefault();
+    if (!query.trim()) return;
+    await searchOrder(query);
+  }
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    // 1. Revisar si viene código por parámetro en la URL (?guia=, ?order=, ?pedido=, ?id=, ?q=)
+    const params = new URLSearchParams(window.location.search);
+    const paramCode =
+      params.get("guia") ||
+      params.get("order") ||
+      params.get("pedido") ||
+      params.get("id") ||
+      params.get("q");
+
+    // 2. Si no hay parámetro en la URL, verificar el último pedido registrado en este dispositivo
+    const savedOrder = (() => {
+      try {
+        return localStorage.getItem("tiendadelki_last_order");
+      } catch {
+        return null;
+      }
+    })();
+
+    const targetOrder = paramCode || savedOrder;
+
+    if (targetOrder) {
+      const clean = targetOrder.trim().toUpperCase().replace(/^#/, "");
+      setQuery(clean);
+      searchOrder(clean);
+    }
+  }, []);
 
   function handleCopy(text: string) {
     navigator.clipboard.writeText(text);
@@ -209,7 +251,46 @@ export default function TrackingPage() {
             >
               {loading ? "Consultando..." : "🔍 Rastrear"}
             </button>
+            {query && (
+              <button
+                type="button"
+                onClick={() => {
+                  setQuery("");
+                  setOrder(null);
+                  setError(null);
+                }}
+                style={{
+                  background: "transparent",
+                  border: "1px solid var(--color-border)",
+                  borderRadius: "10px",
+                  padding: "0.9rem 1.25rem",
+                  color: "var(--color-text-muted)",
+                  cursor: "pointer",
+                  fontSize: "0.9rem",
+                  fontWeight: 600,
+                }}
+                title="Limpiar para consultar otro pedido"
+              >
+                ✕ Limpiar
+              </button>
+            )}
           </form>
+
+          {order && (
+            <div
+              style={{
+                marginTop: "0.85rem",
+                fontSize: "0.85rem",
+                color: "#16a34a",
+                display: "flex",
+                alignItems: "center",
+                gap: "0.35rem",
+                fontWeight: 500,
+              }}
+            >
+              <span>✓ Pedido detectado automáticamente: <strong>#{order.orderNumber}</strong></span>
+            </div>
+          )}
 
           {error && (
             <div

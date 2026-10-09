@@ -275,6 +275,15 @@ export function CheckoutForm({ shippingMethods, bankAccounts }: CheckoutFormProp
       // Clear cart
       clearCart();
 
+      // Guardar identificador del pedido para autocompletar rastreo automáticamente
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem("tiendadelki_last_order", orderNumber);
+        } catch {
+          // ignore
+        }
+      }
+
       // Redirect to confirmation page (URL limpia protegida por cookie HttpOnly)
       router.push(`/pedido/confirmacion/${orderNumber}`);
     } catch (err: any) {

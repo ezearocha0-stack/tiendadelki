@@ -500,18 +500,37 @@ export default async function OrderConfirmationPage({ params, searchParams }: Or
           </div>
         </div>
 
-        {/* Back to store */}
-        <div style={{ textAlign: "center", marginTop: "3rem" }}>
+        {/* Navigation actions */}
+        <div style={{ textAlign: "center", marginTop: "3rem", display: "flex", justifyContent: "center", gap: "1rem", flexWrap: "wrap", alignItems: "center" }}>
+          <Link
+            href={`/rastreo?guia=${encodeURIComponent(cleanNumber)}`}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              backgroundColor: "rgba(37, 99, 235, 0.08)",
+              color: "var(--color-primary, #2563eb)",
+              fontWeight: 700,
+              textDecoration: "none",
+              fontSize: "0.95rem",
+              padding: "0.75rem 1.4rem",
+              borderRadius: "10px",
+              border: "1px solid rgba(37, 99, 235, 0.2)",
+            }}
+          >
+            📦 Consultar en Portal de Rastreo
+          </Link>
           <Link
             href="/tienda"
             style={{
               display: "inline-flex",
               alignItems: "center",
               gap: "0.5rem",
-              color: "var(--color-primary, #2563eb)",
+              color: "var(--color-text-muted)",
               fontWeight: 600,
               textDecoration: "none",
               fontSize: "0.95rem",
+              padding: "0.75rem 1.4rem",
             }}
           >
             ← Continuar comprando en el Catálogo

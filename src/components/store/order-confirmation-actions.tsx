@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { formatCurrency } from "@/lib/formatters";
 import { useWhatsApp } from "@/hooks/use-whatsapp";
 
@@ -51,6 +51,16 @@ export function OrderConfirmationActions({
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && orderNumber) {
+      try {
+        localStorage.setItem("tiendadelki_last_order", orderNumber);
+      } catch {
+        // ignore
+      }
+    }
+  }, [orderNumber]);
 
   function handleCopy(accountNumber: string, id: string) {
     navigator.clipboard.writeText(accountNumber);
