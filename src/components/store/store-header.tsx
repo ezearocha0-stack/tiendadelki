@@ -110,16 +110,29 @@ export function StoreHeader() {
             <span style={{ width: "22px", height: "2px", backgroundColor: "var(--text-primary)", display: "block" }}></span>
           </button>
 
-          {/* Logo */}
-          <Link href="/" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "0.5rem", flexShrink: 0 }}>
-            <div>
-              <div style={{ fontSize: "1.35rem", fontWeight: "800", letterSpacing: "-0.03em", color: "var(--text-primary)", lineHeight: 1 }}>
-                Tienda<span style={{ color: "var(--color-brand-accent)" }}>Delki</span>
-              </div>
-              <div style={{ fontSize: "0.68rem", color: "var(--text-muted)", fontWeight: "600", letterSpacing: "0.06em", textTransform: "uppercase" }}>
-                Física & Online
-              </div>
-            </div>
+          {/* Logo Oficial */}
+          <Link
+            href="/"
+            style={{
+              textDecoration: "none",
+              display: "inline-flex",
+              alignItems: "center",
+              flexShrink: 0,
+            }}
+            aria-label="TiendaDelki"
+          >
+            <img
+              src="/logo.png"
+              alt="TiendaDelki"
+              className="store-header-logo"
+              style={{
+                height: "44px",
+                width: "auto",
+                maxHeight: "44px",
+                objectFit: "contain",
+                display: "block",
+              }}
+            />
           </Link>
 
           {/* Buscador central en Desktop */}
@@ -393,9 +406,24 @@ export function StoreHeader() {
           >
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
-                <span style={{ fontWeight: "800", fontSize: "1.2rem", color: "var(--text-primary)" }}>
-                  Tienda<span style={{ color: "var(--color-brand-accent)" }}>Delki</span>
-                </span>
+                <Link
+                  href="/"
+                  onClick={() => setMobileMenuOpen(false)}
+                  style={{ display: "inline-flex", alignItems: "center", textDecoration: "none" }}
+                  aria-label="TiendaDelki"
+                >
+                  <img
+                    src="/logo.png"
+                    alt="TiendaDelki"
+                    style={{
+                      height: "36px",
+                      width: "auto",
+                      maxHeight: "36px",
+                      objectFit: "contain",
+                      display: "block",
+                    }}
+                  />
+                </Link>
                 <button
                   onClick={() => setMobileMenuOpen(false)}
                   style={{

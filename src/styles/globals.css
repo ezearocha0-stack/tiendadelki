@@ -366,8 +366,26 @@ button {
   transform: scale(1.03);
 }
 
+/* Logo del Header */
+.store-header-logo {
+  height: 44px;
+  width: auto;
+  max-height: 44px;
+  object-fit: contain;
+  display: block;
+  transition: opacity 0.2s ease;
+}
+
+.store-header-logo:hover {
+  opacity: 0.9;
+}
+
 /* Responsive Header Breakpoints */
 @media (max-width: 768px) {
+  .store-header-logo {
+    height: 36px;
+    max-height: 36px;
+  }
   .desktop-secondary-nav,
   .desktop-search-form,
   .desktop-nav-link {
