@@ -189,7 +189,7 @@ export function OrderConfirmationActions({
               padding: "1.25rem",
               border: "1px solid #bbf7d0",
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 180px), 1fr))",
               gap: "1rem",
               marginBottom: "1.25rem",
             }}

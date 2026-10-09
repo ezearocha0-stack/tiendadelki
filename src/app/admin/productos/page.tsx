@@ -146,7 +146,7 @@ export default function AdminProductsPage() {
       {/* Barra de Filtros y Búsqueda */}
       <div className="card" style={{ marginBottom: "1.5rem", padding: "1.25rem 1.4rem" }}>
         <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", alignItems: "center" }}>
-          <div style={{ flex: "1 1 280px" }}>
+          <div style={{ flex: "1 1 240px", minWidth: 0, maxWidth: "100%" }}>
             <input
               type="text"
               placeholder="Buscar por nombre, SKU o slug..."
@@ -164,7 +164,7 @@ export default function AdminProductsPage() {
             />
           </div>
 
-          <div style={{ width: "220px", flexShrink: 0 }}>
+          <div style={{ flex: "1 1 180px", minWidth: 0, maxWidth: "100%" }}>
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
@@ -187,7 +187,7 @@ export default function AdminProductsPage() {
             </select>
           </div>
 
-          <div style={{ width: "190px", flexShrink: 0 }}>
+          <div style={{ flex: "1 1 160px", minWidth: 0, maxWidth: "100%" }}>
             <select
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
@@ -216,7 +216,7 @@ export default function AdminProductsPage() {
                 setSelectedStatus("");
               }}
               className="btn btn-secondary"
-              style={{ padding: "0.65rem 1rem", fontSize: "0.85rem" }}
+              style={{ padding: "0.65rem 1rem", fontSize: "0.85rem", flexShrink: 0 }}
             >
               Limpiar
             </button>
@@ -261,7 +261,7 @@ export default function AdminProductsPage() {
             </Link>
           </div>
         ) : (
-          <div style={{ overflowX: "auto" }}>
+          <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
             <table className="table-saas">
               <thead>
                 <tr>

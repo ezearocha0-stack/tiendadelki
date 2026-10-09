@@ -14,7 +14,7 @@ export function StoreFooter() {
         backgroundColor: "#0f172a",
         borderTop: "1px solid #1e293b",
         color: "#94a3b8",
-        paddingTop: "3.5rem",
+        paddingTop: "clamp(2rem, 5vw, 3.5rem)",
         paddingBottom: "2rem",
         marginTop: "4rem",
       }}
@@ -25,7 +25,7 @@ export function StoreFooter() {
           margin: "0 auto",
           padding: "0 1.25rem",
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 220px), 1fr))",
           gap: "2.5rem",
           marginBottom: "3rem",
         }}

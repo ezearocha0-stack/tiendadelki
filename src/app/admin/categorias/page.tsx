@@ -311,8 +311,8 @@ export default function AdminCategoriesPage() {
               Cargando categorías...
             </div>
           ) : (
-            <div style={{ maxHeight: "600px", overflowY: "auto" }}>
-              <table className="table-saas" style={{ width: "100%" }}>
+            <div style={{ maxHeight: "600px", overflow: "auto", WebkitOverflowScrolling: "touch" }}>
+              <table className="table-saas" style={{ width: "100%", minWidth: "480px" }}>
                 <thead>
                   <tr>
                     <th>Nombre / Slug</th>

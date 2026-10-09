@@ -26,7 +26,7 @@ export default async function CategoriesPage() {
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       <StoreHeader />
 
-      <main style={{ flex: 1, padding: "2.5rem 1.25rem", maxWidth: "1400px", margin: "0 auto", width: "100%" }}>
+      <main style={{ flex: 1, padding: "clamp(1.25rem, 3vw, 2.5rem) clamp(0.75rem, 3vw, 1.25rem)", maxWidth: "1400px", margin: "0 auto", width: "100%" }}>
         {/* Breadcrumbs */}
         <div style={{ fontSize: "0.85rem", color: "var(--text-muted)", marginBottom: "0.5rem" }}>
           <Link href="/" style={{ color: "var(--text-muted)" }}>Inicio</Link>
@@ -35,7 +35,7 @@ export default async function CategoriesPage() {
         </div>
 
         <div style={{ marginBottom: "2.5rem" }}>
-          <h1 style={{ fontSize: "2.25rem", fontWeight: "900", color: "var(--text-primary)", margin: "0 0 0.5rem 0" }}>
+          <h1 style={{ fontSize: "clamp(1.5rem, 4vw, 2.25rem)", fontWeight: "900", color: "var(--text-primary)", margin: "0 0 0.5rem 0" }}>
             Directorio de Categorías
           </h1>
           <p style={{ color: "var(--text-secondary)", fontSize: "1rem" }}>
@@ -46,7 +46,7 @@ export default async function CategoriesPage() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
             gap: "1.5rem",
           }}
         >
@@ -57,7 +57,7 @@ export default async function CategoriesPage() {
                 backgroundColor: "var(--bg-surface)",
                 border: "1px solid var(--border-subtle)",
                 borderRadius: "var(--radius-lg)",
-                padding: "1.75rem",
+                padding: "clamp(1rem, 3vw, 1.75rem)",
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "space-between",

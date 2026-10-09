@@ -40,7 +40,7 @@ export function StoreHeader() {
           backgroundColor: "#0f172a",
           color: "#e2e8f0",
           borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
-          padding: "0.35rem 1.25rem",
+          padding: "0.35rem clamp(0.75rem, 2vw, 1.25rem)",
           fontSize: "0.78rem",
           display: "flex",
           justifyContent: "space-between",
@@ -49,7 +49,7 @@ export function StoreHeader() {
           gap: "0.5rem",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
           <span>📍 Tienda física en San Fernando de Montecristi</span>
           <span style={{ opacity: 0.4 }}>•</span>
           <span>🏪 Ventas locales y retiro en tienda</span>
@@ -74,7 +74,7 @@ export function StoreHeader() {
         style={{
           backgroundColor: "#ffffff",
           borderBottom: "1px solid var(--border-subtle)",
-          padding: "0.75rem 1.25rem",
+          padding: "0.65rem clamp(0.75rem, 2vw, 1.25rem)",
         }}
       >
         <div
@@ -401,6 +401,8 @@ export function StoreHeader() {
               flexDirection: "column",
               justifyContent: "space-between",
               boxShadow: "var(--shadow-xl)",
+              overflowY: "auto",
+              WebkitOverflowScrolling: "touch",
             }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -456,7 +458,7 @@ export function StoreHeader() {
                     border: "1px solid var(--border-strong)",
                     backgroundColor: "var(--bg-muted)",
                     color: "var(--text-primary)",
-                    fontSize: "0.875rem",
+                    fontSize: "1rem",
                   }}
                 />
                 <button

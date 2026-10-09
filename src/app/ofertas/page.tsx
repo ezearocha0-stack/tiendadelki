@@ -74,14 +74,14 @@ export default async function OfertasPage({ searchParams }: OfertasPageProps) {
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       <StoreHeader />
 
-      <main style={{ flex: 1, padding: "2rem 1.25rem", maxWidth: "1400px", margin: "0 auto", width: "100%" }}>
+      <main style={{ flex: 1, padding: "clamp(1rem, 3vw, 2rem) clamp(0.75rem, 3vw, 1.25rem)", maxWidth: "1400px", margin: "0 auto", width: "100%" }}>
         {/* Banner de Ofertas */}
         <div
           style={{
             background: "linear-gradient(135deg, #451a03 0%, #78350f 50%, #9a3412 100%)",
             border: "1px solid #d97706",
             borderRadius: "var(--radius-lg)",
-            padding: "3rem 2rem",
+            padding: "clamp(1.5rem, 5vw, 3rem) clamp(1rem, 4vw, 2rem)",
             marginBottom: "2.5rem",
             textAlign: "center",
             boxShadow: "0 10px 30px rgba(217, 119, 6, 0.25)",

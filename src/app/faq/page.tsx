@@ -81,7 +81,7 @@ export default function FaqPage() {
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "var(--color-bg)" }}>
       <StoreHeader />
 
-      <main style={{ flex: 1, padding: "2.5rem 1rem", maxWidth: "900px", width: "100%", margin: "0 auto" }}>
+      <main style={{ flex: 1, padding: "clamp(1.5rem, 4vw, 2.5rem) clamp(0.75rem, 3vw, 1rem)", maxWidth: "900px", width: "100%", margin: "0 auto" }}>
         {/* Breadcrumb */}
         <nav style={{ fontSize: "0.875rem", color: "var(--color-text-muted)", marginBottom: "1.5rem" }}>
           <Link href="/" style={{ color: "var(--color-text-muted)", textDecoration: "none" }}>Inicio</Link>
@@ -91,7 +91,7 @@ export default function FaqPage() {
 
         {/* Hero Header */}
         <div style={{ textAlign: "center", marginBottom: "3rem" }}>
-          <h1 style={{ fontSize: "2.25rem", fontWeight: 800, margin: "0 0 0.75rem", color: "var(--color-text-main)" }}>
+          <h1 style={{ fontSize: "clamp(1.5rem, 4vw, 2.25rem)", fontWeight: 800, margin: "0 0 0.75rem", color: "var(--color-text-main)" }}>
             Preguntas Frecuentes (FAQ)
           </h1>
           <p style={{ color: "var(--color-text-muted)", fontSize: "1.05rem", maxWidth: "600px", margin: "0 auto" }}>

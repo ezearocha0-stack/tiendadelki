@@ -15,6 +15,12 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  text-rendering: optimizeLegibility;
+}
+
+img, picture, video, canvas {
+  max-width: 100%;
+  height: auto;
 }
 
 /* ==========================================================================
@@ -37,7 +43,7 @@ a:hover {
 }
 
 /* ==========================================================================
-   INPUTS, SELECTS Y FORMULARIOS
+   INPUTS, SELECTS Y FORMULARIOS (Preventing iOS Zoom on Focus)
    ========================================================================== */
 input:not([type="checkbox"]):not([type="radio"]), select, textarea {
   font-family: inherit;
@@ -49,6 +55,14 @@ input:not([type="checkbox"]):not([type="radio"]), select, textarea {
   padding: 0.625rem 0.875rem;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  input:not([type="checkbox"]):not([type="radio"]), select, textarea {
+    font-size: 16px !important; /* Prevents unwanted auto-zoom in iOS Safari */
+  }
 }
 
 input:not([type="checkbox"]):not([type="radio"]):focus, select:focus, textarea:focus {
@@ -77,13 +91,47 @@ label {
 }
 
 /* ==========================================================================
-   CONTENEDOR Y ESTRUCTURA
+   CONTENEDOR Y ESTRUCTURA RESPONSIVA
    ========================================================================== */
 .container {
   width: 100%;
   max-width: 1320px;
   margin: 0 auto;
-  padding: 0 1.25rem;
+  padding: 0 clamp(0.75rem, 3vw, 1.25rem);
+  box-sizing: border-box;
+}
+
+/* Grillas Flexibles y Adaptables */
+.grid {
+  display: grid;
+}
+
+.grid-cols-1 {
+  grid-template-columns: 1fr;
+}
+
+.grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.grid-cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+.grid-cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .grid-cols-2,
+  .grid-cols-3,
+  .grid-cols-4 {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
 }
 
 /* ==========================================================================
@@ -93,9 +141,11 @@ label {
   background-color: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
-  padding: 1.5rem;
+  padding: clamp(1rem, 2.5vw, 1.5rem);
   box-shadow: var(--shadow-card);
   transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .card-interactive {
@@ -117,6 +167,7 @@ button {
   border: none;
   outline: none;
   background: transparent;
+  touch-action: manipulation;
 }
 
 .btn {
@@ -132,6 +183,18 @@ button {
   white-space: nowrap;
   text-decoration: none;
   cursor: pointer;
+  touch-action: manipulation;
+  box-sizing: border-box;
+}
+
+@media (max-width: 640px) {
+  .btn {
+    min-height: 44px;
+  }
+  .btn-wrap-mobile {
+    white-space: normal !important;
+    text-align: center;
+  }
 }
 
 .btn-primary {
@@ -281,15 +344,19 @@ button {
    ========================================================================== */
 .table-saas-container {
   width: 100%;
+  max-width: 100%;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-subtle);
   background-color: var(--bg-surface);
   box-shadow: var(--shadow-card);
+  box-sizing: border-box;
 }
 
 .table-saas {
   width: 100%;
+  min-width: 600px;
   border-collapse: collapse;
   text-align: left;
   font-size: 0.875rem;
@@ -304,6 +371,7 @@ button {
   letter-spacing: 0.05em;
   padding: 0.85rem 1.25rem;
   border-bottom: 1px solid var(--border-subtle);
+  white-space: nowrap;
 }
 
 .table-saas td {
@@ -326,27 +394,34 @@ button {
    ========================================================================== */
 .store-product-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
+}
+
+@media (max-width: 359px) {
+  .store-product-grid {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
 }
 
 @media (min-width: 640px) {
   .store-product-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1.25rem;
   }
 }
 
 @media (min-width: 768px) {
   .store-product-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1.5rem;
   }
 }
 
 @media (min-width: 1024px) {
   .store-product-grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 1.5rem;
   }
 }
@@ -501,12 +576,15 @@ button {
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-xl);
-  padding: 1.75rem;
+  padding: clamp(1.2rem, 3vw, 1.75rem);
   width: 100%;
   max-width: 520px;
   position: relative;
-  max-height: 90vh;
+  max-height: calc(100vh - 2rem);
+  max-height: calc(100dvh - 2rem);
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
 }
 
 .modal-header {
@@ -533,7 +611,12 @@ button {
   line-height: 1;
   color: var(--text-muted);
   cursor: pointer;
-  padding: 0.25rem 0.5rem;
+  padding: 0.5rem;
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border-radius: var(--radius-sm);
   transition: color 0.15s ease, background-color 0.15s ease;
 }
@@ -551,6 +634,7 @@ button {
   margin-top: 1.5rem;
   padding-top: 1rem;
   border-top: 1px solid var(--border-subtle);
+  flex-wrap: wrap;
 }
 
 .btn-sm {
@@ -559,3 +643,16 @@ button {
   border-radius: var(--radius-sm);
 }
 
+/* ==========================================================================
+   UTILIDADES DE TEXTO Y ACCESIBILIDAD
+   ========================================================================== */
+.text-break-word {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.truncate-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

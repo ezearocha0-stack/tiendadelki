@@ -171,9 +171,9 @@ export function ProductDetailView({ product, relatedProducts }: ProductDetailPro
   );
 
   return (
-    <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "1.5rem 1.25rem 4rem 1.25rem" }}>
+    <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "clamp(1rem, 2.5vw, 1.5rem) clamp(0.75rem, 2vw, 1.25rem) 4rem clamp(0.75rem, 2vw, 1.25rem)" }}>
       {/* Breadcrumbs */}
-      <div style={{ fontSize: "0.85rem", color: "var(--text-muted)", marginBottom: "1.5rem" }}>
+      <div style={{ fontSize: "0.85rem", color: "var(--text-muted)", marginBottom: "1.5rem", overflowX: "auto", whiteSpace: "nowrap" }} className="scrollbar-none">
         <Link href="/" style={{ color: "var(--text-muted)" }}>Inicio</Link>
         <span style={{ margin: "0 0.5rem" }}>/</span>
         <Link href="/tienda" style={{ color: "var(--text-muted)" }}>Tienda</Link>
@@ -189,8 +189,8 @@ export function ProductDetailView({ product, relatedProducts }: ProductDetailPro
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
-          gap: "3rem",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 320px), 1fr))",
+          gap: "clamp(1.5rem, 4vw, 3rem)",
           alignItems: "start",
           marginBottom: "4rem",
         }}
@@ -550,24 +550,26 @@ export function ProductDetailView({ product, relatedProducts }: ProductDetailPro
             </div>
 
             {/* Botón 1: Agregar al Carrito & Botón Favoritos */}
-            <div style={{ display: "flex", gap: "0.75rem", width: "100%" }}>
+            <div style={{ display: "flex", gap: "0.75rem", width: "100%", flexWrap: "wrap" }}>
               <button
                 type="button"
                 disabled={isOutOfStock}
                 onClick={handleAddToCart}
                 style={{
-                  flex: 1,
-                  padding: "0.85rem 1.25rem",
+                  flex: "1 1 200px",
+                  minWidth: 0,
+                  padding: "0.85rem 1rem",
                   borderRadius: "var(--radius-md)",
                   backgroundColor: isOutOfStock ? "#f1f5f9" : "var(--color-brand-primary)",
                   color: isOutOfStock ? "var(--text-muted)" : "#ffffff",
                   fontWeight: "600",
-                  fontSize: "0.95rem",
+                  fontSize: "clamp(0.85rem, 2.5vw, 0.95rem)",
                   cursor: isOutOfStock ? "not-allowed" : "pointer",
                   boxShadow: "var(--shadow-xs)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
+                  textAlign: "center",
                   gap: "0.5rem",
                   minHeight: "46px",
                   transition: "background-color 0.15s ease",
@@ -598,8 +600,10 @@ export function ProductDetailView({ product, relatedProducts }: ProductDetailPro
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
+                  flexShrink: 0,
                   transition: "all 0.15s ease",
                   minHeight: "46px",
+                  minWidth: "46px",
                 }}
               >
                 {favorited ? "❤️" : "🤍"}
@@ -667,7 +671,7 @@ export function ProductDetailView({ product, relatedProducts }: ProductDetailPro
             borderRadius: "var(--radius-lg)",
             border: "1px solid var(--border-subtle)",
             boxShadow: "var(--shadow-xs)",
-            padding: "2rem",
+            padding: "clamp(1.25rem, 3vw, 2rem)",
             marginBottom: "4rem",
           }}
         >

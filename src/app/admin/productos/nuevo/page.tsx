@@ -635,7 +635,7 @@ export default function NewProductPage() {
                       border: "1px solid var(--border-subtle)",
                     }}
                   >
-                    <div style={{ display: "flex", gap: "1rem", alignItems: "center", marginBottom: "0.75rem" }}>
+                    <div style={{ display: "flex", gap: "0.75rem", alignItems: "center", marginBottom: "0.75rem", flexWrap: "wrap" }}>
                       <input
                         type="text"
                         placeholder="Nombre de atributo (ej. Color, Talla)"
@@ -646,7 +646,9 @@ export default function NewProductPage() {
                           )
                         }
                         style={{
-                          width: "200px",
+                          flex: "1 1 140px",
+                          minWidth: 0,
+                          maxWidth: "100%",
                           padding: "0.5rem 0.75rem",
                           backgroundColor: "var(--bg-surface)",
                           border: "1px solid var(--border-strong)",
@@ -656,7 +658,7 @@ export default function NewProductPage() {
                         }}
                       />
 
-                      <div style={{ display: "flex", gap: "0.5rem", flex: 1 }}>
+                      <div style={{ display: "flex", gap: "0.5rem", flex: "2 1 180px", minWidth: 0 }}>
                         <input
                           type="text"
                           placeholder="Agregar opción (ej. Negro) y presione Enter"
@@ -676,6 +678,7 @@ export default function NewProductPage() {
                           }}
                           style={{
                             flex: 1,
+                            minWidth: 0,
                             padding: "0.5rem 0.75rem",
                             backgroundColor: "var(--bg-surface)",
                             border: "1px solid var(--border-strong)",

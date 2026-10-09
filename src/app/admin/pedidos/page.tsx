@@ -173,7 +173,7 @@ export default function AdminPedidosPage() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 150px), 1fr))",
           gap: "1rem",
           marginBottom: "2rem",
         }}
@@ -288,7 +288,7 @@ export default function AdminPedidosPage() {
       <div
         className="card"
         style={{
-          padding: "1.25rem 1.5rem",
+          padding: "clamp(1rem, 2.5vw, 1.5rem)",
           marginBottom: "1.5rem",
           display: "flex",
           flexDirection: "column",
@@ -296,7 +296,7 @@ export default function AdminPedidosPage() {
         }}
       >
         <form onSubmit={handleSearchSubmit} style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
-          <div style={{ flex: "1 1 300px" }}>
+          <div style={{ flex: "1 1 240px", minWidth: 0, maxWidth: "100%" }}>
             <input
               type="text"
               placeholder="Buscar por # de pedido (#TK-...), cliente, teléfono o email..."
@@ -413,7 +413,7 @@ export default function AdminPedidosPage() {
             </p>
           </div>
         ) : (
-          <div style={{ overflowX: "auto" }}>
+          <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
             <table className="table-saas">
               <thead>
                 <tr>

@@ -407,7 +407,7 @@ export default function AdminInventoryPage() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 200px), 1fr))",
           gap: "1rem",
           marginBottom: "2rem",
         }}
@@ -562,11 +562,15 @@ export default function AdminInventoryPage() {
 
       {/* Barra de Pestañas */}
       <div
+        className="scrollbar-none"
         style={{
           display: "flex",
           gap: "0.5rem",
           borderBottom: "1px solid var(--border-subtle)",
           marginBottom: "1.5rem",
+          overflowX: "auto",
+          whiteSpace: "nowrap",
+          WebkitOverflowScrolling: "touch",
         }}
       >
         <button
@@ -644,7 +648,9 @@ export default function AdminInventoryPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               style={{
-                flex: "1 1 300px",
+                flex: "1 1 240px",
+                minWidth: 0,
+                maxWidth: "100%",
                 padding: "0.6rem 1rem",
                 borderRadius: "var(--radius-md)",
                 border: "1px solid var(--border-strong)",
@@ -664,7 +670,9 @@ export default function AdminInventoryPage() {
                 backgroundColor: "var(--bg-app)",
                 color: "var(--text-primary)",
                 fontSize: "0.9rem",
-                minWidth: "180px",
+                flex: "1 1 180px",
+                minWidth: 0,
+                maxWidth: "100%",
               }}
             >
               <option value="">Todas las Categorías</option>
@@ -686,7 +694,9 @@ export default function AdminInventoryPage() {
                   backgroundColor: "var(--bg-app)",
                   color: "var(--text-primary)",
                   fontSize: "0.9rem",
-                  minWidth: "180px",
+                  flex: "1 1 180px",
+                  minWidth: 0,
+                  maxWidth: "100%",
                 }}
               >
                 <option value="ALL">Todos los Estados</option>
@@ -737,10 +747,11 @@ export default function AdminInventoryPage() {
                 backgroundColor: "var(--bg-surface)",
                 borderRadius: "var(--radius-md)",
                 border: "1px solid var(--border-subtle)",
-                overflow: "hidden",
+                overflowX: "auto",
+                WebkitOverflowScrolling: "touch",
               }}
             >
-              <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "0.9rem" }}>
+              <table style={{ width: "100%", minWidth: "720px", borderCollapse: "collapse", textAlign: "left", fontSize: "0.9rem" }}>
                 <thead>
                   <tr style={{ backgroundColor: "rgba(255,255,255,0.03)", borderBottom: "1px solid var(--border-subtle)" }}>
                     <th style={{ padding: "0.85rem 1rem", color: "var(--text-muted)", fontWeight: "600" }}>PRODUCTO / VARIANTE</th>

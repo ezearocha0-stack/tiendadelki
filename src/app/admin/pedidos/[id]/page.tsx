@@ -174,7 +174,7 @@ export default function AdminOrderDetailPage({ params }: OrderDetailProps) {
   }
 
   return (
-    <div style={{ padding: "2rem 1.5rem", maxWidth: "1300px", width: "100%", margin: "0 auto" }}>
+    <div style={{ padding: "0 0 3rem 0", maxWidth: "1300px", width: "100%", margin: "0 auto" }}>
       {/* Top Breadcrumb & Navigation */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
         <Link
@@ -251,7 +251,7 @@ export default function AdminOrderDetailPage({ params }: OrderDetailProps) {
           background: "var(--bg-surface)",
           border: "1px solid var(--border-subtle)",
           borderRadius: "var(--radius-lg)",
-          padding: "1.5rem",
+          padding: "clamp(1rem, 2.5vw, 1.5rem)",
           marginBottom: "2rem",
           display: "flex",
           justifyContent: "space-between",
@@ -510,7 +510,7 @@ export default function AdminOrderDetailPage({ params }: OrderDetailProps) {
               background: "var(--bg-surface)",
               border: "1px solid var(--border-subtle)",
               borderRadius: "var(--radius-lg)",
-              padding: "1.5rem",
+              padding: "clamp(1rem, 2.5vw, 1.5rem)",
             }}
           >
             <h2 style={{ fontSize: "1.15rem", fontWeight: 700, margin: "0 0 1rem" }}>
@@ -523,6 +523,7 @@ export default function AdminOrderDetailPage({ params }: OrderDetailProps) {
                 return (
                   <div
                     key={item.id}
+                    className="admin-order-item-row"
                     style={{
                       display: "grid",
                       gridTemplateColumns: "60px 1fr auto",
@@ -532,11 +533,11 @@ export default function AdminOrderDetailPage({ params }: OrderDetailProps) {
                       borderBottom: "1px solid var(--border-subtle)",
                     }}
                   >
-                    <div style={{ width: "60px", height: "60px", borderRadius: "6px", overflow: "hidden", background: "#f1f5f9" }}>
+                    <div style={{ width: "60px", height: "60px", borderRadius: "6px", overflow: "hidden", background: "#f1f5f9", flexShrink: 0 }}>
                       <img src={imgUrl} alt={item.productTitle} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                     </div>
 
-                    <div>
+                    <div style={{ minWidth: 0 }}>
                       <div style={{ fontWeight: 600, fontSize: "0.95rem" }}>{item.productTitle}</div>
                       {item.variantTitle && (
                         <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>
@@ -548,7 +549,7 @@ export default function AdminOrderDetailPage({ params }: OrderDetailProps) {
                       </div>
                     </div>
 
-                    <div style={{ fontWeight: 700, fontSize: "1rem" }}>
+                    <div className="admin-order-item-total" style={{ fontWeight: 700, fontSize: "1rem" }}>
                       {formatCurrency(Number(item.totalPrice))}
                     </div>
                   </div>
@@ -1263,6 +1264,16 @@ export default function AdminOrderDetailPage({ params }: OrderDetailProps) {
         @media (min-width: 900px) {
           .order-detail-layout {
             grid-template-columns: 1fr 380px !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .admin-order-item-row {
+            grid-template-columns: 50px 1fr !important;
+            gap: 0.75rem !important;
+          }
+          .admin-order-item-total {
+            grid-column: 2 / -1 !important;
+            text-align: right !important;
           }
         }
       `}</style>

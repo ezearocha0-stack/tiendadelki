@@ -57,7 +57,7 @@ export default async function HomePage() {
           style={{
             background: "radial-gradient(circle at 18% 20%, rgba(79, 70, 229, 0.08) 0%, transparent 45%), radial-gradient(circle at 82% 80%, rgba(59, 130, 246, 0.06) 0%, transparent 42%), #ffffff",
             borderBottom: "1px solid var(--border-subtle)",
-            padding: "5rem 1.5rem",
+            padding: "clamp(2.75rem, 6vw, 4.75rem) clamp(1rem, 3vw, 1.5rem)",
             position: "relative",
           }}
         >
@@ -80,9 +80,11 @@ export default async function HomePage() {
                 color: "var(--color-brand-primary)",
                 fontSize: "0.8rem",
                 fontWeight: "700",
-                marginBottom: "1.75rem",
+                marginBottom: "1.5rem",
                 letterSpacing: "0.04em",
                 textTransform: "uppercase",
+                maxWidth: "100%",
+                boxSizing: "border-box",
               }}
             >
               <span>Tienda Física en Montecristi • Catálogo en Tiempo Real</span>
@@ -90,10 +92,10 @@ export default async function HomePage() {
 
             <h1
               style={{
-                fontSize: "clamp(2.1rem, 4.8vw, 3.4rem)",
+                fontSize: "clamp(1.75rem, 4.8vw, 3.2rem)",
                 fontWeight: "800",
                 letterSpacing: "-0.03em",
-                lineHeight: 1.15,
+                lineHeight: 1.18,
                 color: "var(--text-primary)",
                 maxWidth: "850px",
                 margin: "0 auto 1.25rem auto",
@@ -104,10 +106,10 @@ export default async function HomePage() {
 
             <p
               style={{
-                fontSize: "clamp(0.95rem, 2vw, 1.125rem)",
+                fontSize: "clamp(0.925rem, 2vw, 1.1rem)",
                 color: "var(--text-secondary)",
                 maxWidth: "640px",
-                margin: "0 auto 2.5rem auto",
+                margin: "0 auto 2.25rem auto",
                 lineHeight: 1.6,
               }}
             >
@@ -149,7 +151,7 @@ export default async function HomePage() {
         {/* 2. TRUST PILLARS (TARJETAS FLOTANTES SOBRE FONDO #F4F7FB) */}
         <section
           style={{
-            padding: "2.5rem 1.25rem",
+            padding: "2rem clamp(0.75rem, 2.5vw, 1.25rem)",
             backgroundColor: "var(--bg-app)",
           }}
         >
@@ -158,7 +160,7 @@ export default async function HomePage() {
               maxWidth: "1320px",
               margin: "0 auto",
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 240px), 1fr))",
               gap: "1.25rem",
             }}
           >
@@ -273,10 +275,10 @@ export default async function HomePage() {
 
         {/* 3. CATEGORÍAS PRINCIPALES */}
         {categories.length > 0 && (
-          <section style={{ maxWidth: "1320px", margin: "2rem auto 0 auto", padding: "0 1.25rem" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "1.5rem" }}>
+          <section style={{ maxWidth: "1320px", margin: "2rem auto 0 auto", padding: "0 clamp(0.75rem, 2.5vw, 1.25rem)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: "0.75rem", marginBottom: "1.5rem" }}>
               <div>
-                <h2 style={{ fontSize: "1.5rem", fontWeight: "800", color: "var(--text-primary)", margin: 0, letterSpacing: "-0.02em" }}>
+                <h2 style={{ fontSize: "clamp(1.25rem, 3vw, 1.5rem)", fontWeight: "800", color: "var(--text-primary)", margin: 0, letterSpacing: "-0.02em" }}>
                   Categorías Principales
                 </h2>
                 <p style={{ color: "var(--text-secondary)", fontSize: "0.875rem", margin: "0.25rem 0 0" }}>
@@ -291,8 +293,8 @@ export default async function HomePage() {
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-                gap: "1.1rem",
+                gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 140px), 1fr))",
+                gap: "1rem",
               }}
             >
               {categories.map((cat) => (
@@ -301,7 +303,7 @@ export default async function HomePage() {
                   href={`/categorias/${cat.slug}`}
                   className="card card-interactive"
                   style={{
-                    padding: "1.5rem 1.25rem",
+                    padding: "1.25rem 1rem",
                     textDecoration: "none",
                     display: "flex",
                     flexDirection: "column",
@@ -311,31 +313,32 @@ export default async function HomePage() {
                 >
                   <div
                     style={{
-                      width: "60px",
-                      height: "60px",
+                      width: "56px",
+                      height: "56px",
                       borderRadius: "50%",
                       backgroundColor: "var(--bg-app)",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      fontSize: "1.5rem",
-                      marginBottom: "0.85rem",
+                      fontSize: "1.4rem",
+                      marginBottom: "0.75rem",
                       overflow: "hidden",
                       border: "1px solid var(--border-subtle)",
+                      flexShrink: 0,
                     }}
                   >
                     {cat.imageUrl ? (
                       <img src={cat.imageUrl} alt={cat.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                     ) : (
-                      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" color="var(--color-brand-primary)">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" color="var(--color-brand-primary)">
                         <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
                       </svg>
                     )}
                   </div>
-                  <h3 style={{ fontSize: "0.95rem", fontWeight: "700", color: "var(--text-primary)", marginBottom: "0.2rem" }}>
+                  <h3 style={{ fontSize: "0.9rem", fontWeight: "700", color: "var(--text-primary)", marginBottom: "0.2rem" }}>
                     {cat.name}
                   </h3>
-                  <span style={{ fontSize: "0.78rem", color: "var(--text-muted)" }}>
+                  <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
                     {cat._count.products} productos
                   </span>
                 </Link>
@@ -346,10 +349,10 @@ export default async function HomePage() {
 
         {/* 4. PRODUCTOS DESTACADOS */}
         {featuredProducts.length > 0 && (
-          <section style={{ maxWidth: "1320px", margin: "3.5rem auto 0 auto", padding: "0 1.25rem" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "1.5rem" }}>
+          <section style={{ maxWidth: "1320px", margin: "3.5rem auto 0 auto", padding: "0 clamp(0.75rem, 2.5vw, 1.25rem)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: "0.75rem", marginBottom: "1.5rem" }}>
               <div>
-                <h2 style={{ fontSize: "1.5rem", fontWeight: "800", color: "var(--text-primary)", margin: 0, letterSpacing: "-0.02em" }}>
+                <h2 style={{ fontSize: "clamp(1.25rem, 3vw, 1.5rem)", fontWeight: "800", color: "var(--text-primary)", margin: 0, letterSpacing: "-0.02em" }}>
                   Productos Destacados
                 </h2>
                 <p style={{ color: "var(--text-secondary)", fontSize: "0.875rem", margin: "0.25rem 0 0" }}>
@@ -387,14 +390,14 @@ export default async function HomePage() {
           style={{
             maxWidth: "1320px",
             margin: "4rem auto 0 auto",
-            padding: "0 1.25rem",
+            padding: "0 clamp(0.75rem, 2.5vw, 1.25rem)",
           }}
         >
           <div
             style={{
               background: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
               borderRadius: "var(--radius-xl)",
-              padding: "2.5rem 2.25rem",
+              padding: "clamp(1.5rem, 4vw, 2.5rem) clamp(1.2rem, 3vw, 2.25rem)",
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
@@ -408,7 +411,7 @@ export default async function HomePage() {
               <span style={{ fontSize: "0.75rem", fontWeight: "700", color: "#4ade80", textTransform: "uppercase", letterSpacing: "0.06em" }}>
                 Atención Directa & Pedidos Rápidos
               </span>
-              <h3 style={{ fontSize: "1.6rem", fontWeight: "800", color: "#ffffff", margin: "0.4rem 0 0.5rem 0", letterSpacing: "-0.02em" }}>
+              <h3 style={{ fontSize: "clamp(1.25rem, 3.5vw, 1.6rem)", fontWeight: "800", color: "#ffffff", margin: "0.4rem 0 0.5rem 0", letterSpacing: "-0.02em" }}>
                 ¿Prefieres consultar o pedir directamente por WhatsApp?
               </h3>
               <p style={{ color: "#cbd5e1", fontSize: "0.95rem", lineHeight: 1.5, margin: 0 }}>
@@ -436,10 +439,10 @@ export default async function HomePage() {
 
         {/* 6. NOVEDADES RECIENTES */}
         {newProducts.length > 0 && (
-          <section style={{ maxWidth: "1320px", margin: "3.5rem auto 0 auto", padding: "0 1.25rem" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "1.5rem" }}>
+          <section style={{ maxWidth: "1320px", margin: "3.5rem auto 0 auto", padding: "0 clamp(0.75rem, 2.5vw, 1.25rem)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: "0.75rem", marginBottom: "1.5rem" }}>
               <div>
-                <h2 style={{ fontSize: "1.5rem", fontWeight: "800", color: "var(--text-primary)", margin: 0, letterSpacing: "-0.02em" }}>
+                <h2 style={{ fontSize: "clamp(1.25rem, 3vw, 1.5rem)", fontWeight: "800", color: "var(--text-primary)", margin: 0, letterSpacing: "-0.02em" }}>
                   Nuevas Colecciones
                 </h2>
                 <p style={{ color: "var(--text-secondary)", fontSize: "0.875rem", margin: "0.25rem 0 0" }}>
@@ -474,10 +477,10 @@ export default async function HomePage() {
 
         {/* 7. OFERTAS Y REBAJAS */}
         {dealProducts.length > 0 && (
-          <section style={{ maxWidth: "1320px", margin: "3.5rem auto 4rem auto", padding: "0 1.25rem" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "1.5rem" }}>
+          <section style={{ maxWidth: "1320px", margin: "3.5rem auto 4rem auto", padding: "0 clamp(0.75rem, 2.5vw, 1.25rem)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: "0.75rem", marginBottom: "1.5rem" }}>
               <div>
-                <h2 style={{ fontSize: "1.5rem", fontWeight: "800", color: "var(--text-primary)", margin: 0, letterSpacing: "-0.02em" }}>
+                <h2 style={{ fontSize: "clamp(1.25rem, 3vw, 1.5rem)", fontWeight: "800", color: "var(--text-primary)", margin: 0, letterSpacing: "-0.02em" }}>
                   Rebajas y Ofertas Especiales
                 </h2>
                 <p style={{ color: "var(--text-secondary)", fontSize: "0.875rem", margin: "0.25rem 0 0" }}>

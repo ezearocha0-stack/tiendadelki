@@ -53,7 +53,7 @@ export default function AdminLoginPage() {
         style={{
           maxWidth: "420px",
           width: "100%",
-          padding: "2.5rem 2rem",
+          padding: "clamp(1.5rem, 5vw, 2.5rem) clamp(1rem, 4vw, 2rem)",
           boxShadow: "var(--shadow-lg)",
         }}
       >

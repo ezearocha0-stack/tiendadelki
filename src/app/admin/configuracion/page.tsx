@@ -429,7 +429,7 @@ export default function AdminConfiguracionPage() {
               backgroundColor: "var(--bg-card)",
               border: "1px solid var(--border-subtle)",
               borderRadius: "12px",
-              padding: "1.75rem",
+              padding: "clamp(1rem, 3vw, 1.75rem)",
               display: "flex",
               flexDirection: "column",
               gap: "1.25rem",
@@ -564,7 +564,7 @@ export default function AdminConfiguracionPage() {
               backgroundColor: "var(--bg-card)",
               border: "1px solid var(--border-subtle)",
               borderRadius: "12px",
-              padding: "1.75rem",
+              padding: "clamp(1rem, 3vw, 1.75rem)",
               display: "flex",
               flexDirection: "column",
               gap: "1.5rem",
@@ -572,7 +572,7 @@ export default function AdminConfiguracionPage() {
           >
             <div>
               <h2 style={{ fontSize: "1.2rem", fontWeight: 700, margin: "0 0 1rem 0" }}>Canales de Contacto</h2>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1rem" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))", gap: "1rem" }}>
                 <div>
                   <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.35rem" }}>
                     Teléfono Principal *
@@ -665,7 +665,7 @@ export default function AdminConfiguracionPage() {
 
             <div>
               <h2 style={{ fontSize: "1.2rem", fontWeight: 700, margin: "0 0 1rem 0" }}>Ubicación Física</h2>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1rem" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))", gap: "1rem" }}>
                 <div>
                   <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.35rem" }}>
                     Dirección / Calle
@@ -831,7 +831,7 @@ export default function AdminConfiguracionPage() {
               backgroundColor: "var(--bg-card)",
               border: "1px solid var(--border-subtle)",
               borderRadius: "12px",
-              padding: "1.75rem",
+              padding: "clamp(1rem, 3vw, 1.75rem)",
               display: "flex",
               flexDirection: "column",
               gap: "1.5rem",
@@ -839,7 +839,7 @@ export default function AdminConfiguracionPage() {
           >
             <div>
               <h2 style={{ fontSize: "1.2rem", fontWeight: 700, margin: "0 0 1rem 0" }}>Horarios de Atención</h2>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1rem" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))", gap: "1rem" }}>
                 <div>
                   <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.35rem" }}>
                     Días de Atención
@@ -926,7 +926,7 @@ export default function AdminConfiguracionPage() {
 
             <div>
               <h2 style={{ fontSize: "1.2rem", fontWeight: 700, margin: "0 0 1rem 0" }}>Redes Sociales y Mensajes</h2>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1rem" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))", gap: "1rem" }}>
                 <div>
                   <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.35rem" }}>
                     Instagram
@@ -1096,7 +1096,7 @@ export default function AdminConfiguracionPage() {
               </button>
             </div>
           ) : (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "1rem" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 300px), 1fr))", gap: "1rem" }}>
               {bankAccounts.map((acc) => (
                 <div
                   key={acc.id}
@@ -1160,7 +1160,7 @@ export default function AdminConfiguracionPage() {
                     </div>
                   </div>
 
-                  <div style={{ display: "flex", gap: "0.5rem", borderTop: "1px solid var(--border-subtle)", paddingTop: "0.85rem" }}>
+                  <div style={{ display: "flex", gap: "0.5rem", borderTop: "1px solid var(--border-subtle)", paddingTop: "0.85rem", flexWrap: "wrap" }}>
                     <button
                       type="button"
                       onClick={() => handleToggleBankActive(acc)}

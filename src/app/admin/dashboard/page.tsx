@@ -331,7 +331,7 @@ export default function AdminDashboardPage() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 200px), 1fr))",
             gap: "0.85rem",
           }}
         >
@@ -693,7 +693,7 @@ export default function AdminDashboardPage() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 240px), 1fr))",
             gap: "1.1rem",
           }}
         >
@@ -916,7 +916,7 @@ export default function AdminDashboardPage() {
 
       {/* 5. GRÁFICOS PRINCIPALES: EVOLUCIÓN DE VENTAS Y PEDIDOS */}
       <section style={{ marginBottom: "2.5rem" }}>
-        <div className="card" style={{ padding: "1.75rem" }}>
+        <div className="card" style={{ padding: "clamp(1rem, 2.5vw, 1.75rem)" }}>
           {/* Barra superior de controles del gráfico */}
           <div
             style={{
@@ -1163,7 +1163,7 @@ export default function AdminDashboardPage() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 320px), 1fr))",
           gap: "1.5rem",
         }}
       >

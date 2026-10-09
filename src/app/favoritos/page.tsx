@@ -134,7 +134,7 @@ export default function FavoritosPage() {
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       <StoreHeader />
 
-      <main style={{ flex: 1, padding: "2rem 1.25rem", maxWidth: "1400px", margin: "0 auto", width: "100%" }}>
+      <main style={{ flex: 1, padding: "clamp(1rem, 3vw, 2rem) clamp(0.75rem, 3vw, 1.25rem)", maxWidth: "1400px", margin: "0 auto", width: "100%" }}>
         {/* Encabezado */}
         <div style={{ marginBottom: "2rem" }}>
           <div style={{ fontSize: "0.85rem", color: "var(--text-muted)", marginBottom: "0.5rem" }}>
@@ -147,7 +147,7 @@ export default function FavoritosPage() {
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: "1rem" }}>
             <div>
-              <h1 style={{ fontSize: "2rem", fontWeight: "900", color: "var(--text-primary)", margin: 0 }}>
+              <h1 style={{ fontSize: "clamp(1.35rem, 4vw, 2rem)", fontWeight: "900", color: "var(--text-primary)", margin: 0 }}>
                 ❤️ Mis Productos Favoritos
               </h1>
               <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem", margin: "0.25rem 0 0 0" }}>

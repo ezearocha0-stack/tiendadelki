@@ -18,7 +18,7 @@ export default async function NuestraTiendaPage() {
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "var(--color-bg)" }}>
       <StoreHeader />
 
-      <main style={{ flex: 1, padding: "2.5rem 1rem", maxWidth: "1000px", width: "100%", margin: "0 auto" }}>
+      <main style={{ flex: 1, padding: "clamp(1.5rem, 4vw, 2.5rem) clamp(0.75rem, 3vw, 1rem)", maxWidth: "1000px", width: "100%", margin: "0 auto" }}>
         {/* Breadcrumb */}
         <nav style={{ fontSize: "0.875rem", color: "var(--color-text-muted)", marginBottom: "1.5rem" }}>
           <Link href="/" style={{ color: "var(--color-text-muted)", textDecoration: "none" }}>Inicio</Link>
@@ -44,7 +44,7 @@ export default async function NuestraTiendaPage() {
           >
             Nuestra Historia y Visión
           </span>
-          <h1 style={{ fontSize: "2.5rem", fontWeight: 800, margin: "0 0 1rem", color: "var(--color-text-main)" }}>
+          <h1 style={{ fontSize: "clamp(1.5rem, 4vw, 2.5rem)", fontWeight: 800, margin: "0 0 1rem", color: "var(--color-text-main)" }}>
             De la Tienda Física a la Experiencia Digital
           </h1>
           <p style={{ color: "var(--color-text-muted)", fontSize: "1.15rem", maxWidth: "700px", margin: "0 auto", lineHeight: 1.6 }}>
@@ -58,7 +58,7 @@ export default async function NuestraTiendaPage() {
             background: "var(--color-surface)",
             borderRadius: "var(--radius-lg, 16px)",
             border: "1px solid var(--color-border)",
-            padding: "2.5rem",
+            padding: "clamp(1.25rem, 4vw, 2.5rem)",
             boxShadow: "var(--shadow-sm)",
             marginBottom: "3rem",
             lineHeight: 1.8,
@@ -88,7 +88,7 @@ export default async function NuestraTiendaPage() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 200px), 1fr))",
             gap: "1.5rem",
             marginBottom: "3.5rem",
           }}

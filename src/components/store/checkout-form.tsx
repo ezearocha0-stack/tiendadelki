@@ -412,7 +412,7 @@ export function CheckoutForm({ shippingMethods, bankAccounts }: CheckoutFormProp
               background: "var(--color-surface)",
               borderRadius: "var(--radius-md, 12px)",
               border: "1px solid var(--color-border)",
-              padding: "1.5rem",
+              padding: "clamp(1rem, 3vw, 1.5rem)",
               boxShadow: "var(--shadow-sm)",
             }}
           >
@@ -582,7 +582,7 @@ export function CheckoutForm({ shippingMethods, bankAccounts }: CheckoutFormProp
               background: "var(--color-surface)",
               borderRadius: "var(--radius-md, 12px)",
               border: "1px solid var(--color-border)",
-              padding: "1.5rem",
+              padding: "clamp(1rem, 3vw, 1.5rem)",
               boxShadow: "var(--shadow-sm)",
             }}
           >
@@ -797,7 +797,7 @@ export function CheckoutForm({ shippingMethods, bankAccounts }: CheckoutFormProp
               background: "var(--color-surface)",
               borderRadius: "var(--radius-md, 12px)",
               border: "1px solid var(--color-border)",
-              padding: "1.5rem",
+              padding: "clamp(1rem, 3vw, 1.5rem)",
               boxShadow: "var(--shadow-sm)",
             }}
           >
@@ -904,7 +904,7 @@ export function CheckoutForm({ shippingMethods, bankAccounts }: CheckoutFormProp
               background: "var(--color-surface)",
               borderRadius: "var(--radius-md, 12px)",
               border: "1px solid var(--color-border)",
-              padding: "1.5rem",
+              padding: "clamp(1rem, 3vw, 1.5rem)",
               boxShadow: "var(--shadow-sm)",
             }}
           >
@@ -954,6 +954,7 @@ export function CheckoutForm({ shippingMethods, bankAccounts }: CheckoutFormProp
                 {bankAccounts.map((acc) => (
                   <div
                     key={acc.id}
+                    className="checkout-bank-card"
                     style={{
                       background: "var(--color-bg)",
                       border: "1px solid var(--color-border)",
@@ -1093,7 +1094,7 @@ export function CheckoutForm({ shippingMethods, bankAccounts }: CheckoutFormProp
               background: "var(--color-surface)",
               borderRadius: "var(--radius-lg, 16px)",
               border: "1px solid var(--color-border)",
-              padding: "1.75rem",
+              padding: "clamp(1.25rem, 3vw, 1.75rem)",
               boxShadow: "var(--shadow-md)",
               position: "sticky",
               top: "90px",
@@ -1242,6 +1243,18 @@ export function CheckoutForm({ shippingMethods, bankAccounts }: CheckoutFormProp
         @media (min-width: 960px) {
           .checkout-grid {
             grid-template-columns: 1fr 400px !important;
+          }
+        }
+        @media (max-width: 520px) {
+          .checkout-bank-card {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 0.85rem !important;
+          }
+          .checkout-bank-card button {
+            width: 100% !important;
+            justify-content: center !important;
+            min-height: 42px !important;
           }
         }
       `}</style>

@@ -273,7 +273,7 @@ export default function AdminShippingMethodsPage() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 200px), 1fr))",
           gap: "1rem",
           marginBottom: "2rem",
         }}
@@ -401,8 +401,8 @@ export default function AdminShippingMethodsPage() {
             No hay métodos de envío en esta categoría.
           </div>
         ) : (
-          <div style={{ overflowX: "auto" }}>
-            <table className="table-saas">
+          <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+            <table className="table-saas" style={{ minWidth: "620px" }}>
               <thead>
                 <tr>
                   <th>Método / Zona</th>
@@ -568,7 +568,7 @@ export default function AdminShippingMethodsPage() {
                 />
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 180px), 1fr))", gap: "1rem" }}>
                 <div>
                   <label htmlFor="envio-price" style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, marginBottom: "0.35rem", color: "var(--text-primary)" }}>
                     Tarifa (RD$) *
@@ -603,7 +603,7 @@ export default function AdminShippingMethodsPage() {
                 </div>
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "1rem" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 180px), 1fr))", gap: "1rem" }}>
                 <div>
                   <label htmlFor="envio-days" style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, marginBottom: "0.35rem", color: "var(--text-primary)" }}>
                     Tiempo Estimado de Entrega

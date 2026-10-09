@@ -393,6 +393,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               height: "100%",
               boxShadow: "var(--shadow-xl)",
               animation: "fadeIn 0.2s ease-out",
+              overflowY: "auto",
+              WebkitOverflowScrolling: "touch",
             }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -409,7 +411,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             height: "64px",
             backgroundColor: "#ffffff",
             borderBottom: "1px solid var(--border-subtle)",
-            padding: "0 1.5rem",
+            padding: "0 clamp(0.75rem, 2vw, 1.5rem)",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
@@ -419,7 +421,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             boxShadow: "0 1px 2px 0 rgba(15, 23, 42, 0.03)",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", minWidth: 0 }}>
             {/* Botón menú móvil */}
             <button
               onClick={() => setMobileDrawerOpen(true)}
@@ -428,13 +430,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 display: "none",
                 alignItems: "center",
                 justifyContent: "center",
-                width: "36px",
-                height: "36px",
+                width: "38px",
+                height: "38px",
                 borderRadius: "var(--radius-md)",
                 border: "1px solid var(--border-strong)",
                 backgroundColor: "var(--bg-subtle)",
                 color: "var(--text-primary)",
                 cursor: "pointer",
+                flexShrink: 0,
               }}
               aria-label="Abrir menú de navegación"
             >
@@ -446,17 +449,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </button>
 
             {/* Breadcrumbs de navegación */}
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <span style={{ fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: "500" }}>Admin</span>
-              <span style={{ fontSize: "0.85rem", color: "var(--border-strong)" }}>/</span>
-              <span style={{ fontSize: "0.9rem", color: "var(--text-primary)", fontWeight: "700" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", minWidth: 0 }}>
+              <span style={{ fontSize: "0.85rem", color: "var(--text-muted)", fontWeight: "500", display: "none" }} className="admin-breadcrumb-root">Admin</span>
+              <span style={{ fontSize: "0.85rem", color: "var(--border-strong)", display: "none" }} className="admin-breadcrumb-root">/</span>
+              <span style={{ fontSize: "0.9rem", color: "var(--text-primary)", fontWeight: "700", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                 {getActivePageTitle()}
               </span>
             </div>
           </div>
 
           {/* Acciones del Header */}
-          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexShrink: 0 }}>
             <Link
               href="/admin/inventario?action=quick_sale"
               className="btn"
@@ -464,10 +467,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 backgroundColor: "#ecfdf5",
                 color: "#065f46",
                 border: "1px solid #a7f3d0",
-                padding: "0.45rem 0.85rem",
+                padding: "0.45rem 0.75rem",
                 fontSize: "0.825rem",
                 fontWeight: "700",
                 textDecoration: "none",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.25rem",
               }}
             >
               <span>⚡</span>
@@ -479,12 +485,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               target="_blank"
               className="btn btn-secondary"
               style={{
-                padding: "0.45rem 0.85rem",
+                padding: "0.45rem 0.75rem",
                 fontSize: "0.825rem",
                 textDecoration: "none",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.25rem",
               }}
             >
-              <span>Tienda Online</span>
+              <span className="admin-header-label-desktop">Tienda</span>
               <span style={{ fontSize: "0.85rem" }}>↗</span>
             </Link>
 
@@ -503,7 +512,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </header>
 
         {/* Contenedor de la página con fondo #F4F7FB */}
-        <main style={{ flex: 1, backgroundColor: "var(--bg-app)", padding: "1.5rem" }}>
+        <main style={{ flex: 1, backgroundColor: "var(--bg-app)", padding: "clamp(0.75rem, 2vw, 1.5rem)", minWidth: 0 }}>
           {children}
         </main>
       </div>
@@ -519,6 +528,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           .admin-mobile-toggle {
             display: none !important;
           }
+          .admin-breadcrumb-root {
+            display: inline !important;
+          }
         }
         @media (max-width: 1023px) {
           .admin-desktop-sidebar {
@@ -531,6 +543,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             display: flex !important;
           }
           .admin-header-label {
+            display: none;
+          }
+        }
+        @media (max-width: 480px) {
+          .admin-header-label-desktop {
             display: none;
           }
         }

@@ -736,8 +736,8 @@ export default function AdminEditProductPage({ params }: { params: Promise<{ id:
 
         {/* Tabla de Variantes Existentes */}
         {variants.length > 0 && (
-          <div style={{ overflowX: "auto" }}>
-            <table className="table-saas" style={{ width: "100%" }}>
+          <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+            <table className="table-saas" style={{ width: "100%", minWidth: "560px" }}>
               <thead>
                 <tr>
                   <th>Título</th>
@@ -777,7 +777,7 @@ export default function AdminEditProductPage({ params }: { params: Promise<{ id:
 
       {/* SECCIÓN 4: GALERÍA DE IMÁGENES */}
       <div className="card" style={{ marginTop: "2rem" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem", marginBottom: "1rem" }}>
           <div>
             <h2 style={{ fontSize: "1.2rem", fontWeight: "700" }}>4. Fotografías</h2>
             <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>

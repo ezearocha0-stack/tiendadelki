@@ -194,9 +194,9 @@ export default function TrackingPage() {
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "var(--color-bg)" }}>
       <StoreHeader />
 
-      <main style={{ flex: 1, padding: "3rem 1rem", maxWidth: "860px", width: "100%", margin: "0 auto" }}>
+      <main style={{ flex: 1, padding: "clamp(1.5rem, 4vw, 3rem) clamp(0.75rem, 2vw, 1rem)", maxWidth: "860px", width: "100%", margin: "0 auto" }}>
         {/* Header Title */}
-        <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
+        <div style={{ textAlign: "center", marginBottom: "2rem" }}>
           <div
             style={{
               display: "inline-flex",
@@ -213,10 +213,10 @@ export default function TrackingPage() {
           >
             📦 ESTADO DEL PEDIDO
           </div>
-          <h1 style={{ fontSize: "2.25rem", fontWeight: 800, margin: "0 0 0.75rem", color: "var(--color-text-main)" }}>
+          <h1 style={{ fontSize: "clamp(1.5rem, 4vw, 2.25rem)", fontWeight: 800, margin: "0 0 0.75rem", color: "var(--color-text-main)" }}>
             Seguimiento de tu Pedido
           </h1>
-          <p style={{ color: "var(--color-text-muted)", fontSize: "1.05rem", margin: 0, maxWidth: "600px", marginInline: "auto" }}>
+          <p style={{ color: "var(--color-text-muted)", fontSize: "clamp(0.9rem, 2.5vw, 1.05rem)", margin: 0, maxWidth: "600px", marginInline: "auto" }}>
             Ingresa tu número de orden para consultar el estado en tiempo real y la disponibilidad para retiro de tu compra.
           </p>
         </div>
@@ -227,7 +227,7 @@ export default function TrackingPage() {
             background: "var(--color-surface)",
             borderRadius: "16px",
             border: "1px solid var(--color-border)",
-            padding: "1.75rem",
+            padding: "clamp(1rem, 3vw, 1.75rem)",
             boxShadow: "var(--shadow-md)",
             marginBottom: "2rem",
           }}
@@ -340,7 +340,7 @@ export default function TrackingPage() {
                 background: "var(--color-surface)",
                 borderRadius: "16px",
                 border: "1px solid var(--color-border)",
-                padding: "2rem",
+                padding: "clamp(1.25rem, 3vw, 2rem)",
                 boxShadow: "var(--shadow-sm)",
               }}
             >
@@ -381,8 +381,8 @@ export default function TrackingPage() {
 
               {/* Visual Progression Stepper */}
               {order.status !== "CANCELADO" && (
-                <div style={{ marginTop: "1.5rem", paddingTop: "1.5rem", borderTop: "1px solid var(--color-border)" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", position: "relative", maxWidth: "550px", margin: "0 auto" }}>
+                <div style={{ marginTop: "1.5rem", paddingTop: "1.5rem", borderTop: "1px solid var(--color-border)", overflowX: "auto", paddingBottom: "0.5rem" }} className="scrollbar-none">
+                  <div style={{ display: "flex", justifyContent: "space-between", position: "relative", minWidth: "320px", maxWidth: "550px", margin: "0 auto" }}>
                     <div style={{ position: "absolute", top: "14px", left: "20px", right: "20px", height: "3px", background: "#e2e8f0", zIndex: 0 }} />
                     <div
                       style={{
@@ -445,7 +445,7 @@ export default function TrackingPage() {
                   background: "linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)",
                   border: "2px solid #16a34a",
                   borderRadius: "16px",
-                  padding: "1.75rem",
+                  padding: "clamp(1rem, 3vw, 1.75rem)",
                   boxShadow: "0 4px 14px rgba(22, 163, 74, 0.12)",
                 }}
               >

@@ -14,12 +14,12 @@ export function WhatsAppFloatingButton() {
       aria-label="Atención al cliente por WhatsApp"
       style={{
         position: "fixed",
-        bottom: "24px",
-        left: "24px",
+        bottom: "calc(16px + env(safe-area-inset-bottom, 0px))",
+        left: "calc(16px + env(safe-area-inset-left, 0px))",
         backgroundColor: "#25D366",
         color: "#ffffff",
-        width: "52px",
-        height: "52px",
+        width: "50px",
+        height: "50px",
         borderRadius: "50%",
         display: "flex",
         alignItems: "center",

@@ -303,14 +303,17 @@ export function ProductCard({
           <Link
             href={`/producto/${slug}`}
             style={{
-              display: "block",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
               textAlign: "center",
-              padding: "0.5rem 0.75rem",
+              minHeight: "42px",
+              padding: "0.55rem 0.75rem",
               borderRadius: "var(--radius-md)",
               backgroundColor: isOutOfStock ? "#f8fafc" : "#ffffff",
               color: isOutOfStock ? "var(--text-muted)" : "var(--text-primary)",
               border: "1px solid var(--border-strong)",
-              fontSize: "0.825rem",
+              fontSize: "0.85rem",
               fontWeight: "600",
               textDecoration: "none",
               transition: "all 0.15s ease",

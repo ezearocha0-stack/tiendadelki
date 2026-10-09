@@ -88,7 +88,7 @@ export default async function TiendaPage({ searchParams }: TiendaPageProps) {
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       <StoreHeader />
 
-      <main style={{ flex: 1, padding: "2rem 1.25rem", maxWidth: "1400px", margin: "0 auto", width: "100%" }}>
+      <main style={{ flex: 1, padding: "clamp(1rem, 3vw, 2rem) clamp(0.75rem, 3vw, 1.25rem)", maxWidth: "1400px", margin: "0 auto", width: "100%" }}>
         {/* Encabezado y Breadcrumbs */}
         <div style={{ marginBottom: "1.75rem" }}>
           <div style={{ fontSize: "0.85rem", color: "var(--text-muted)", marginBottom: "0.5rem" }}>
@@ -105,7 +105,7 @@ export default async function TiendaPage({ searchParams }: TiendaPageProps) {
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: "1rem" }}>
             <div>
-              <h1 style={{ fontSize: "1.75rem", fontWeight: "700", color: "var(--text-primary)", margin: 0 }}>
+              <h1 style={{ fontSize: "clamp(1.35rem, 4vw, 1.75rem)", fontWeight: "700", color: "var(--text-primary)", margin: 0 }}>
                 {selectedCategoryData ? selectedCategoryData.name : "Catálogo de Productos"}
               </h1>
               <p style={{ color: "var(--text-secondary)", fontSize: "0.875rem", margin: "0.25rem 0 0 0" }}>
@@ -114,7 +114,7 @@ export default async function TiendaPage({ searchParams }: TiendaPageProps) {
             </div>
 
             {/* Selector de Ordenación */}
-            <form method="GET" style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <form method="GET" style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
               {search && <input type="hidden" name="search" value={search} />}
               {categorySlug && <input type="hidden" name="category" value={categorySlug} />}
               {specialFilter && <input type="hidden" name="filter" value={specialFilter} />}

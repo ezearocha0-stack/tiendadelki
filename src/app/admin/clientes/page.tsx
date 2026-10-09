@@ -100,7 +100,7 @@ export default function AdminClientesPage() {
             onChange={(e) => setSearch(e.target.value)}
             style={{
               flex: 1,
-              minWidth: "260px",
+              minWidth: "min(100%, 220px)",
               padding: "0.65rem 1rem",
               backgroundColor: "var(--bg-surface)",
               border: "1px solid var(--border-subtle)",
@@ -149,8 +149,8 @@ export default function AdminClientesPage() {
             </p>
           </div>
         ) : (
-          <div style={{ overflowX: "auto" }}>
-            <table className="table-saas" style={{ width: "100%", textAlign: "left" }}>
+          <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+            <table className="table-saas" style={{ width: "100%", minWidth: "620px", textAlign: "left" }}>
               <thead>
                 <tr>
                   <th>Cliente</th>

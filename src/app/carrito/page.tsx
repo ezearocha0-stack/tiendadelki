@@ -38,7 +38,7 @@ export default function CartPage() {
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", backgroundColor: "var(--bg-app)" }}>
       <StoreHeader />
 
-      <main style={{ flex: 1, padding: "2rem 1.25rem", maxWidth: "1200px", width: "100%", margin: "0 auto" }}>
+      <main style={{ flex: 1, padding: "clamp(1rem, 2.5vw, 2rem) clamp(0.75rem, 2vw, 1.25rem)", maxWidth: "1200px", width: "100%", margin: "0 auto" }}>
         {/* Breadcrumb */}
         <nav style={{ fontSize: "0.85rem", color: "var(--text-muted)", marginBottom: "1.25rem" }}>
           <Link href="/" style={{ color: "var(--text-muted)", textDecoration: "none" }}>Inicio</Link>
@@ -46,8 +46,8 @@ export default function CartPage() {
           <span style={{ color: "var(--text-primary)", fontWeight: 600 }}>Mi Carrito</span>
         </nav>
 
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "1.5rem" }}>
-          <h1 style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "1.5rem", flexWrap: "wrap", gap: "0.5rem" }}>
+          <h1 style={{ fontSize: "clamp(1.35rem, 3vw, 1.75rem)", fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>
             Carrito de Compras ({itemCount})
           </h1>
           {items.length > 0 && (
@@ -96,7 +96,7 @@ export default function CartPage() {
             style={{
               backgroundColor: "#ffffff",
               borderRadius: "var(--radius-lg)",
-              padding: "4rem 2rem",
+              padding: "clamp(2.5rem, 6vw, 4rem) 1.5rem",
               textAlign: "center",
               border: "1px solid var(--border-subtle)",
               boxShadow: "var(--shadow-sm)",
@@ -167,6 +167,7 @@ export default function CartPage() {
               {items.map((item) => (
                 <div
                   key={item.id}
+                  className="cart-item-card"
                   style={{
                     backgroundColor: "#ffffff",
                     borderRadius: "var(--radius-lg)",
@@ -181,6 +182,7 @@ export default function CartPage() {
                 >
                   {/* Thumbnail */}
                   <div
+                    className="cart-item-thumb"
                     style={{
                       width: "80px",
                       height: "80px",
@@ -354,7 +356,7 @@ export default function CartPage() {
                   backgroundColor: "#ffffff",
                   borderRadius: "var(--radius-lg)",
                   border: "1px solid var(--border-subtle)",
-                  padding: "1.75rem",
+                  padding: "clamp(1.25rem, 3vw, 1.75rem)",
                   boxShadow: "var(--shadow-sm)",
                   position: "sticky",
                   top: "90px",
@@ -504,6 +506,17 @@ export default function CartPage() {
         @media (min-width: 900px) {
           .cart-layout-grid {
             grid-template-columns: 1fr 380px !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .cart-item-card {
+            grid-template-columns: 68px 1fr !important;
+            gap: 0.75rem !important;
+            padding: 0.75rem 0.85rem !important;
+          }
+          .cart-item-thumb {
+            width: 68px !important;
+            height: 68px !important;
           }
         }
       `}</style>
