@@ -18,6 +18,11 @@ export const metadata: Metadata = {
   },
   description: "Compra ropa, accesorios y artículos seleccionados con calidad garantizada. Venta física y catálogo en tiempo real en San Fernando de Montecristi, República Dominicana.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
+  icons: {
+    icon: "/icon.png",
+    shortcut: "/icon.png",
+    apple: "/icon.png",
+  },
   alternates: {
     canonical: "./",
   },
