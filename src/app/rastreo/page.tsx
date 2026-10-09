@@ -540,8 +540,8 @@ export default function TrackingPage() {
               </div>
             )}
 
-            {/* EXTERNAL CARRIER TRACKING CARD (When not local pickup and has carrier) */}
-            {!isLocalOrder && (order.carrierName || order.trackingNumber) && (
+            {/* EXTERNAL CARRIER TRACKING CARD (When not local pickup, not cancelled, and has carrier) */}
+            {!isLocalOrder && order.status !== "CANCELADO" && (order.carrierName || order.trackingNumber) && (
               <div
                 style={{
                   background: "linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)",
@@ -691,6 +691,56 @@ export default function TrackingPage() {
                     </button>
                   )}
                 </div>
+              </div>
+            )}
+
+            {/* CANCELLED ORDER CARD */}
+            {order.status === "CANCELADO" && (
+              <div
+                style={{
+                  background: "#fef2f2",
+                  border: "2px solid #ef4444",
+                  borderRadius: "16px",
+                  padding: "1.75rem",
+                  boxShadow: "0 4px 14px rgba(239, 68, 68, 0.12)",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.75rem" }}>
+                  <span style={{ fontSize: "1.6rem" }}>🛑</span>
+                  <h3 style={{ margin: 0, fontSize: "1.25rem", fontWeight: 800, color: "#991b1b" }}>
+                    Pedido Cancelado
+                  </h3>
+                </div>
+
+                <p style={{ margin: "0 0 1.25rem", fontSize: "0.95rem", color: "#7f1d1d", lineHeight: 1.6 }}>
+                  Este pedido figura como cancelado. Si realizaste un pago previo o acordaste una devolución / reembolso de tus artículos, nuestro equipo te atenderá de inmediato por WhatsApp para coordinar los detalles.
+                </p>
+
+                {phone && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      openDirectWhatsApp(
+                        `Hola TiendaDelki, deseo consultar sobre el estado de mi pedido cancelado #${order.orderNumber}.`
+                      )
+                    }
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "0.4rem",
+                      background: "#25D366",
+                      color: "#ffffff",
+                      border: "none",
+                      padding: "0.65rem 1.2rem",
+                      borderRadius: "8px",
+                      fontSize: "0.9rem",
+                      fontWeight: 700,
+                      cursor: "pointer",
+                    }}
+                  >
+                    💬 Contactar Atención por WhatsApp
+                  </button>
+                )}
               </div>
             )}
 

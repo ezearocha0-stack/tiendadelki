@@ -458,11 +458,20 @@ export default function AdminOrderDetailPage({ params }: OrderDetailProps) {
             </button>
           )}
 
-          {/* Cancelar (Si no está completado ni cancelado) */}
+          {/* Cancelar / Reembolsar (Si no está completado ni cancelado) */}
           {order.status !== "COMPLETADO" && order.status !== "CANCELADO" && (
             <button
               type="button"
-              onClick={() => setModalType("CANCEL")}
+              onClick={() => {
+                setModalInput({
+                  notes: "",
+                  rejectionReason: "",
+                  carrierName: "",
+                  trackingNumber: "",
+                  trackingUrl: "",
+                });
+                setModalType("CANCEL");
+              }}
               style={{
                 backgroundColor: "transparent",
                 color: "#dc2626",
@@ -474,7 +483,11 @@ export default function AdminOrderDetailPage({ params }: OrderDetailProps) {
                 cursor: "pointer",
               }}
             >
-              Cancelar Pedido
+              {order.status === "PENDIENTE_DE_PAGO"
+                ? "✕ Cancelar Pedido"
+                : order.status === "ENTREGADO"
+                ? "✕ Devolución / Reembolso"
+                : "✕ Cancelar y Reembolsar"}
             </button>
           )}
         </div>
@@ -1117,12 +1130,18 @@ export default function AdminOrderDetailPage({ params }: OrderDetailProps) {
         );
       })()}
 
-      {/* 4. Modal Cancelar */}
+      {/* 4. Modal Cancelar / Reembolsar */}
       {modalType === "CANCEL" && (
         <div className="modal-backdrop">
-          <div className="modal-dialog" style={{ maxWidth: "480px" }}>
+          <div className="modal-dialog" style={{ maxWidth: "520px" }}>
             <div className="modal-header">
-              <h3 className="modal-title" style={{ color: "#dc2626" }}>Confirmar Cancelación del Pedido</h3>
+              <h3 className="modal-title" style={{ color: "#dc2626" }}>
+                {order.status === "PENDIENTE_DE_PAGO"
+                  ? "Confirmar Cancelación del Pedido"
+                  : order.status === "ENTREGADO"
+                  ? "Devolución / Reembolso de Pedido Entregado"
+                  : "Confirmar Cancelación y Reembolso"}
+              </h3>
               <button
                 type="button"
                 onClick={() => setModalType(null)}
@@ -1132,20 +1151,86 @@ export default function AdminOrderDetailPage({ params }: OrderDetailProps) {
                 ✕
               </button>
             </div>
-            <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", margin: "0 0 1.25rem 0", lineHeight: 1.5 }}>
-              Esta acción marcará el pedido como <strong style={{ color: "var(--text-primary)" }}>CANCELADO</strong>. Esta acción queda registrada en la bitácora.
-            </p>
 
-            <div style={{ marginBottom: "1.5rem" }}>
-              <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.35rem", color: "var(--text-primary)" }}>
-                Motivo de la cancelación *
+            {order.status !== "PENDIENTE_DE_PAGO" ? (
+              <div
+                style={{
+                  background: "#fef3c7",
+                  border: "1px solid #fde68a",
+                  color: "#92400e",
+                  padding: "0.9rem 1rem",
+                  borderRadius: "8px",
+                  fontSize: "0.85rem",
+                  lineHeight: 1.5,
+                  marginBottom: "1.25rem",
+                }}
+              >
+                <div style={{ fontWeight: 700, marginBottom: "0.35rem" }}>
+                  ⚠️ Este pedido figura con pago registrado ({formatCurrency(order.total)})
+                </div>
+                <ul style={{ margin: 0, paddingLeft: "1.2rem" }}>
+                  <li>
+                    <strong>Inventario:</strong> Las prendas se devolverán automáticamente al stock disponible.
+                  </li>
+                  <li>
+                    <strong>Reembolso:</strong> Debes transferir el dinero de vuelta al cliente o devolverle el efectivo en la tienda física según corresponda.
+                  </li>
+                </ul>
+              </div>
+            ) : (
+              <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", margin: "0 0 1.25rem 0", lineHeight: 1.5 }}>
+                Esta acción marcará el pedido como <strong style={{ color: "var(--text-primary)" }}>CANCELADO</strong> y liberará el inventario reservado.
+              </p>
+            )}
+
+            <div style={{ marginBottom: "1rem" }}>
+              <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.4rem", color: "var(--text-primary)" }}>
+                Sugerencias de motivo:
               </label>
-              <input
-                type="text"
+              <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap", marginBottom: "0.75rem" }}>
+                {(order.status === "PENDIENTE_DE_PAGO"
+                  ? ["No concretó el pago", "Solicitud del cliente", "Duplicado / Error"]
+                  : order.status === "ENTREGADO"
+                  ? ["Devolución voluntaria (24h)", "Defecto de fábrica (Garantía)", "Cambio de talla no disponible"]
+                  : ["Cancelado por el cliente", "Sin disponibilidad / Agotado", "Reembolso bancario emitido"]
+                ).map((chip) => (
+                  <button
+                    key={chip}
+                    type="button"
+                    onClick={() => setModalInput({ ...modalInput, notes: chip })}
+                    style={{
+                      background: modalInput.notes === chip ? "#fee2e2" : "var(--bg-app)",
+                      border: modalInput.notes === chip ? "1px solid #f87171" : "1px solid var(--border-subtle)",
+                      color: modalInput.notes === chip ? "#b91c1c" : "var(--text-primary)",
+                      borderRadius: "6px",
+                      padding: "0.25rem 0.55rem",
+                      fontSize: "0.75rem",
+                      fontWeight: 600,
+                      cursor: "pointer",
+                    }}
+                  >
+                    + {chip}
+                  </button>
+                ))}
+              </div>
+
+              <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.35rem", color: "var(--text-primary)" }}>
+                Detalles / Motivo del reembolso o cancelación *
+              </label>
+              <textarea
                 required
-                placeholder="Ej. Solicitado por el cliente / Falta de pago / etc."
+                rows={3}
+                placeholder="Ej. Solicitado por el cliente / Reembolsado RD$1,500 por Banreservas ref: 12345 / etc."
                 value={modalInput.notes}
                 onChange={(e) => setModalInput({ ...modalInput, notes: e.target.value })}
+                style={{
+                  width: "100%",
+                  padding: "0.6rem 0.75rem",
+                  borderRadius: "8px",
+                  border: "1px solid var(--border-subtle)",
+                  fontSize: "0.875rem",
+                  fontFamily: "inherit",
+                }}
               />
             </div>
 
@@ -1163,7 +1248,11 @@ export default function AdminOrderDetailPage({ params }: OrderDetailProps) {
                 onClick={() => handleStatusUpdate("CANCELADO", { notes: modalInput.notes })}
                 className="btn btn-danger"
               >
-                {actionLoading ? "Cancelando..." : "Confirmar Cancelación"}
+                {actionLoading
+                  ? "Procesando..."
+                  : order.status === "PENDIENTE_DE_PAGO"
+                  ? "Confirmar Cancelación"
+                  : "Confirmar Cancelación y Reembolso"}
               </button>
             </div>
           </div>

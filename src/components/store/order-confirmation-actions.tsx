@@ -152,8 +152,8 @@ export function OrderConfirmationActions({
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-      {/* 1. DISPATCH / TRACKING / READY FOR PICKUP CARD */}
-      {(trackingNumber || carrierName || isShipped || isDelivered || isCompleted) && (
+      {/* 1. DISPATCH / TRACKING / READY FOR PICKUP CARD (Only if not cancelled) */}
+      {!isCancelled && (trackingNumber || carrierName || isShipped || isDelivered || isCompleted) && (
         <div
           style={{
             background: "linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)",
@@ -337,8 +337,8 @@ export function OrderConfirmationActions({
           <h3 style={{ margin: "0 0 0.5rem", fontSize: "1.25rem", fontWeight: 800, color: "#991b1b" }}>
             Este pedido ha sido Cancelado
           </h3>
-          <p style={{ margin: "0 auto 1.25rem", maxWidth: "550px", fontSize: "0.95rem", color: "#7f1d1d" }}>
-            Si crees que esto se debe a un error o necesitas reactivar tu compra, por favor comunícate directamente con nosotros vía WhatsApp.
+          <p style={{ margin: "0 auto 1.25rem", maxWidth: "550px", fontSize: "0.95rem", color: "#7f1d1d", lineHeight: 1.5 }}>
+            Si habías realizado un pago o acordaste una devolución / reembolso de esta orden, nuestro equipo te atenderá de inmediato por WhatsApp para coordinar los detalles.
           </p>
           {storePhone && (
             <button
