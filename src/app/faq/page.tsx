@@ -52,13 +52,13 @@ const FAQS: FaqItem[] = [
   },
   {
     category: "Garantías y Devoluciones",
-    question: "¿Los productos cuentan con garantía?",
-    answer: "Todos nuestros productos nuevos cuentan con garantía contra defectos de fábrica de 30 a 90 días (dependiendo de la categoría). Conserva tu factura o número de pedido para cualquier reclamación.",
+    question: "¿Puedo cambiar una prenda por talla o preferencia?",
+    answer: "Sí. Para cambios voluntarios de talla o modelo dispones de un plazo comercial de hasta 24 horas a partir del momento de la entrega o retiro en tienda. La prenda debe conservar todas sus etiquetas originales adheridas, no haber sido usada ni lavada, encontrarse en buen estado y presentarse con el número de pedido o recibo en nuestro local físico. Por razones de higiene y salud no aplican cambios en ropa íntima ni trajes de baño; tampoco se admiten cambios voluntarios en artículos en liquidación final o rebajas especiales.",
   },
   {
     category: "Garantías y Devoluciones",
-    question: "¿Puedo cambiar una prenda si la talla o color no me queda?",
-    answer: "Sí, dispones de 7 días continuos a partir de la entrega para solicitar un cambio de talla o color, siempre y cuando el producto conserve sus etiquetas originales, empaque y no muestre señales de uso.",
+    question: "¿Cómo aplican las garantías y reclamos por defectos o artículos incorrectos?",
+    answer: "El plazo comercial de 24 horas aplica a cambios voluntarios por talla o preferencia y no restringe tus derechos legales como consumidor. Si recibiste un artículo con defectos comprobables de fábrica o un producto distinto al ordenado, atendemos tu reclamación conforme a la normativa aplicable de protección al consumidor en República Dominicana (Ley 358-05). En estos casos, te pedimos contactarnos a la brevedad con tu comprobante o número de pedido para evaluar la solución correspondiente (reposición o ajuste).",
   },
 ];
 

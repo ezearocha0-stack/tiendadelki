@@ -96,7 +96,7 @@ export default function PoliticasPage() {
             </div>
           </section>
 
-          {/* 3. Cambios y Garantia */}
+          {/* 3. Cambios y Garantias */}
           <section
             style={{
               background: "var(--color-surface)",
@@ -107,19 +107,47 @@ export default function PoliticasPage() {
             }}
           >
             <h2 style={{ fontSize: "1.4rem", fontWeight: 700, margin: "0 0 1rem", color: "var(--color-text-main)" }}>
-              3. Cambios y Garantía
+              3. Cambios Comerciales y Garantías
             </h2>
             <div style={{ fontSize: "0.95rem", lineHeight: 1.7, color: "var(--color-text-muted)" }}>
               <p style={{ margin: "0 0 1rem" }}>
-                Tu satisfacción con cada compra es fundamental. Puedes solicitar el cambio de un producto o talla en nuestra tienda física bajo las siguientes pautas:
+                En <strong>TiendaDelki</strong> procuramos que cada cliente quede plenamente satisfecho con su compra. Para brindarte un servicio ágil y transparente en nuestro establecimiento físico, aplicamos las siguientes directrices:
               </p>
-              <ul style={{ paddingLeft: "1.25rem", margin: "0 0 1rem" }}>
-                <li style={{ marginBottom: "0.35rem" }}>El producto debe encontrarse sin uso, con sus etiquetas adheridas y en su empaque original.</li>
-                <li style={{ marginBottom: "0.35rem" }}>Presentar el número de pedido o constancia de compra.</li>
-                <li style={{ marginBottom: "0.35rem" }}>Los cambios se gestionan presencialmente en nuestro local en Montecristi.</li>
+
+              <h3 style={{ fontSize: "1.05rem", fontWeight: 700, color: "var(--color-text-main)", margin: "1.25rem 0 0.5rem" }}>
+                A. Plazo comercial de 24 horas para cambios voluntarios (talla o preferencia)
+              </h3>
+              <p style={{ margin: "0 0 0.75rem" }}>
+                Si deseas cambiar una prenda por ajuste de talla o preferencia de modelo, dispones de un plazo comercial de <strong>hasta 24 horas continuas</strong> a partir del momento de la entrega o el retiro en tienda física. Para procesar el cambio voluntario, es indispensable cumplir con los siguientes requisitos:
+              </p>
+              <ul style={{ paddingLeft: "1.25rem", margin: "0 1rem 1rem" }}>
+                <li style={{ marginBottom: "0.35rem" }}>
+                  <strong>Estado del artículo:</strong> La prenda debe conservar todas sus etiquetas originales intactas, no haber sido lavada ni usada, encontrarse libre de olores (como perfumes o desodorantes), manchas o roturas, y mantenerse en su empaque original.
+                </li>
+                <li style={{ marginBottom: "0.35rem" }}>
+                  <strong>Comprobante:</strong> Es obligatorio presentar el número de pedido oficial o el recibo/factura de compra.
+                </li>
+                <li style={{ marginBottom: "0.35rem" }}>
+                  <strong>Gestión presencial:</strong> Los cambios se efectúan de forma presencial en nuestra tienda en San Fernando de Montecristi y están sujetos a la disponibilidad de existencias en el inventario.
+                </li>
               </ul>
+
+              <h3 style={{ fontSize: "1.05rem", fontWeight: 700, color: "var(--color-text-main)", margin: "1.25rem 0 0.5rem" }}>
+                B. Exclusiones por razones de higiene y mercancía en liquidación
+              </h3>
+              <p style={{ margin: "0 0 0.75rem" }}>
+                Por estrictos motivos sanitarios, de higiene y cuidado de nuestros clientes, <strong>no se admiten cambios voluntarios en prendas íntimas, trajes de baño ni accesorios de uso personal directo</strong>. Asimismo, los artículos adquiridos en liquidación final o rebajas especiales no aplican para cambios voluntarios por preferencia o talla.
+              </p>
+
+              <h3 style={{ fontSize: "1.05rem", fontWeight: 700, color: "var(--color-text-main)", margin: "1.25rem 0 0.5rem" }}>
+                C. Reclamos por defectos de fábrica y derechos del consumidor
+              </h3>
+              <p style={{ margin: "0 0 1rem" }}>
+                El plazo comercial de 24 horas regula exclusivamente los cambios voluntarios por gusto o ajuste de talla. Dicho plazo <strong>no limita ni sustituye tus derechos legales como consumidor</strong> conforme a la legislación aplicable en la República Dominicana (Ley No. 358-05 de Protección al Consumidor). Si recibes una prenda con defectos de fabricación comprobables o un artículo distinto al ordenado, atenderemos tu reclamo oportunamente para su correspondiente reposición o solución procedente, previa evaluación de la mercancía con su comprobante de compra.
+              </p>
+
               <p style={{ margin: 0 }}>
-                Para consultar disponibilidad de tallas antes de pasar por la tienda, contáctanos directamente a nuestro WhatsApp de atención al cliente.
+                Para consultar disponibilidad de tallas o coordinar cualquier visita a la tienda, puedes escribirnos directamente a nuestro WhatsApp oficial de atención.
               </p>
             </div>
           </section>

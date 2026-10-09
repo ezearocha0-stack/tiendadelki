@@ -651,7 +651,7 @@ export function ProductDetailView({ product, relatedProducts }: ProductDetailPro
               <li><strong>Retiro en Tienda:</strong> Pedidos listos para retirar en nuestra tienda física.</li>
               <li><strong>Pago Oficial:</strong> Transferencia o depósito bancario verificado.</li>
               <li><strong>Ubicación:</strong> Tienda física en San Fernando de Montecristi.</li>
-              <li><strong>Garantía:</strong> Cambios permitidos dentro del plazo establecido en perfecto estado.</li>
+              <li><strong>Cambios y Garantía:</strong> Plazo comercial de 24h tras entrega/retiro para cambios de talla o preferencia (prenda sin uso, con etiquetas y recibo; excluye higiene y liquidación). Garantía legal por defectos de fábrica.</li>
             </ul>
           </div>
         </div>
