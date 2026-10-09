@@ -1,7 +1,7 @@
 /**
  * LIMPIEZA TOTAL DE DATOS COMERCIALES DE TIENDADELKI
  * - Deja la tienda en cero comercialmente lista para comenzar a operar.
- * - Preserva schema, migraciones, tabla Store por defecto y cuenta admin@tiendadelki.com (SUPER_ADMIN).
+ * - Preserva schema, migraciones, tabla Store por defecto y cuenta ezearocha@gmail.com (SUPER_ADMIN).
  * - Elimina productos, variantes, imágenes, marcas, categorías, pedidos, items, historiales, movimientos,
  *   cuentas bancarias antiguas, direcciones, favoritos, usuarios no administrativos, uploads y comprobantes.
  * - Establece la configuración comercial oficial en Monte Cristi / Barrio El Albinal.
@@ -66,11 +66,12 @@ async function cleanCommercialData() {
   console.table(beforeCounts);
 
   // 2. Verificar que existe la cuenta administrativa principal
-  const adminUser = await prisma.user.findFirst({
-    where: { email: "admin@tiendadelki.com" },
+  const adminEmail = process.env.INITIAL_ADMIN_EMAIL || "ezearocha@gmail.com";
+  let adminUser = await prisma.user.findFirst({
+    where: { email: { in: [adminEmail, "ezearocha@gmail.com", "admin@tiendadelki.com"] } },
   });
   if (!adminUser) {
-    throw new Error("ABORTANDO: No se encontró la cuenta administrativa admin@tiendadelki.com");
+    throw new Error(`ABORTANDO: No se encontró la cuenta administrativa (${adminEmail})`);
   }
   console.log(`🔒 Cuenta administrativa verificada: ${adminUser.email} (Rol: ${adminUser.role}, ID: ${adminUser.id})`);
 
@@ -95,20 +96,20 @@ async function cleanCommercialData() {
   // Cuentas bancarias antiguas
   await prisma.bankAccount.deleteMany({});
 
-  // Clientes y Direcciones (conservar únicamente admin@tiendadelki.com)
+  // Clientes y Direcciones (conservar únicamente la cuenta del super admin)
   await prisma.customerAddress.deleteMany({});
   await prisma.user.deleteMany({
     where: {
-      email: {
-        not: "admin@tiendadelki.com",
+      id: {
+        not: adminUser.id,
       },
     },
   });
 
-  // Asegurar que admin@tiendadelki.com conserve rol SUPER_ADMIN y estado activo
+  // Asegurar que conserve rol SUPER_ADMIN y estado activo
   await prisma.user.update({
-    where: { email: "admin@tiendadelki.com" },
-    data: { role: "SUPER_ADMIN", isActive: true },
+    where: { id: adminUser.id },
+    data: { email: adminEmail, role: "SUPER_ADMIN", isActive: true },
   });
 
   // Asegurar que Store por defecto existe con nombre TiendaDelki

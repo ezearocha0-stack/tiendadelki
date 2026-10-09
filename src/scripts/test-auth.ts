@@ -1,4 +1,4 @@
-﻿import { SignJWT } from "jose";
+import { SignJWT } from "jose";
 import { signJwt, verifyJwt, AUTH_COOKIE_OPTIONS, getValidIssuers, getCanonicalIssuer } from "../core/auth/jwt";
 import { requireAdminUser, requireAuthenticatedUser } from "../core/auth/session";
 import { hashPassword, verifyPassword } from "../core/auth/password";
@@ -47,7 +47,7 @@ async function runAuthTests() {
   await test("Generación y firma criptográfica de JWT con algoritmo HS256", async () => {
     const payload = {
       sub: "user-12345",
-      email: "admin@tiendadelki.com",
+      email: "ezearocha@gmail.com",
       role: Role.SUPER_ADMIN,
       name: "Delki Admin",
     };

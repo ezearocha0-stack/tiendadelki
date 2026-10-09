@@ -146,7 +146,7 @@ async function runWhatsAppTests() {
       sub: "test-admin-whatsapp",
       role: Role.ADMIN,
       name: "Admin WhatsApp",
-      email: "admin@tiendadelki.com",
+      email: "ezearocha@gmail.com",
     });
 
     const patchReq = new Request("http://localhost:3000/api/settings", {

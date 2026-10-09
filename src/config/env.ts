@@ -14,7 +14,7 @@ const envSchema = z
       .string()
       .min(16, "JWT_SECRET debe tener al menos 16 caracteres")
       .default(DEFAULT_DEV_JWT),
-    INITIAL_ADMIN_EMAIL: z.string().email().default("admin@tiendadelki.com"),
+    INITIAL_ADMIN_EMAIL: z.string().email().default("ezearocha@gmail.com"),
     INITIAL_ADMIN_PASSWORD: z.string().min(8).default("TiendaDelki#2026!Adm"),
     COOKIE_NAME: z.string().default("td_auth_token"),
     STORAGE_PROVIDER: z.enum(["local", "s3", "r2"]).default("local"),
@@ -174,7 +174,7 @@ try {
       process.env.DATABASE_URL ||
       "postgresql://postgres:postgres@localhost:5432/tiendadelki_dev?schema=public",
     JWT_SECRET: process.env.JWT_SECRET || DEFAULT_DEV_JWT,
-    INITIAL_ADMIN_EMAIL: process.env.INITIAL_ADMIN_EMAIL || "admin@tiendadelki.com",
+    INITIAL_ADMIN_EMAIL: process.env.INITIAL_ADMIN_EMAIL || "ezearocha@gmail.com",
     INITIAL_ADMIN_PASSWORD: process.env.INITIAL_ADMIN_PASSWORD || "TiendaDelki#2026!Adm",
     COOKIE_NAME: process.env.COOKIE_NAME || "td_auth_token",
     STORAGE_PROVIDER: (process.env.STORAGE_PROVIDER as "local" | "s3" | "r2") || "local",

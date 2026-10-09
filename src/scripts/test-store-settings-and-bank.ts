@@ -46,7 +46,7 @@ async function runStoreSettingsAndBankTests() {
 
     const adminToken = await signJwt({
       sub: adminUser.id,
-      email: adminUser.email || "admin@tiendadelki.com",
+      email: adminUser.email || "ezearocha@gmail.com",
       role: adminUser.role,
       name: "Admin",
     });

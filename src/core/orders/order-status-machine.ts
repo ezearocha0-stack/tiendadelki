@@ -18,6 +18,7 @@ export const ALLOWED_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
   ],
   [OrderStatus.PREPARANDO]: [
     OrderStatus.ENVIADO,
+    OrderStatus.ENTREGADO,
     OrderStatus.CANCELADO,
   ],
   [OrderStatus.ENVIADO]: [

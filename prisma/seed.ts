@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("🌱 Iniciando sembrado de datos para TiendaDelki...");
 
-  const adminEmail = process.env.INITIAL_ADMIN_EMAIL || "admin@tiendadelki.com";
+  const adminEmail = process.env.INITIAL_ADMIN_EMAIL || "ezearocha@gmail.com";
   const adminRawPassword = process.env.INITIAL_ADMIN_PASSWORD || "TiendaDelki#2026!Adm";
   const adminPasswordHash = await bcrypt.hash(adminRawPassword, 12);
   const staffPasswordHash = await bcrypt.hash("Staff_TiendaDelki_2026!", 12);

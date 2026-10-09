@@ -160,13 +160,35 @@ export default function TrackingPage() {
     setTimeout(() => setCopiedTracking(false), 2500);
   }
 
-  const statusMeta = order ? STATUS_CONFIG[order.status] || {
-    label: order.status,
-    bg: "#f3f4f6",
-    color: "#374151",
-    step: 1,
-    icon: "📋",
-  } : null;
+  const isLocalOrder =
+    order?.carrierName?.toLowerCase().includes("local") ||
+    order?.carrierName?.toLowerCase().includes("retiro") ||
+    order?.carrierName?.toLowerCase().includes("recogida") ||
+    order?.carrierName?.toLowerCase().includes("tienda") ||
+    order?.shippingMethod?.name?.toLowerCase().includes("recogida") ||
+    order?.shippingMethod?.name?.toLowerCase().includes("retiro") ||
+    order?.shippingMethod?.name?.toLowerCase().includes("tienda");
+
+  const baseStatus = order ? STATUS_CONFIG[order.status] : null;
+  const statusMeta = baseStatus
+    ? order?.status === "ENVIADO" && isLocalOrder
+      ? {
+          label: "LISTO PARA RETIRAR EN TIENDA",
+          bg: "#dcfce7",
+          color: "#15803d",
+          step: 4,
+          icon: "🏪",
+        }
+      : baseStatus
+    : null;
+
+  const currentSteps = [
+    { step: 1, label: "Recibido" },
+    { step: 2, label: "Pagado" },
+    { step: 3, label: "Preparando" },
+    { step: 4, label: isLocalOrder ? "Listo p/ Retiro" : "En Camino" },
+    { step: 5, label: "Entregado" },
+  ];
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "var(--color-bg)" }}>
@@ -367,7 +389,7 @@ export default function TrackingPage() {
                         position: "absolute",
                         top: "14px",
                         left: "20px",
-                        width: `${Math.min(100, Math.max(0, ((statusMeta.step - 1) / (ORDER_STEPS.length - 1)) * 100))}%`,
+                        width: `${Math.min(100, Math.max(0, ((statusMeta.step - 1) / (currentSteps.length - 1)) * 100))}%`,
                         height: "3px",
                         background: "var(--color-primary, #2563eb)",
                         zIndex: 0,
@@ -375,7 +397,7 @@ export default function TrackingPage() {
                       }}
                     />
 
-                    {ORDER_STEPS.map((s) => {
+                    {currentSteps.map((s) => {
                       const isCompleted = statusMeta.step >= s.step;
                       const isCurrent = statusMeta.step === s.step;
                       return (
@@ -416,8 +438,110 @@ export default function TrackingPage() {
               )}
             </div>
 
-            {/* TRACKING CARD (When dispatched) */}
-            {(order.carrierName || order.trackingNumber) && (
+            {/* LOCAL IN-STORE PICKUP CARD */}
+            {isLocalOrder && (order.status === "ENVIADO" || order.status === "PREPARANDO" || order.status === "ENTREGADO") && (
+              <div
+                style={{
+                  background: "linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)",
+                  border: "2px solid #16a34a",
+                  borderRadius: "16px",
+                  padding: "1.75rem",
+                  boxShadow: "0 4px 14px rgba(22, 163, 74, 0.12)",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.75rem" }}>
+                  <span style={{ fontSize: "1.6rem" }}>🏪</span>
+                  <h3 style={{ margin: 0, fontSize: "1.25rem", fontWeight: 800, color: "#166534" }}>
+                    {order.status === "ENTREGADO" || order.status === "COMPLETADO"
+                      ? "Pedido Retirado con Éxito"
+                      : order.status === "ENVIADO"
+                      ? "¡Tu Pedido está Listo para Retirar en Tienda!"
+                      : "Preparando para Retiro en Tienda"}
+                  </h3>
+                </div>
+
+                <p style={{ margin: "0 0 1.25rem", fontSize: "0.95rem", color: "#14532d", lineHeight: 1.6 }}>
+                  {order.status === "ENTREGADO" || order.status === "COMPLETADO"
+                    ? "Confirmamos que tu compra fue retirada satisfactoriamente en nuestro local. ¡Gracias por preferir TiendaDelki!"
+                    : order.status === "ENVIADO"
+                    ? "Tus productos ya están empacados en mostrador. Puedes pasar a recogerlos por nuestra tienda física en San Fernando de Montecristi con tu número de orden."
+                    : "Estamos organizando y empacando tus artículos para que puedas retirarlos en nuestro local a la brevedad."}
+                </p>
+
+                <div
+                  style={{
+                    background: "#ffffff",
+                    borderRadius: "12px",
+                    padding: "1.25rem",
+                    border: "1px solid #bbf7d0",
+                    display: "grid",
+                    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+                    gap: "1rem",
+                    marginBottom: "1.25rem",
+                  }}
+                >
+                  <div>
+                    <span style={{ display: "block", fontSize: "0.75rem", fontWeight: 700, color: "#4b5563", textTransform: "uppercase" }}>
+                      Modalidad de Entrega
+                    </span>
+                    <strong style={{ fontSize: "1.05rem", color: "#111827" }}>Retiro Presencial en Tienda</strong>
+                  </div>
+
+                  <div>
+                    <span style={{ display: "block", fontSize: "0.75rem", fontWeight: 700, color: "#4b5563", textTransform: "uppercase" }}>
+                      Lugar de Retiro
+                    </span>
+                    <strong style={{ fontSize: "1.05rem", color: "#111827" }}>San Fernando de Montecristi</strong>
+                  </div>
+
+                  {order.shippedAt && (
+                    <div>
+                      <span style={{ display: "block", fontSize: "0.75rem", fontWeight: 700, color: "#4b5563", textTransform: "uppercase" }}>
+                        Disponible desde
+                      </span>
+                      <span style={{ fontSize: "0.95rem", color: "#374151" }}>
+                        {new Date(order.shippedAt).toLocaleDateString("es-DO", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {phone && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      openDirectWhatsApp(
+                        `Hola TiendaDelki, deseo consultar sobre el retiro de mi pedido #${order.orderNumber}.`
+                      )
+                    }
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "0.4rem",
+                      background: "#ffffff",
+                      color: "#166534",
+                      border: "1px solid #86efac",
+                      padding: "0.65rem 1.2rem",
+                      borderRadius: "8px",
+                      fontSize: "0.9rem",
+                      fontWeight: 600,
+                      cursor: "pointer",
+                    }}
+                  >
+                    💬 Notificar o consultar retiro por WhatsApp
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* EXTERNAL CARRIER TRACKING CARD (When not local pickup and has carrier) */}
+            {!isLocalOrder && (order.carrierName || order.trackingNumber) && (
               <div
                 style={{
                   background: "linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)",

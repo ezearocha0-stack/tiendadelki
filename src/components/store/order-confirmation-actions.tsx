@@ -144,9 +144,15 @@ export function OrderConfirmationActions({
   const isCompleted = status === "COMPLETADO";
   const isCancelled = status === "CANCELADO";
 
+  const isLocalPickup =
+    carrierName?.toLowerCase().includes("local") ||
+    carrierName?.toLowerCase().includes("retiro") ||
+    carrierName?.toLowerCase().includes("tienda") ||
+    trackingNumber?.toLowerCase().includes("retiro");
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-      {/* 1. DISPATCH / TRACKING CARD (When carrier or tracking number exists or order is shipped/delivered/completed) */}
+      {/* 1. DISPATCH / TRACKING / READY FOR PICKUP CARD */}
       {(trackingNumber || carrierName || isShipped || isDelivered || isCompleted) && (
         <div
           style={{
@@ -158,15 +164,21 @@ export function OrderConfirmationActions({
           }}
         >
           <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.75rem" }}>
-            <span style={{ fontSize: "1.5rem" }}>🚚</span>
+            <span style={{ fontSize: "1.5rem" }}>{isLocalPickup ? "🏪" : "🚚"}</span>
             <h3 style={{ margin: 0, fontSize: "1.2rem", fontWeight: 800, color: "#166534" }}>
-              {isDelivered || isCompleted ? "Paquete Entregado con Éxito" : "¡Tu paquete ya está en camino!"}
+              {isDelivered || isCompleted
+                ? isLocalPickup ? "¡Pedido Retirado con Éxito!" : "Paquete Entregado con Éxito"
+                : isLocalPickup ? "¡Tu Pedido está Listo para Retirar en Tienda!" : "¡Tu paquete ya está en camino!"}
             </h3>
           </div>
 
           <p style={{ margin: "0 0 1.25rem", fontSize: "0.95rem", color: "#14532d" }}>
             {isDelivered || isCompleted
-              ? "Confirmamos que tu paquete fue entregado satisfactoriamente. ¡Esperamos que disfrutes tus productos!"
+              ? isLocalPickup
+                ? "Confirmamos que tu compra fue retirada satisfactoriamente en nuestro local. ¡Esperamos que disfrutes tus prendas!"
+                : "Confirmamos que tu paquete fue entregado satisfactoriamente. ¡Esperamos que disfrutes tus productos!"
+              : isLocalPickup
+              ? "Tus artículos ya están empacados y listos en mostrador. Puedes pasar a retirarlos por nuestra tienda física en San Fernando de Montecristi con tu número de orden."
               : "Hemos despachado tu pedido con la empresa de transporte correspondiente. A continuación los datos para su seguimiento:"}
           </p>
 
@@ -182,16 +194,23 @@ export function OrderConfirmationActions({
               marginBottom: "1.25rem",
             }}
           >
-            {carrierName && (
+            <div>
+              <span style={{ display: "block", fontSize: "0.75rem", fontWeight: 700, color: "#4b5563", textTransform: "uppercase" }}>
+                {isLocalPickup ? "Modalidad de Entrega" : "Empresa Transportista"}
+              </span>
+              <strong style={{ fontSize: "1.05rem", color: "#111827" }}>
+                {isLocalPickup ? "Retiro Presencial en Tienda" : (carrierName || "Mensajería Expresa")}
+              </strong>
+            </div>
+
+            {isLocalPickup ? (
               <div>
                 <span style={{ display: "block", fontSize: "0.75rem", fontWeight: 700, color: "#4b5563", textTransform: "uppercase" }}>
-                  Empresa Transportista
+                  Lugar de Retiro
                 </span>
-                <strong style={{ fontSize: "1.05rem", color: "#111827" }}>{carrierName}</strong>
+                <strong style={{ fontSize: "1.05rem", color: "#111827" }}>San Fernando de Montecristi</strong>
               </div>
-            )}
-
-            {trackingNumber && (
+            ) : trackingNumber ? (
               <div>
                 <span style={{ display: "block", fontSize: "0.75rem", fontWeight: 700, color: "#4b5563", textTransform: "uppercase" }}>
                   Número de Guía / Tracking
@@ -230,7 +249,7 @@ export function OrderConfirmationActions({
                   </button>
                 </div>
               </div>
-            )}
+            ) : null}
 
             {shippedAt && (
               <div>

@@ -7,7 +7,7 @@ import { prisma } from "../lib/db";
 async function verifyInventoryStatus() {
   const token = await signJwt({
     sub: "cmtp4y4wl0001uc50l7eq1oce",
-    email: "admin@tiendadelki.com",
+    email: "ezearocha@gmail.com",
     role: Role.SUPER_ADMIN,
     name: "Admin",
   });

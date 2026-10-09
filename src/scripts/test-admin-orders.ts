@@ -22,7 +22,7 @@ async function runAdminOrderTests() {
     adminUserId = adminUser ? adminUser.id : "test-admin-id";
     const adminToken = await signJwt({
       sub: adminUserId,
-      email: adminUser?.email || "admin@tiendadelki.com",
+      email: adminUser?.email || "ezearocha@gmail.com",
       role: Role.ADMIN,
       name: "Admin Tester",
     });

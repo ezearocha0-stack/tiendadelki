@@ -116,7 +116,34 @@ export default function AdminOrderDetailPage({ params }: OrderDetailProps) {
       ? JSON.parse(order.shippingAddress)
       : order.shippingAddress || {};
 
+  const isPickupOrder =
+    order.shippingMethod?.name?.toLowerCase().includes("retiro") ||
+    order.shippingMethod?.name?.toLowerCase().includes("recogida") ||
+    order.shippingMethod?.name?.toLowerCase().includes("tienda") ||
+    order.shippingMethod?.name?.toLowerCase().includes("local") ||
+    order.carrierName?.toLowerCase().includes("local") ||
+    order.carrierName?.toLowerCase().includes("retiro") ||
+    order.carrierName?.toLowerCase().includes("tienda");
+
   function renderStatusBadge(status: string) {
+    if (status === "ENVIADO" && isPickupOrder) {
+      return (
+        <span
+          style={{
+            background: "#dcfce7",
+            color: "#15803d",
+            border: "1px solid #86efac",
+            padding: "0.35rem 0.85rem",
+            borderRadius: "9999px",
+            fontSize: "0.85rem",
+            fontWeight: 700,
+          }}
+        >
+          🏪 Listo para Retirar en Tienda
+        </span>
+      );
+    }
+
     const map: Record<string, { label: string; bg: string; color: string; border?: string }> = {
       PENDIENTE_DE_PAGO: { label: "⏳ Pendiente de Pago", bg: "#fef3c7", color: "#b45309" },
       PAGO_EN_REVISION: { label: "⏱ Pago en Revisión", bg: "#dbeafe", color: "#1e40af", border: "1px solid #93c5fd" },
@@ -309,27 +336,63 @@ export default function AdminOrderDetailPage({ params }: OrderDetailProps) {
             </button>
           )}
 
-          {/* 3. Despachar / Enviar con Tracking */}
+          {/* 3. Despachar / Listo para Retiro */}
           {order.status === "PREPARANDO" && (
-            <button
-              type="button"
-              onClick={() => setModalType("SET_SHIPPING")}
-              style={{
-                backgroundColor: "#0284c7",
-                color: "#fff",
-                border: "none",
-                borderRadius: "var(--radius-md)",
-                padding: "0.6rem 1.1rem",
-                fontWeight: 700,
-                fontSize: "0.875rem",
-                cursor: "pointer",
-              }}
-            >
-              🚚 Despachar / Agregar Guía
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={() => {
+                  setModalInput({
+                    notes: "",
+                    rejectionReason: "",
+                    carrierName: isPickupOrder ? "Entrega / Retiro Local" : (order.carrierName || "Entrega / Retiro Local"),
+                    trackingNumber: isPickupOrder ? "" : (order.trackingNumber || ""),
+                    trackingUrl: order.trackingUrl || "",
+                  });
+                  setModalType("SET_SHIPPING");
+                }}
+                style={{
+                  backgroundColor: "#0284c7",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "var(--radius-md)",
+                  padding: "0.6rem 1.1rem",
+                  fontWeight: 700,
+                  fontSize: "0.875rem",
+                  cursor: "pointer",
+                }}
+              >
+                {isPickupOrder ? "🏪 Listo para Retiro en Tienda" : "🚚 Despachar / Agregar Guía"}
+              </button>
+
+              {isPickupOrder && (
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleStatusUpdate("ENTREGADO", {
+                      notes: "Entregado directamente al cliente en el mostrador de la tienda física.",
+                    })
+                  }
+                  disabled={actionLoading}
+                  style={{
+                    backgroundColor: "#16a34a",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "var(--radius-md)",
+                    padding: "0.6rem 1.1rem",
+                    fontWeight: 700,
+                    fontSize: "0.875rem",
+                    cursor: "pointer",
+                  }}
+                  title="Si el cliente ya se encuentra en la tienda y retira su compra directamente"
+                >
+                  ✓ Marcar Entregado en Tienda
+                </button>
+              )}
+            </>
           )}
 
-          {/* 4. Marcar Entregado */}
+          {/* 4. Marcar Entregado / Retirado */}
           {order.status === "ENVIADO" && (
             <>
               <button
@@ -345,12 +408,18 @@ export default function AdminOrderDetailPage({ params }: OrderDetailProps) {
                   cursor: "pointer",
                 }}
               >
-                ✏️ Editar Guía
+                {isPickupOrder ? "✏️ Modificar Retiro" : "✏️ Editar Guía"}
               </button>
 
               <button
                 type="button"
-                onClick={() => handleStatusUpdate("ENTREGADO", { notes: "Paquete entregado al cliente." })}
+                onClick={() =>
+                  handleStatusUpdate("ENTREGADO", {
+                    notes: isPickupOrder
+                      ? "Mercancía retirada satisfactoriamente por el cliente en tienda física."
+                      : "Paquete entregado al cliente.",
+                  })
+                }
                 disabled={actionLoading}
                 style={{
                   backgroundColor: "#059669",
@@ -363,7 +432,7 @@ export default function AdminOrderDetailPage({ params }: OrderDetailProps) {
                   cursor: "pointer",
                 }}
               >
-                🏠 Marcar Entregado
+                {isPickupOrder ? "🏠 Marcar Retirado por Cliente" : "🏠 Marcar Entregado"}
               </button>
             </>
           )}
@@ -919,95 +988,134 @@ export default function AdminOrderDetailPage({ params }: OrderDetailProps) {
         </div>
       )}
 
-      {/* 3. Modal Despachar / Enviar Pedido */}
-      {modalType === "SET_SHIPPING" && (
-        <div className="modal-backdrop">
-          <div className="modal-dialog" style={{ maxWidth: "500px" }}>
-            <div className="modal-header">
-              <h3 className="modal-title">Despachar Pedido y Registrar Guía</h3>
-              <button
-                type="button"
-                onClick={() => setModalType(null)}
-                className="modal-close-btn"
-                aria-label="Cerrar modal"
-              >
-                ✕
-              </button>
-            </div>
-            <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", margin: "0 0 1.25rem 0", lineHeight: 1.5 }}>
-              Ingresa los datos de envío para que el cliente pueda rastrear su paquete.
-            </p>
+      {/* 3. Modal Despachar / Enviar Pedido o Marcar Listo para Retiro */}
+      {modalType === "SET_SHIPPING" && (() => {
+        const isCurrentCarrierLocal =
+          modalInput.carrierName.toLowerCase().includes("local") ||
+          modalInput.carrierName.toLowerCase().includes("retiro") ||
+          modalInput.carrierName.toLowerCase().includes("recogida") ||
+          modalInput.carrierName.toLowerCase().includes("tienda");
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "1rem", marginBottom: "1.5rem" }}>
-              <div>
-                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.35rem", color: "var(--text-primary)" }}>
-                  Empresa de Transporte / Mensajería *
-                </label>
-                <select
-                  value={modalInput.carrierName}
-                  onChange={(e) => setModalInput({ ...modalInput, carrierName: e.target.value })}
+        return (
+          <div className="modal-backdrop">
+            <div className="modal-dialog" style={{ maxWidth: "520px" }}>
+              <div className="modal-header">
+                <h3 className="modal-title">
+                  {isCurrentCarrierLocal ? "🏪 Marcar Listo para Retiro en Tienda" : "🚚 Despachar Pedido y Registrar Guía"}
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => setModalType(null)}
+                  className="modal-close-btn"
+                  aria-label="Cerrar modal"
                 >
-                  <option value="Entrega / Retiro Local">Entrega / Retiro Local</option>
-                  <option value="Metro Pac">Metro Pac</option>
-                  <option value="Caribe Tours">Caribe Tours</option>
-                  <option value="BM Cargo">BM Cargo</option>
-                  <option value="Vimenpaq">Vimenpaq</option>
-                  <option value="Otro">Otro Transportista</option>
-                </select>
+                  ✕
+                </button>
               </div>
 
-              <div>
-                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.35rem", color: "var(--text-primary)" }}>
-                  Número de Guía / Tracking *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Ej. MP-8492041"
-                  value={modalInput.trackingNumber}
-                  onChange={(e) => setModalInput({ ...modalInput, trackingNumber: e.target.value })}
-                />
+              <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", margin: "0 0 1.25rem 0", lineHeight: 1.5 }}>
+                {isCurrentCarrierLocal
+                  ? "Indica que los productos ya fueron preparados y están disponibles para retiro en el local."
+                  : "Ingresa los datos de envío para que el cliente pueda rastrear su paquete con la mensajería."}
+              </p>
+
+              {isCurrentCarrierLocal && (
+                <div
+                  style={{
+                    backgroundColor: "#f0fdf4",
+                    border: "1px solid #bbf7d0",
+                    color: "#166534",
+                    padding: "0.85rem 1rem",
+                    borderRadius: "8px",
+                    fontSize: "0.85rem",
+                    marginBottom: "1.25rem",
+                    lineHeight: 1.5,
+                  }}
+                >
+                  ✓ <strong>Retiro Local en Tienda:</strong> No requiere número de guía de mensajería. Al confirmar, el pedido cambiará a estado <strong>Listo para Retiro</strong> y el cliente sabrá que ya puede pasar por la tienda.
+                </div>
+              )}
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem", marginBottom: "1.5rem" }}>
+                <div>
+                  <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.35rem", color: "var(--text-primary)" }}>
+                    Método de Entrega / Transporte *
+                  </label>
+                  <select
+                    value={modalInput.carrierName}
+                    onChange={(e) => setModalInput({ ...modalInput, carrierName: e.target.value })}
+                  >
+                    <option value="Entrega / Retiro Local">🏪 Entrega / Retiro Local en Tienda</option>
+                    <option value="Caribe Tours">Caribe Tours</option>
+                    <option value="Metro Pac">Metro Pac</option>
+                    <option value="BM Cargo">BM Cargo</option>
+                    <option value="Vimenpaq">Vimenpaq</option>
+                    <option value="Otro">Otro Transportista</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.35rem", color: "var(--text-primary)" }}>
+                    Número de Guía o Referencia {isCurrentCarrierLocal ? "(Opcional)" : "*"}
+                  </label>
+                  <input
+                    type="text"
+                    required={!isCurrentCarrierLocal}
+                    placeholder={isCurrentCarrierLocal ? "Opcional (Ej. Mostrador o en blanco)" : "Ej. MP-8492041"}
+                    value={modalInput.trackingNumber}
+                    onChange={(e) => setModalInput({ ...modalInput, trackingNumber: e.target.value })}
+                  />
+                </div>
+
+                {!isCurrentCarrierLocal && (
+                  <div>
+                    <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.35rem", color: "var(--text-primary)" }}>
+                      Enlace de Rastreo Web (Opcional)
+                    </label>
+                    <input
+                      type="url"
+                      placeholder="https://metropac.com.do/tracking?id=..."
+                      value={modalInput.trackingUrl}
+                      onChange={(e) => setModalInput({ ...modalInput, trackingUrl: e.target.value })}
+                    />
+                  </div>
+                )}
               </div>
 
-              <div>
-                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.35rem", color: "var(--text-primary)" }}>
-                  Enlace de Rastreo Web (Opcional)
-                </label>
-                <input
-                  type="url"
-                  placeholder="https://metropac.com.do/tracking?id=..."
-                  value={modalInput.trackingUrl}
-                  onChange={(e) => setModalInput({ ...modalInput, trackingUrl: e.target.value })}
-                />
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  onClick={() => setModalType(null)}
+                  className="btn btn-secondary"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  disabled={
+                    actionLoading ||
+                    (!isCurrentCarrierLocal && (!modalInput.carrierName.trim() || !modalInput.trackingNumber.trim()))
+                  }
+                  onClick={() =>
+                    handleStatusUpdate("ENVIADO", {
+                      carrierName: modalInput.carrierName,
+                      trackingNumber: modalInput.trackingNumber.trim() || (isCurrentCarrierLocal ? "RETIRO-TIENDA" : ""),
+                      trackingUrl: isCurrentCarrierLocal ? null : (modalInput.trackingUrl || null),
+                    })
+                  }
+                  className="btn btn-primary"
+                >
+                  {actionLoading
+                    ? "Guardando..."
+                    : isCurrentCarrierLocal
+                    ? "🏪 Marcar Listo para Retiro"
+                    : "🚚 Guardar y Marcar Enviado"}
+                </button>
               </div>
-            </div>
-
-            <div className="modal-footer">
-              <button
-                type="button"
-                onClick={() => setModalType(null)}
-                className="btn btn-secondary"
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                disabled={actionLoading || !modalInput.carrierName.trim() || !modalInput.trackingNumber.trim()}
-                onClick={() =>
-                  handleStatusUpdate("ENVIADO", {
-                    carrierName: modalInput.carrierName,
-                    trackingNumber: modalInput.trackingNumber,
-                    trackingUrl: modalInput.trackingUrl || null,
-                  })
-                }
-                className="btn btn-primary"
-              >
-                {actionLoading ? "Registrando..." : "Guardar y Marcar Enviado"}
-              </button>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* 4. Modal Cancelar */}
       {modalType === "CANCEL" && (

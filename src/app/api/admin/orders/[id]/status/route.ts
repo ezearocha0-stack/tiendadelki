@@ -46,9 +46,16 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
 
     // 2. Validaciones complementarias según el estado destino
     if (validated.targetStatus === OrderStatus.ENVIADO) {
-      if (!validated.carrierName?.trim() || !validated.trackingNumber?.trim()) {
+      const carrier = (validated.carrierName || "").toLowerCase();
+      const isLocalPickup =
+        carrier.includes("local") ||
+        carrier.includes("retiro") ||
+        carrier.includes("recogida") ||
+        carrier.includes("tienda");
+
+      if (!isLocalPickup && (!validated.carrierName?.trim() || !validated.trackingNumber?.trim())) {
         throw new ValidationError(
-          "Para marcar un pedido como ENVIADO es obligatorio especificar el Transportista y el Número de Guía."
+          "Para envíos con empresas de mensajería es obligatorio especificar el Transportista y el Número de Guía."
         );
       }
     }
@@ -77,15 +84,24 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
       } else if (validated.targetStatus === OrderStatus.PREPARANDO) {
         historyNote = historyNote || "Pedido enviado a preparación en almacén.";
       } else if (validated.targetStatus === OrderStatus.ENVIADO) {
-        orderUpdateData.carrierName = validated.carrierName!.trim();
-        orderUpdateData.trackingNumber = validated.trackingNumber!.trim();
+        const carrier = (validated.carrierName || "").toLowerCase();
+        const isLocalPickup =
+          carrier.includes("local") ||
+          carrier.includes("retiro") ||
+          carrier.includes("recogida") ||
+          carrier.includes("tienda");
+
+        orderUpdateData.carrierName = validated.carrierName?.trim() || "Entrega / Retiro Local";
+        orderUpdateData.trackingNumber = validated.trackingNumber?.trim() || (isLocalPickup ? "RETIRO-LOCAL" : "N/A");
         orderUpdateData.trackingUrl = validated.trackingUrl?.trim() || null;
         orderUpdateData.shippedAt = new Date();
         historyNote =
           historyNote ||
-          `Despachado vía ${validated.carrierName!.trim()}. Guía: ${validated.trackingNumber!.trim()}`;
+          (isLocalPickup
+            ? "Pedido preparado y listo para retiro en tienda física."
+            : `Despachado vía ${orderUpdateData.carrierName}. Guía: ${orderUpdateData.trackingNumber}`);
       } else if (validated.targetStatus === OrderStatus.ENTREGADO) {
-        historyNote = historyNote || "Paquete entregado con éxito al cliente.";
+        historyNote = historyNote || "Pedido entregado con éxito al cliente en tienda física o domicilio.";
       } else if (validated.targetStatus === OrderStatus.COMPLETADO) {
         historyNote = historyNote || "Orden completada y archivada.";
       } else if (validated.targetStatus === OrderStatus.CANCELADO) {

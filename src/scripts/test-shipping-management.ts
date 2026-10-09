@@ -18,7 +18,7 @@ async function runShippingTests() {
     const adminUser = await prisma.user.findFirst({ where: { role: { in: [Role.SUPER_ADMIN, Role.ADMIN] } } });
     const adminToken = await signJwt({
       sub: adminUser?.id || "admin-shipping-id",
-      email: adminUser?.email || "admin@tiendadelki.com",
+      email: adminUser?.email || "ezearocha@gmail.com",
       role: Role.ADMIN,
       name: "Admin Shipping",
     });

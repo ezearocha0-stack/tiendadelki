@@ -142,13 +142,40 @@ export default async function OrderConfirmationPage({ params, searchParams }: Or
   const shippingCost = Number(order.shippingCost || 0);
   const total = Number(order.total || 0);
 
-  const statusMeta = STATUS_CONFIG[order.status] || {
+  const isLocalOrder =
+    order.carrierName?.toLowerCase().includes("local") ||
+    order.carrierName?.toLowerCase().includes("retiro") ||
+    order.carrierName?.toLowerCase().includes("tienda") ||
+    order.shippingMethod?.name?.toLowerCase().includes("recogida") ||
+    order.shippingMethod?.name?.toLowerCase().includes("retiro") ||
+    order.shippingMethod?.name?.toLowerCase().includes("tienda");
+
+  const baseStatus = STATUS_CONFIG[order.status] || {
     label: order.status || "RECIBIDO",
     bg: "#f3f4f6",
     color: "#374151",
     step: 1,
     icon: "📋",
   };
+
+  const statusMeta =
+    order.status === "ENVIADO" && isLocalOrder
+      ? {
+          label: "LISTO PARA RETIRAR EN TIENDA",
+          bg: "#dcfce7",
+          color: "#15803d",
+          step: 4,
+          icon: "🏪",
+        }
+      : baseStatus;
+
+  const currentSteps = [
+    { step: 1, label: "Recibido" },
+    { step: 2, label: "Pagado" },
+    { step: 3, label: "Preparando" },
+    { step: 4, label: isLocalOrder ? "Listo p/ Retiro" : "En Camino" },
+    { step: 5, label: "Entregado" },
+  ];
 
   const formattedAccounts = (bankAccounts || []).map((a) => ({
     id: a.id,
@@ -274,7 +301,7 @@ export default async function OrderConfirmationPage({ params, searchParams }: Or
                     position: "absolute",
                     top: "14px",
                     left: "20px",
-                    width: `${Math.min(100, Math.max(0, ((statusMeta.step - 1) / (ORDER_STEPS.length - 1)) * 100))}%`,
+                    width: `${Math.min(100, Math.max(0, ((statusMeta.step - 1) / (currentSteps.length - 1)) * 100))}%`,
                     height: "3px",
                     background: "var(--color-primary, #2563eb)",
                     zIndex: 0,
@@ -282,7 +309,7 @@ export default async function OrderConfirmationPage({ params, searchParams }: Or
                   }}
                 />
 
-                {ORDER_STEPS.map((s) => {
+                {currentSteps.map((s) => {
                   const isCompleted = statusMeta.step >= s.step;
                   const isCurrent = statusMeta.step === s.step;
                   return (

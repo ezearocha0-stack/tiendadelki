@@ -45,7 +45,7 @@ async function runMasterQASuite() {
     sub: adminId,
     role: Role.ADMIN,
     name: "Administrador QA",
-    email: adminUser.email || "admin@tiendadelki.com",
+    email: adminUser.email || "ezearocha@gmail.com",
   });
 
   const customerUserA = await prisma.user.upsert({
